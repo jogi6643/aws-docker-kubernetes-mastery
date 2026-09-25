@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Solution Architect & SysOps (102 Lectures) - Complete Theory & Architecture Portal</title>
+  <meta name="description"
+    content="Complete theoretical notes, architecture diagrams, hands-on CLI commands, SAA-C03 exam tips, and interview Q&A for the 102-lecture AWS tutorial series by Bhupinder Rajput (Technical Guftgu).">
+  <meta name="keywords"
+    content="AWS, Solution Architect, SAA-C03, SysOps, Cloud Computing, EC2, VPC, S3, RDS, DynamoDB, Route 53, CloudFront, SQS, SNS, Lambda, Hindi AWS Tutorial">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF9900'/><text y='70' x='15' font-size='60' font-family='sans-serif' font-weight='bold' fill='%23000'>AWS</text></svg>">
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo-brand" id="logo-brand">
+        <span class="logo-badge" id="logo-badge">AWS</span>
+        <span class="logo-text" id="logo-text">Cloud<span>Architect</span></span>
+      </a>
+
+      <!-- Course Switcher -->
+      <div class="course-switcher" id="course-switcher" role="tablist" aria-label="Course selection">
+        <button class="course-switch-btn active" data-course="aws" id="switch-course-aws" role="tab"
+          aria-selected="true">
+          <i class="fa-brands fa-aws"></i> <span>AWS Cloud (102)</span>
+        </button>
+        <button class="course-switch-btn" data-course="docker" id="switch-course-docker" role="tab"
+          aria-selected="false">
+          <i class="fa-brands fa-docker"></i> <span>Docker (8)</span>
+        </button>
+        <button class="course-switch-btn" data-course="k8s" id="switch-course-k8s" role="tab" aria-selected="false">
+          <i class="fa-solid fa-dharmachakra"></i> <span>Kubernetes (10)</span>
+        </button>
+      </div>
+
+      <nav class="header-nav">
+        <a href="#lectures" class="nav-link active" data-view="lectures" id="nav-lectures">
+          <i class="fa-solid fa-graduation-cap"></i> <span id="nav-lectures-label">102 Lectures</span>
+        </a>
+        <a href="#cheatsheets" class="nav-link" data-view="cheatsheets" id="nav-cheatsheets">
+          <i class="fa-solid fa-table-columns"></i> Cheatsheets
+        </a>
+        <a href="#quiz" class="nav-link" data-view="quiz" id="nav-quiz">
+          <i class="fa-solid fa-circle-question"></i> Exam Quiz
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode" aria-label="Toggle theme">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View: Lectures -->
+  <main id="main-lectures-view">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-badge-pill" id="hero-badge-pill">
+          <i class="fa-brands fa-aws"></i> Technical Guftgu • Bhupinder Rajput Series
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          AWS Solution Architect & SysOps <br>
+          <span class="gradient-text">Complete Theory & Architecture Portal</span>
+        </h1>
+
+        <p class="hero-subtitle" id="hero-subtitle">
+          Master the complete AWS Certified Solutions Architect (SAA-C03) & SysOps Administrator curriculum.
+          Detailed theoretical notes, Hindi explanations (<strong>Asaan Bhasha Me</strong>), architectural diagrams,
+          hands-on CLI commands, and real interview questions extracted from all <strong>102 Video Lectures</strong>.
+        </p>
+
+        <!-- Stats Grid -->
+        <div class="hero-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" id="hero-stat-icon-1"><i class="fa-solid fa-video"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="hero-stat-lectures">102</div>
+              <div class="stat-label" id="hero-stat-lectures-label">Full Video Lectures</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" id="hero-stat-icon-2"><i class="fa-solid fa-cubes"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="hero-stat-modules">12</div>
+              <div class="stat-label" id="hero-stat-modules-label">Core AWS Modules</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" id="hero-stat-icon-3"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="hero-stat-duration">42+ hrs</div>
+              <div class="stat-label">Curated Content</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" id="hero-stat-icon-4"><i class="fa-solid fa-award"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="hero-stat-exam">SAA-C03</div>
+              <div class="stat-label" id="hero-stat-exam-label">Exam Aligned</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="progress-card">
+          <div class="progress-header">
+            <span><i class="fa-solid fa-list-check" style="color: var(--aws-orange); margin-right: 0.5rem;"></i> Course
+              Completion Progress</span>
+            <span><span id="completed-count">0</span> / <span id="total-count-label">102</span> Completed (<span
+                id="progress-percentage">0%</span>)</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls & Filters Toolbar -->
+    <section class="controls-toolbar">
+      <div class="container toolbar-inner">
+        <div class="search-and-view">
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" class="search-input"
+              placeholder="Search any service, concept, or lecture (e.g. S3, VPC, EC2, NAT, IAM, Lec 54)..."
+              autocomplete="off">
+            <button class="clear-search-btn" id="clear-search-btn" title="Clear search">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="view-controls">
+            <button class="view-btn" id="filter-bookmarks-btn" title="Show Bookmarked Only">
+              <i class="fa-solid fa-bookmark"></i>
+            </button>
+            <span id="results-count"
+              style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; font-family: 'Fira Code', monospace; margin-left: 0.5rem;">
+              102 of 102 Lectures
+            </span>
+          </div>
+        </div>
+
+        <!-- Module Pills Filter -->
+        <div class="module-filter-bar" id="module-filter-bar">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Lectures Cards Grid -->
+    <section class="container">
+      <div class="lectures-grid" id="lectures-grid">
+        <!-- Dynamically rendered lecture cards -->
+      </div>
+    </section>
+  </main>
+
+  <!-- View: Comparison Cheat Sheets -->
+  <section class="container cheatsheet-section" id="cheatsheets-view">
+    <div style="margin-bottom: 2rem;">
+      <h2 style="font-size: 2rem; margin-bottom: 0.5rem;" id="cheatsheets-title">AWS Architectural Comparison Matrices
+      </h2>
+      <p style="color: var(--text-secondary);" id="cheatsheets-subtitle">High-yield comparison tables frequently tested
+        in AWS SAA-C03 and SysOps certification exams.</p>
+    </div>
+    <div id="cheatsheets-container">
+      <!-- Dynamically generated comparison tables -->
+    </div>
+  </section>
+
+  <!-- View: Exam Quiz -->
+  <section class="container quiz-section" id="quiz-view">
+    <div style="margin-bottom: 2rem; text-align: center;">
+      <h2 style="font-size: 2rem; margin-bottom: 0.5rem;" id="quiz-title">AWS SAA-C03 Interactive Scenario Quiz</h2>
+      <p style="color: var(--text-secondary); max-width: 650px; margin: 0 auto;" id="quiz-subtitle">Test your
+        architectural reasoning with real-world scenario questions. Select an option to see immediate feedback and
+        detailed explanations.</p>
+    </div>
+    <div class="quiz-container" id="quiz-container">
+      <!-- Dynamically generated questions -->
+    </div>
+  </section>
+
+  <!-- Lecture Details Modal -->
+  <div class="modal-overlay" id="lecture-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="modal-badge-row">
+            <span class="lecture-badge" id="modal-badge">Module 1</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-family: 'Fira Code', monospace;">
+              <i class="fa-regular fa-clock"></i> <span id="modal-duration">30:00</span>
+            </span>
+          </div>
+          <h2 class="modal-title" id="modal-title">Lecture Title</h2>
+        </div>
+        <button class="modal-close-btn" id="modal-close-btn" title="Close (Esc)" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Tab Bar -->
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" data-tab="theory" id="tab-btn-theory">
+          <i class="fa-solid fa-book-open"></i> Theory & Hindi Notes
+        </button>
+        <button class="modal-tab-btn" data-tab="board" id="tab-btn-board">
+          <i class="fa-solid fa-chalkboard-user"></i> Whiteboard Notes (बोर्ड)
+        </button>
+        <button class="modal-tab-btn" data-tab="architecture" id="tab-btn-arch">
+          <i class="fa-solid fa-diagram-project"></i> Architecture
+        </button>
+        <button class="modal-tab-btn" data-tab="commands" id="tab-btn-commands">
+          <i class="fa-solid fa-terminal"></i> CLI & Commands
+        </button>
+        <button class="modal-tab-btn" data-tab="exam" id="tab-btn-exam">
+          <i class="fa-solid fa-award"></i> Exam & Interview
+        </button>
+        <button class="modal-tab-btn" data-tab="video" id="tab-btn-video">
+          <i class="fa-brands fa-youtube" style="color: #FF0000;"></i> Watch Video
+        </button>
+      </div>
+
+      <!-- Modal Content Panes -->
+      <div class="modal-body">
+        <div class="tab-pane active" id="pane-theory"></div>
+        <div class="tab-pane" id="pane-board"></div>
+        <div class="tab-pane" id="pane-architecture"></div>
+        <div class="tab-pane" id="pane-commands"></div>
+        <div class="tab-pane" id="pane-exam"></div>
+        <div class="tab-pane" id="pane-video"></div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div class="footer-nav-btns">
+          <button class="nav-btn" id="prev-lecture-btn">
+            <i class="fa-solid fa-arrow-left"></i> Previous
+          </button>
+          <button class="nav-btn" id="next-lecture-btn">
+            Next <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <button class="mark-completed-btn" id="modal-mark-completed-btn">
+          <i class="fa-regular fa-circle"></i> Mark Completed
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand" id="footer-brand">
+        <span class="logo-badge" id="footer-logo-badge">AWS</span> <span id="footer-brand-title">Cloud Solutions
+          Architect Knowledge Portal</span>
+      </div>
+      <p class="footer-text" id="footer-text">
+        Based on the 102-lecture AWS Solution Architect & SysOps video tutorial series by <strong>Bhupinder Rajput
+          (Technical Guftgu)</strong>.
+        Designed for self-paced study, rapid exam revision (SAA-C03 / SOA-C02), and cloud engineering interview
+        preparation.
+      </p>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;" id="footer-subtext">
+        Completely free educational resource • All rights to original video tutorials belong to Technical Guftgu.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/lecturesData.js"></script>
+  <script src="js/dockerData.js"></script>
+  <script src="js/k8sData.js"></script>
+  <script src="js/cheatsheets.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
