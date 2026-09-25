@@ -97,34 +97,34 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 01 - Docker)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "49:53",
-      "summary": "भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर समझाया कि पुराने समय में सॉफ्टवेयर कैसे डिप्लॉय होता था, डेवलपर्स और ऑपरेशन टीम के बीच झगड़े ('मेरे लैपटॉप में चल रहा था, प्रोडक्शन में क्यों फटा?') क्यों होते थे, और कैसे डॉकर ने शिपिंग कंटेनर मॉडल पर इस समस्या को हमेशा के लिए खत्म किया।",
+      "summary": "Bhupinder Rajput ji ne digital board par samjhaya ki puraane time me software kaise deploy hota tha, developers aur operations team ke beech conflict ('Mere laptop me chal raha tha, production me kyu crash hua?') kyu hoti thi, aur kaise Docker ne shipping container model ke through is problem ko permanently solve kiya.",
       "sections": [
         {
           "heading": "1. The Traditional Deployment Problem ('Works on My Machine')",
-          "hindiNote": "बोर्ड पर एक डेवलपर और एक सर्वर एडमिन का केस बनाया गया:",
+          "hindiNote": "Board par ek developer aur ek server admin ka scenario draw karke samjhaya gaya:",
           "points": [
-            "डेवलपर के लैपटॉप पर: Python 3.9, Ubuntu 22.04, SQLite लाइब्रेरी। कोड बहुत बढ़िया चल रहा है।",
-            "प्रोडक्शन सर्वर पर: Python 3.6, RedHat Enterprise Linux, अलग SSL लाइब्रेरी। कोड प्रोडक्शन में डालते ही एरर दे देता है!",
-            "परिणाम: डेवलपर कहता है 'मेरे कोड में कोई गलती नहीं है', और सिस्टम एडमिन कहता है 'सर्वर पर नहीं चल रहा'।"
+            "Developer ke laptop par: Python 3.9, Ubuntu 22.04, SQLite library. Code bilkul badhiya chal raha hai.",
+            "Production server par: Python 3.6, RedHat Enterprise Linux, different SSL libraries. Code deploy karte hi crash aur dependency errors!",
+            "Result: Developer bolta hai 'Mere machine par code chal raha hai', aur System Admin bolta hai 'Production server par fail ho gaya'."
           ],
           "diagram": "[ Developer Laptop ] (Python 3.9, Ubuntu) ===> Code Works Perfectly!\n       |\n       +--- Deploy to Production ---> [ Production Server ] (Python 3.6, CentOS)\n                                             |\n                                             v\n                                   [ FAILED / CRASHED ] (Dependency Mismatch!)"
         },
         {
-          "heading": "2. The Cargo Shipping Analogy (कार्गो शिपिंग कंटेनर उदाहरण)",
-          "hindiNote": "डॉकर का नाम और लोगो 'व्हेल पर रखे कंटेनर' क्यों है? बोर्ड पर इतिहास का बहुत सुंदर उदाहरण समझाया गया:",
+          "heading": "2. The Cargo Shipping Analogy (Cargo Shipping Container Example)",
+          "hindiNote": "Docker ka name aur logo 'Whale carrying containers' kyu hai? Board par shipping industry ka historic analogy draw kiya gaya:",
           "points": [
-            "1950 से पहले: जहाजों में सामान (केले, कपड़े, गाड़ियां, मसाले) खुले बोरों में रखा जाता था। हर पोर्ट पर उतारने-चढ़ाने में हफ्तों लगते थे और सामान खराब हो जाता था।",
-            "स्टैंडर्ड शिपिंग कंटेनर: फिर एक फिक्स साइज का स्टील का कंटेनर बनाया गया। अब चाहे अंदर कुछ भी हो, क्रेन उसे उठाकर जहाज, ट्रक या ट्रेन पर बिना बदले रख देती है।",
-            "डॉकर भी यही करता है: आपका कोड, उसकी लाइब्रेरी, कॉन्फ़िगरेशन एक 'सॉफ्टवेयर कंटेनर' में बंद हो जाती है। यह कंटेनर लैपटॉप, EC2, या डेटा सेंटर में बिना किसी बदलाव के चलता है।"
+            "Pre-1950s Shipping: Ships me goods (fruits, clothes, machines, spices) open sacks me load hote the. Har port par loading/unloading me weeks lagte the aur damage hota tha.",
+            "Standard Intermodal Containers: Malcolm McLean ne standard size steel container introduce kiya. Ab andar chahe kuch bhi ho, crane bina modify kiye ship, truck ya train par transfer kar sakti hai.",
+            "Docker bhi exactly yahi karta hai: Aapka application code, dependencies aur runtime ek isolated 'Software Container' me package ho jaate hain. Ye container local laptop, AWS EC2 ya on-prem data center me identical run karta hai."
           ],
           "diagram": "+-------------------------------------------------------------+\n| DOCKER CONTAINER (Standardized Software Package)            |\n|                                                             |\n|  [ Your Application Code ]                                  |\n|  [ Exact Python/Node Runtime ]                              |\n|  [ Exact Dependencies & Libraries ]                         |\n|  [ Environment Configs ]                                    |\n+-------------------------------------------------------------+\n         |                        |                       |\n         v                        v                       v\n[ Developer Laptop ]     [ AWS EC2 Instance ]     [ Google Cloud / Azure ]"
         },
         {
           "heading": "3. Monolithic Architecture vs Microservices",
-          "hindiNote": "क्लाउड और डेवॉप्स में डॉकर इतना जरूरी क्यों बन गया?",
+          "hindiNote": "Cloud aur DevOps architecture me Docker itna essential kyu ban gaya?",
           "points": [
-            "Monolithic (मोनोलिथिक): पूरा सॉफ्टवेयर (यूजर लॉगिन, पेमेंट, कार्ट, इनवॉइस) एक ही 10GB के बड़े प्रोग्राम में होता है। अगर पेमेंट में बग आया तो पूरी वेबसाइट डाउन!",
-            "Microservices (माइक्रोसर्विसेज): हर सर्विस का अपना अलग छोटा कंटेनर (Login Container, Payment Container, Cart Container)। अगर कार्ट क्रैश भी हुआ तो बाकी वेबसाइट चलती रहती है।"
+            "Monolithic Architecture: Poora software (Login, Payment, Cart, Invoice) ek hi single huge code repository me hota hai. Agar payment module me bug aaya toh poori website down!",
+            "Microservices Architecture: Har service ka isolated lightweight container hota hai (Login Container, Payment Container, Cart Container). Agar Cart container crash bhi ho jaye, tab bhi poori website active rehti hai."
           ],
           "diagram": "MONOLITHIC:     [ UI + Login + Cart + Payment + DB ] ---> Single Huge Failure Point\n\nMICROSERVICES:  [ UI Container ]   ---> [ Login Container ]\n                       |          ---> [ Cart Container ]\n                       +          ---> [ Payment Container ]"
         }
@@ -166,11 +166,11 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 02 - Virtualization)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "27:40",
-      "summary": "बोर्ड पर वर्चुअल मशीन (VM) और डॉकर कंटेनर की लेयर्स बनाकर दोनों के बीच का तकनीकी फर्क समझाया गया। यह इंटरव्यू का सबसे महत्वपूर्ण सवाल है।",
+      "summary": "Board par Virtual Machine (VM) aur Docker Container ke architecture layers draw karke exact technical difference explain kiya gaya. Ye top interview question hai.",
       "sections": [
         {
           "heading": "1. Virtual Machine (VM) Architecture on Board",
-          "hindiNote": "VM में क्या-क्या लेयर्स होती हैं और यह भारी क्यों होती है:",
+          "hindiNote": "VM architecture layers aur iske heavyweight hone ke reasons:",
           "points": [
             "Hardware: Physical Server (CPU, RAM, Disks)",
             "Host OS: Physical server ka OS",
@@ -182,7 +182,7 @@ window.DOCKER_LECTURES = [
         },
         {
           "heading": "2. Docker Container Architecture on Board",
-          "hindiNote": "डॉकर में गेस्ट OS की कोई जरूरत नहीं होती:",
+          "hindiNote": "Docker me Guest OS ki zaroorat nahi hoti (OS-level virtualization):",
           "points": [
             "Hardware + Host OS + Linux Kernel",
             "Docker Engine (dockerd Daemon)",
@@ -194,10 +194,10 @@ window.DOCKER_LECTURES = [
         },
         {
           "heading": "3. The Secret Behind Isolation: Namespaces & Cgroups",
-          "hindiNote": "अगर कंटेनर एक ही कर्नल शेयर करते हैं, तो वे आपस में टकराते क्यों नहीं?",
+          "hindiNote": "Agar containers same Host OS Kernel share karte hain, toh isolation kaise maintain hota hai?",
           "points": [
-            "Namespaces (पर्दा / Isolation): कंटेनर 1 को लगता है कि दुनिया में वही अकेला है। उसका अपना PID 1 होता है, अपना IP एड्रेस, अपना रूट डायरेक्टरी।",
-            "Cgroups (लिमिट / कंट्रोल): कोई भी कंटेनर पूरे सर्वर की रैम या CPU नहीं खा सकता। हम लिमिट लगा सकते हैं (जैसे 'docker run -m 512m')."
+            "Linux Namespaces (Isolation Boundary): Container 1 ko lagta hai system me wo akela hai. Uska apna isolated PID 1, network IP stack, mount points aur user namespace hota hai.",
+            "Control Groups / Cgroups (Resource Limiting): Koi container host machine ki saari RAM ya CPU consume nahi kar sakta. Hard limits enforce kiye jaate hain (e.g. 'docker run -m 512m --cpus=1')."
           ],
           "diagram": "HOST KERNEL:\n  |--> Namespaces ===> PID (Process ID), NET (Network), MNT (Mount), IPC, UTS\n  |--> Cgroups    ===> CPU Throttling, Memory Limits, Disk I/O Throttling"
         }
@@ -239,26 +239,26 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 03 - Architecture)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:04:52",
-      "summary": "इस लेक्चर में भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर 3-टियर डॉकर आर्किटेक्चर (Client, Host/Daemon, Registry) का विस्तृत फ्लोचार्ट बनाया और समझाया कि जब आप 'docker run' लिखते हैं तो पर्दे के पीछे क्या होता है।",
+      "summary": "Is lecture me Bhupinder Rajput ji ne digital board par 3-tier Docker architecture (Client, Host/Daemon, Registry) ka flowchart draw karke explain kiya ki 'docker run' execute karne par internally kya steps trigger hote hain.",
       "sections": [
         {
           "heading": "1. Docker 3-Tier Architecture Flowchart",
-          "hindiNote": "बोर्ड पर तीन बड़े बॉक्स बनाकर समझाया गया:",
+          "hindiNote": "Board par 3 core building blocks draw karke explain kiya gaya:",
           "points": [
-            "Box 1: Docker Client (CLI) - जहाँ आप 'docker build', 'docker pull', 'docker run' लिखते हैं।",
-            "Box 2: Docker Host (Daemon) - असली इंजन (dockerd) जो बैकग्राउंड में चलता है, इमेजेस और कंटेनर्स बनाता है।",
-            "Box 3: Registry (Docker Hub) - इंटरनेट पर मौजूद लाइब्रेरी जहाँ से इमेजेस डाउनलोड होती हैं।"
+            "Box 1: Docker Client (CLI) - Jaha engineer commands execute karta hai ('docker build', 'docker pull', 'docker run').",
+            "Box 2: Docker Host (Daemon) - Engine process (dockerd) jo background me run karta hai aur images, containers, networks manage karta hai.",
+            "Box 3: Registry (Docker Hub / ECR) - Cloud library jaha base images aur customized application images store/download hoti hain."
           ],
           "diagram": "+-------------------+       REST API       +-------------------------------------+\n|   DOCKER CLIENT   |  =================>  |             DOCKER HOST             |\n| (docker CLI tool) |  /var/run/docker.sock| +---------------------------------+ |\n|                   |                      | | Docker Daemon (dockerd)         | |\n| - docker build    |                      | |  |-> Images (Nginx, Ubuntu, App)| |\n| - docker pull     |                      | |  |-> Containers (Running Proc)  | |\n| - docker run      |                      | |  |-> Networks & Volumes         | |\n+-------------------+                      | +---------------------------------+ |\n                                           +-------------------------------------+\n                                                              ^ \n                                                              | Pull / Push\n                                                              v\n                                                   +----------------------+\n                                                   |   DOCKER REGISTRY    |\n                                                   |   (hub.docker.com)   |\n                                                   +----------------------+"
         },
         {
           "heading": "2. What happens during 'docker run -d nginx'?",
-          "hindiNote": "बोर्ड पर स्टेप-बाय-स्टेप फ्लो बताया गया:",
+          "hindiNote": "Board par step-by-step internal packet/execution flow:",
           "points": [
-            "Step 1: Docker Client ने Daemon से पूछा - 'क्या तुम्हारे लोकल कैशे में nginx इमेज है?'",
-            "Step 2: अगर लोकल में नहीं है, तो Daemon Docker Hub पर जाता है और 'docker pull' करता है।",
-            "Step 3: इमेज की लेयर्स डाउनलोड होने के बाद, Daemon उस इमेज के ऊपर एक Thin Read-Write Layer चढ़ाता है।",
-            "Step 4: Linux Namespaces (PID, NET) और Cgroups एक्टिवेट करता है और कंटेनर स्टार्ट कर देता है!"
+            "Step 1: Docker Client ne dockerd daemon ko REST API request bheji - 'Check karo kya local image cache me requested image maujood hai?'",
+            "Step 2: Agar local storage me nahi hai, toh Daemon Docker Hub registry par jakar automatic 'docker pull' trigger karta hai.",
+            "Step 3: Image layers pull hone ke baad, Daemon read-only layers ke upar ek Thin Read-Write Container Layer mount karta hai.",
+            "Step 4: Linux Namespaces (PID, NET, MNT) aur Cgroups boundaries allocate karke container execution start kar deta hai!"
           ],
           "diagram": "[ docker run -d nginx ]\n       |\n       +--> Local Cache Check? \n                 |-- Found? ===> Create Container Immediately\n                 +-- Not Found? ===> Connect to Docker Hub\n                                           |--> Download Layers\n                                           |--> Save to Local Images\n                                           |--> Launch Container"
         }
@@ -300,30 +300,30 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 04 - Hands-On Commands)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "52:14",
-      "summary": "बोर्ड पर सभी ज़रूरी लिनक्स और डॉकर कमांड्स का स्टेप-बाय-स्टेप फ्लोचार्ट बनाकर समझाया गया, जो हर क्लाउड और डेवॉप्स इंजीनियर को जुबानी याद होना चाहिए।",
+      "summary": "Board par essential Linux aur Docker commands ka lifecycle flowchart draw karke samjhaya gaya, jo har DevOps aur Cloud engineer ko verbally clear hona chahiye.",
       "sections": [
         {
           "heading": "1. Installation Steps on AWS EC2 (Amazon Linux 2)",
-          "hindiNote": "AWS EC2 पर डॉकर सेटअप करने के 4 सुनहरे नियम:",
+          "hindiNote": "AWS EC2 par Docker setup karne ke 4 golden steps:",
           "points": [
-            "Step 1: sudo yum update -y (सिस्टम पैकेज अपडेट करें)",
-            "Step 2: sudo yum install docker -y (डॉकर पैकेज इंस्टॉल करें)",
-            "Step 3: sudo systemctl start docker && sudo systemctl enable docker (सर्विस शुरू और ऑटो-स्टार्ट करें)",
-            "Step 4: sudo usermod -aG docker ec2-user (ec2-user को बिना sudo के डॉकर चलाने की अनुमति दें)"
+            "Step 1: sudo yum update -y (System packages refresh aur update karein)",
+            "Step 2: sudo yum install docker -y (Docker engine package install karein)",
+            "Step 3: sudo systemctl start docker && sudo systemctl enable docker (Daemon service start karein aur boot persistence enable karein)",
+            "Step 4: sudo usermod -aG docker ec2-user (ec2-user ko bina sudo privilege ke Docker commands run karne ki permission dein)"
           ],
           "diagram": "[ AWS EC2 Instance ]\n       |\n       +--> sudo yum install docker -y\n       +--> sudo systemctl start docker\n       +--> sudo usermod -aG docker ec2-user\n       +--> exit & reconnect SSH ===> Docker Ready without sudo!"
         },
         {
           "heading": "2. Essential Container Management Commands Flow",
-          "hindiNote": "कंटेनर को रन करने से लेकर डिलीट करने तक का पूरा चक्र:",
+          "hindiNote": "Container lifecycle - creation se lekar deletion tak ka complete sequence:",
           "points": [
-            "docker images : लोकल में कौन-कौन सी इमेजेस मौजूद हैं।",
-            "docker run -it --name my_ubuntu ubuntu /bin/bash : इंटरैक्टिव मोड में नया कंटेनर खोलें।",
-            "docker ps : केवल चल रहे (Running) कंटेनर्स देखने के लिए।",
-            "docker ps -a : सभी (Running + Stopped) कंटेनर्स देखने के लिए।",
-            "docker stop <id> : कंटेनर को सुरक्षित बंद करने के लिए (SIGTERM).",
-            "docker rm <id> : बंद कंटेनर को मिटाने के लिए।",
-            "docker rm -f <id> : चल रहे कंटेनर को जबरन बंद करके मिटाने के लिए (SIGKILL)."
+            "docker images : Local host storage me available images inspect karein.",
+            "docker run -it --name my_ubuntu ubuntu /bin/bash : Interactive terminal mode me naya container launch karein.",
+            "docker ps : Currently active running containers display karein.",
+            "docker ps -a : Sabhi (Running + Stopped/Exited) containers inspect karein.",
+            "docker stop <id> : Container ko graceful shutdown signal (SIGTERM) bhejne ke liye.",
+            "docker rm <id> : Stopped container ko disk se permanently remove karne ke liye.",
+            "docker rm -f <id> : Active running container ko forceful SIGKILL dekar remove karne ke liye."
           ],
           "diagram": "+-------------------------------------------------------------+\n|                  CONTAINER LIFECYCLE FLOW                   |\n+-------------------------------------------------------------+\n| [ Image ] ----> (docker run -it) ----> [ Running Container ]|\n|                                              |              |\n|                                         (docker stop)       |\n|                                              v              |\n|                                        [ Stopped Container ]|\n|                                              |              |\n|                                         (docker rm)         |\n|                                              v              |\n|                                          [ DELETED ]        |\n+-------------------------------------------------------------+"
         }
@@ -370,27 +370,27 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 05 - Dockerfile & Layers)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:08:04",
-      "summary": "बोर्ड पर एक वास्तविक Dockerfile लिखकर दिखाई गई और बताया गया कि डॉकर हर लाइन को कैसे एक लेयर (Layer) के रूप में कैश करता है।",
+      "summary": "Board par real-world custom Dockerfile live code karke dikhayi gayi aur explain kiya gaya ki Docker kaise har instruction ko isolated cached layer me build karta hai.",
       "sections": [
         {
           "heading": "1. Anatomy of a Production Dockerfile on Board",
-          "hindiNote": "बोर्ड पर लिखी गई Nginx कस्टम वेबसाइट Dockerfile:",
+          "hindiNote": "Board par draw ki gayi Nginx custom static website Dockerfile:",
           "points": [
-            "FROM ubuntu:latest  ==> बेस ऑपरेटिंग सिस्टम चुने (हमेशा पहली लाइन होती है)",
-            "RUN apt-get update && apt-get install -y nginx  ==> इमेज बिल्ड के दौरान कमांड चलाएं",
-            "COPY index.html /var/www/html/  ==> होस्ट से कोड कंटेनर में डालें",
-            "EXPOSE 80  ==> पोर्ट 80 डॉक्यूमेंट करें",
-            "CMD [\"nginx\", \"-g\", \"daemon off;\"]  ==> जब कंटेनर स्टार्ट हो तब यह प्रोसेस चले"
+            "FROM ubuntu:latest  ==> Base operating system image specify karein (always first mandatory instruction)",
+            "RUN apt-get update && apt-get install -y nginx  ==> Image build time par commands execute karke packages install karein",
+            "COPY index.html /var/www/html/  ==> Host system se application code container filesystem me transfer karein",
+            "EXPOSE 80  ==> Target container port document karein",
+            "CMD [\"nginx\", \"-g\", \"daemon off;\"]  ==> Jab container start ho tab ye default process run kare"
           ],
           "diagram": "+-------------------------------------------------------------+\n| DOCKERFILE CODE (Layer Cake Concept)                        |\n+-------------------------------------------------------------+\n| Layer 4: CMD [\"nginx\", \"-g\", \"daemon off;\"] (Run at start)  |\n| Layer 3: COPY index.html /var/www/html/     (Code Layer)    |\n| Layer 2: RUN apt-get install -y nginx       (Package Layer) |\n| Layer 1: FROM ubuntu:latest                 (Base OS Layer) |\n+-------------------------------------------------------------+\n       | \n     docker build -t my_web_app:v1 .\n       v\n[ Final Custom Docker Image ]"
         },
         {
           "heading": "2. Docker Diff (A, C, D Flags) on Board",
-          "hindiNote": "कंटेनर के अंदर क्या बदलाव हुआ, यह देखने का बोर्ड चार्ट:",
+          "hindiNote": "docker diff inspection chart - container running state me kya modifications huye:",
           "points": [
-            "A (Added): अगर कंटेनर के अंदर कोई नई फाइल या फोल्डर बनाया गया।",
-            "C (Changed): अगर किसी पहले से मौजूद सिस्टम फाइल (जैसे /etc/hosts) में बदलाव हुआ।",
-            "D (Deleted): अगर कोई फाइल मिटा दी गई।"
+            "A (Added): Jab container ke andar nayi file ya directory create hoti hai.",
+            "C (Changed): Jab existing file ya system config (/etc/nginx/nginx.conf) modify hoti hai.",
+            "D (Deleted): Jab koi file ya folder delete ho jaata hai."
           ],
           "diagram": "Command: docker diff <container_id>\nOutput:\n  C /etc\n  C /etc/nginx\n  A /var/www/html/my_file.txt   <--- New file added\n  D /var/log/nginx/access.log   <--- File deleted"
         }
@@ -436,37 +436,37 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 06 - Docker Volumes)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:03:28",
-      "summary": "भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर समझाया कि कंटेनर के अंदर डेटा रखना सबसे बड़ी गलती क्यों है, और कैसे पेन ड्राइव (Pen Drive) की तरह डॉकर वॉल्यूम को कंटेनर में लगाकर डेटा को हमेशा सुरक्षित रखा जाता है।",
+      "summary": "Bhupinder Rajput ji ne digital board par samjhaya ki container ke andar database data persist karna kyu dangerous hai, aur kaise Pen Drive analogy ki tarah Docker Volumes attach karke data ko permanently secure rakha jaata hai.",
       "sections": [
         {
-          "heading": "1. Why Containers are Stateless / Ephemeral (डेटा डिलीट क्यों होता है?)",
-          "hindiNote": "बोर्ड पर इंटरनेट कैफे का शानदार उदाहरण समझाया गया:",
+          "heading": "1. Why Containers are Stateless / Ephemeral (Why Data Is Wiped on Container Delete)",
+          "hindiNote": "Board par Internet Cyber Cafe ki real-world analogy explain ki gayi:",
           "points": [
-            "इंटरनेट कैफे कंप्यूटर: आप कैफे गए, डेस्कटॉप पर अपनी जरूरी फाइलें सेव कीं। कंप्यूटर बंद होते ही सब कुछ रीसेट/डिलीट हो गया!",
-            "डॉकर कंटेनर भी कैफे कंप्यूटर जैसा है: कंटेनर में केवल कोड और प्रोसेस चलती है। अगर कंटेनर क्रैश हुआ तो डेटा खत्म।",
-            "पेन ड्राइव (Pen Drive) का समाधान: आप अपनी पेन ड्राइव (Docker Volume) लगाते हैं, उसमें डेटा सेव करते हैं। कंप्यूटर भले टूट जाए, पेन ड्राइव में आपका डेटा सुरक्षित है!"
+            "Cyber Cafe PC: Aap cafe gaye, temporary desktop par file save ki. System restart hote hi DeepFreeze ya reboot se sab kuch wipe/deleted!",
+            "Docker container bhi Cyber Cafe PC jaisa ephemeral hai: Isme execution process run hoti hai. Agar container terminate/delete hua toh internal data destroyed!",
+            "Pen Drive Solution (Docker Volumes): Aap external USB Drive attach karte hain aur data waha store karte hain. System crash ho jaye tab bhi Pen Drive (Volume) me aapka production database 100% safe rehta hai!"
           ],
           "diagram": "WITHOUT VOLUME (DANGEROUS!):\n[ Container Created ] ---> [ Writes Data in Writable Layer ] ---> [ docker rm ] ===> DATA LOST FOREVER!\n\nWITH DOCKER VOLUME (SAFE & PERSISTENT):\n[ Container ] === Mount Point (/var/lib/mysql) ===> [ DOCKER VOLUME on Host Disk ]\n      |                                                        |\n [ docker rm ] (Container Dies)                                v\n                                                   DATA REMAINS 100% SAFE!"
         },
         {
           "heading": "2. 3 Types of Docker Storage on Board",
-          "hindiNote": "बोर्ड पर तीनों स्टोरेज मॉडल्स की तुलना की गई:",
+          "hindiNote": "Board par 3 core storage driver patterns compare kiye gaye:",
           "points": [
-            "1. Docker Volumes (सबसे अच्छा): डॉकर खुद मैनेज करता है (/var/lib/docker/volumes/). प्रोडक्शन डेटाबेस के लिए यही रिकमेंड है।",
-            "2. Bind Mounts: होस्ट मशीन का कोई भी मनचाहा फोल्डर (जैसे /home/ec2-user/code). डेवलपमेंट के समय लाइव कोडिंग के लिए बेस्ट।",
-            "3. tmpfs Mounts: रैम (RAM) में स्टोर होता है, हार्ड डिस्क पर कभी नहीं लिखा जाता। पासवर्ड और कीज के लिए बेस्ट।"
+            "1. Docker Managed Volumes (Best Practice): Docker daemon manage karta hai (/var/lib/docker/volumes/). Production databases ke liye industry standard recommendation.",
+            "2. Bind Mounts: Host machine ka exact file path link hota hai (e.g. /home/ec2-user/code). Local development me live code reloading ke liye best.",
+            "3. tmpfs Mounts: Host RAM memory me ephemeral store hota hai, disk par zero footprint. Sensitive secrets aur temporary tokens ke liye best."
           ],
           "diagram": "+-------------------------------------------------------------------------+\n| HOST SYSTEM STORAGE HIERARCHY                                           |\n+-------------------------------------------------------------------------+\n| [ Docker Volumes ] ===> /var/lib/docker/volumes/my_data/_data (Managed) |\n| [ Bind Mounts ]    ===> /home/user/app (Direct Host Folder)             |\n| [ tmpfs Mounts ]   ===> System Memory (RAM) (Non-Persistent)            |\n+-------------------------------------------------------------------------+"
         },
         {
           "heading": "3. Volume Persistence Proof & Sharing (--volumes-from)",
-          "hindiNote": "बोर्ड पर प्रैक्टिकल टेस्ट का फ्लो:",
+          "hindiNote": "Board par practical persistence validation flow:",
           "points": [
-            "Step 1: वॉल्यूम बनाएं: docker volume create my_data",
-            "Step 2: कंटेनर A में वॉल्यूम लगाएं और उसमें file1.txt लिखें।",
-            "Step 3: कंटेनर A को हमेशा के लिए डिलीट (docker rm -f) कर दें।",
-            "Step 4: नया कंटेनर B बनाएं और वही वॉल्यूम अटैच करें: file1.txt बिल्कुल सही सलामत मिलेगी!",
-            "Step 5: दो कंटेनर्स एक ही वॉल्यूम को आपस में शेयर कर सकते हैं।"
+            "Step 1: Volume create karein: docker volume create my_data",
+            "Step 2: Container A me volume mount karein aur file1.txt write karein.",
+            "Step 3: Container A ko permanently terminate (docker rm -f) kar dein.",
+            "Step 4: Naya container B launch karein aur wahi volume attach karein: file1.txt intact aur 100% safe milegi!",
+            "Step 5: Multiple active containers same volume ko concurrency ke sath share kar sakte hain."
           ],
           "diagram": "[ Container A (Writes File) ] --+ \n                                +---> [ VOLUME: my_data ] <=== [ Container B (Reads File) ]\n[ Container A Deleted! ] -------+               | \n                                                +===> Data Still Intact!"
         }
@@ -513,34 +513,34 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 07 - Port Mapping)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:00:19",
-      "summary": "बोर्ड पर समझाया गया कि इंटरनेट से आने वाले यूजर की रिक्वेस्ट आपके लैपटॉप/EC2 के पोर्ट 80 पर आती है, और डॉकर उसे कंटेनर के अंदर कैसे भेजता है।",
+      "summary": "Board par network packet routing explain ki gayi: Kaise internet se user request EC2 host port par aati hai aur Docker proxy internal container private port par forward karta hai.",
       "sections": [
         {
           "heading": "1. How Docker Port Forwarding (-p) Works on Board",
-          "hindiNote": "बोर्ड पर पैकेट फ्लो का नक्शा:",
+          "hindiNote": "Board par packet traversal topology:",
           "points": [
-            "User Browser: http://<EC2-Public-IP>:8080 खोलता है।",
-            "Host Interface: EC2 सर्वर पोर्ट 8080 पर पैकेट रिसीव करता है।",
-            "iptables NAT: डॉकर इंजन पैकेट को ट्रांसलेट करके कंटेनर के प्राइवेट IP (172.17.0.2:80) पर फॉरवर्ड कर देता है।",
-            "सिंटेक्स याद रखने का तरीका: -p <बाहर का पोर्ट>:<अंदर का पोर्ट> (-p HostPort:ContainerPort)"
+            "User Client: Request bhejta hai http://<EC2-Public-IP>:8080.",
+            "Host Interface: Host kernel port 8080 par packet intercept karta hai.",
+            "Docker iptables NAT: Packet ko translate karke container ke internal private IP (172.17.0.2:80) par route karta hai.",
+            "Syntax formula to remember: -p <Outside/Host Port>:<Inside/Container Port> (-p HostPort:ContainerPort)"
           ],
           "diagram": "[ Client Browser ] (HTTP Request to Public IP : 8080)\n        |\n        v\n[ AWS EC2 Host Interface : Port 8080 ]\n        |\n     (Docker iptables NAT Forwarding)\n        |\n        v\n[ Docker Container IP (172.17.0.2) : Port 80 ] ===> NGINX Web Server Responds!"
         },
         {
           "heading": "2. EXPOSE vs -p (The Classic Interview Question)",
-          "hindiNote": "छात्रों को अक्सर इसमें भ्रम होता है, जिसे बोर्ड पर स्पष्ट किया गया:",
+          "hindiNote": "Engineers ke beech common confusion clear kiya gaya:",
           "points": [
-            "EXPOSE 80: यह सिर्फ एक लेबल या डॉक्यूमेंटेशन है। इसे लिखने से कोई पोर्ट बाहर नहीं खुलता!",
-            "-p 8080:80: यह असली स्विच है। यह होस्ट पर पोर्ट बाइंड करता है और इंटरनेट से आने वाला ट्रैफिक अंदर भेजता है।"
+            "EXPOSE 80: Ye sirf container metadata documentation hai. Isse external traffic open nahi hota!",
+            "-p 8080:80: Ye actual traffic forwarding switch hai. Ye host socket bind karta hai aur traffic forward karta hai."
           ],
           "diagram": "Dockerfile: EXPOSE 80    ===> Just documentation ('This container expects port 80')\nCLI:        -p 8080:80   ===> ACTUAL PORT FORWARDING ACTIVATED!"
         },
         {
           "heading": "3. Docker Exec vs Docker Run on Board",
-          "hindiNote": "दोनों में क्या अंतर है:",
+          "hindiNote": "docker run vs docker exec distinction:",
           "points": [
-            "docker run: एक नया कंटेनर जन्म देता है और चलाता है।",
-            "docker exec: पहले से चल रहे ज़िंदा कंटेनर के अंदर घुसकर नई कमांड या शेल चलाता है।"
+            "docker run: Creates and starts a completely new container instance.",
+            "docker exec: Existing active running container ke andar jakar commands/bash shell launch karta hai."
           ],
           "diagram": "[ New Container Creation ] ===> docker run -it ubuntu /bin/bash\n[ Enter Already Running Container ] ===> docker exec -it <running_id> /bin/bash"
         }
@@ -584,13 +584,13 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 08 - Resume)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "3:27",
-      "summary": "रेज़्यूमे में डॉकर और डेवॉप्स स्किल्स को प्रभावशाली तरीके से लिखने की रणनीतियाँ।",
+      "summary": "DevOps resume me Docker containerization expertise ko impact-driven bullet points me showcase karne ki strategy.",
       "sections": [
         {
           "heading": "1. What NOT to write vs What to write",
-          "hindiNote": "गलत तरीका बनाम सही तरीका:",
+          "hindiNote": "Weak framing vs High-impact framing:",
           "points": [
-            "Don't write: 'Knowledge of Docker and Linux commands.' (यह बहुत बेसिक लगता है)",
+            "Don't write: 'Knowledge of Docker and Linux commands.' (Sounds generic and non-impactful)",
             "Do write: 'Built multi-stage Docker images reducing production container size from 800MB to 45MB using Alpine Linux.'",
             "Do write: 'Implemented persistent Docker Volumes for MySQL database ensuring zero data loss across container lifecycle.'"
           ],

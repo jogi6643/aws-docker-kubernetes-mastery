@@ -115,7 +115,7 @@ window.K8S_LECTURES = [
           "diagram": "DOCKER STANDALONE (Fragile):\n[ Physical Server 1 ] ---> Runs 50 Containers ---> Server Crashes ===> COMPLETE OUTAGE!\n\nKUBERNETES CLUSTER (Resilient):\n[ Master Node (Brain) ]\n       |\n       +---> [ Worker Node 1 ] (Runs Pods A, B)\n       +---> [ Worker Node 2 ] (Runs Pods C, D) ===> Node 2 Dies?\n       +---> [ Worker Node 3 ] <====================== K8s Moves Pods C, D Here Instantly!"
         },
         {
-          "heading": "2. Real-World Analogy: The Orchestra Conductor (ऑर्केस्ट्रा कंडक्टर उदाहरण)",
+          "heading": "2. Real-World Analogy: The Orchestra Conductor (Orchestra Conductor Example)",
           "hindiNote": "Kubernetes ko samajhne ke liye board par Music Orchestra ka real-life example diya gaya:",
           "points": [
             "Musicians (Docker Containers): Har musician apna instrument (Violin, Drums, Guitar) bajane me expert hai.",

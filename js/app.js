@@ -498,11 +498,11 @@
           <div class="theory-board-banner-left">
             <i class="fa-solid fa-chalkboard-user"></i>
             <div>
-              <strong>Classroom Whiteboard Notes (क्लासरूम बोर्ड नोट्स)</strong>
-              <span>भूपिंदर राजपूत जी द्वारा डिजिटल बोर्ड पर समझाए गए सभी डायग्राम्स और एक्सप्लेनेशन देखें।</span>
+              <strong>Classroom Whiteboard Notes</strong>
+              <span>Bhupinder Rajput ji dwara digital board par samjhaye gaye sabhi diagrams aur explanation dekhein.</span>
             </div>
           </div>
-          <span class="btn-board-jump"><i class="fa-solid fa-chalkboard"></i> बोर्ड नोट्स खोलें <i class="fa-solid fa-arrow-right"></i></span>
+          <span class="btn-board-jump"><i class="fa-solid fa-chalkboard"></i> Board Notes Kholein <i class="fa-solid fa-arrow-right"></i></span>
         </div>
 
         <div class="theory-block">
@@ -735,7 +735,7 @@
               <span class="whiteboard-tag"><i class="fa-regular fa-clock"></i> ${escapeHtml(lecture.duration)}</span>
               <span class="whiteboard-tag"><i class="fa-solid fa-layer-group"></i> Module ${lecture.moduleId}: ${escapeHtml(lecture.moduleBadge)}</span>
             </div>
-            <p class="whiteboard-header-summary">${escapeHtml(lecture.cleanTitle)} - डिजिटल बोर्ड क्लासरूम व्याख्या और आर्किटेक्चर फ्लो।</p>
+            <p class="whiteboard-header-summary">${escapeHtml(lecture.cleanTitle)} - Digital board classroom explanation aur architecture flow.</p>
           </div>
 
           <div class="whiteboard-section-card">
@@ -755,7 +755,7 @@
 
           <div class="whiteboard-section-card">
             <h4 class="whiteboard-section-heading">
-              <i class="fa-solid fa-lightbulb"></i> बोर्ड पर समझाई गई मुख्य बातें (Classroom Breakdown)
+              <i class="fa-solid fa-lightbulb"></i> Board Par Samjhai Gayi Mukhya Baatein (Classroom Breakdown)
             </h4>
             <div class="whiteboard-hindi-note">${escapeHtml(lecture.hindiSummary)}</div>
             <ul class="whiteboard-points">
@@ -765,7 +765,7 @@
 
           <div class="whiteboard-section-card">
             <h4 class="whiteboard-section-heading">
-              <i class="fa-solid fa-comments"></i> क्लासरूम डाउट क्लीयरिंग (Exam & Interview Focus)
+              <i class="fa-solid fa-comments"></i> Classroom Doubt Clearing (Exam & Interview Focus)
             </h4>
             <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.75rem;">${escapeHtml(lecture.examTips)}</p>
             <div class="interview-box" style="margin-top: 0.5rem;">

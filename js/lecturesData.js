@@ -275,90 +275,90 @@ window.AWS_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec-01)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "37:36",
-      "summary": "इस लेक्चर में भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर क्लासरूम स्टाइल में स्क्रैच से समझाया कि ट्रेडिशनल डाटा सेंटर कैसे काम करता है, उसमें क्या-क्या परेशानियां (CapEx, कूलिंग, मेंटेनेंस) आती हैं, और क्लाउड कंप्यूटिंग कैसे उन समस्याओं को बिजली ग्रिड और ओला/उबर के मॉडल पर हल करती है।",
+      "summary": "Is lecture me Bhupinder Rajput ji ne digital board par classroom style me scratch se samjhaya ki traditional data center kaise kaam karta hai, usme kya-kya pareshaniyan (CapEx, cooling, maintenance) aati hain, aur cloud computing kaise un samasyaon ko electricity grid aur Ola/Uber ke model par solve karti hai.",
       "sections": [
         {
-          "heading": "1. Traditional On-Premises Data Center Setup (बोर्ड डायग्राम)",
-          "hindiNote": "बोर्ड पर सबसे पहले एक कंपनी का खुद का डाटा सेंटर बनाकर दिखाया गया। अगर एक कंपनी खुद का डाटा सेंटर बनाती है, तो उसे क्या-क्या लगाना पड़ता है:",
+          "heading": "1. Traditional On-Premises Data Center Setup (Board Diagram)",
+          "hindiNote": "Board par sabse pehle ek company ka khud ka data center banakar dikhaya gaya. Agar ek company khud ka data center banati hai, toh use kya-kya setup karna padta hai:",
           "points": [
-            "Physical Building / Real Estate: खुद की जमीन या भारी किराए पर ऑफिस स्पेस।",
-            "Server Racks: महंगे HP, Dell, IBM या Cisco के फिजिकल ब्लेड/रैक सर्वर्स।",
-            "Storage Area Networks (SAN / NAS): टेराबाइट्स/पेटाबाइट्स हार्ड ड्राइव्स और कंट्रोलर्स।",
-            "Precision AC (Cooling HVAC): सर्वर्स की गर्मी निकालने के लिए 18°C-20°C पर 24 घंटे चलने वाले भारी एसी।",
-            "Power Backup (Dual UPS & Diesel Generators): ग्रिड कटने पर बैकअप बिजली, जिसके लिए जनरेटर और डीजल का स्टॉक चाहिए।",
-            "High-Speed Leased Line Internet: टाटा, एयरटेल जैसी दो अलग-अलग ISPs से डेडिकेटेड फाइबर लीज्ड लाइन।",
-            "Specialized Manpower: सिस्टम एडमिन, नेटवर्क एडमिन, स्टोरेज इंजीनियर, 24x7 गार्ड्स और सीसीटीवी।",
-            "दीपावली / सेल ट्रैफिक की समस्या: अगर सेल के लिए 50 सर्वर्स खरीद लिए, तो सेल के बाद 40 सर्वर्स बेकार पड़े रहेंगे (पैसा बर्बाद)।"
+            "Physical Building / Real Estate: Khud ki zameen ya bhari rent par office space.",
+            "Server Racks: Mehenge HP, Dell, IBM ya Cisco ke physical blade/rack servers.",
+            "Storage Area Networks (SAN / NAS): Terabytes/Petabytes hard drives aur controllers.",
+            "Precision AC (Cooling HVAC): Servers ki heat nikalne ke liye 18°C-20°C par 24 hours chalne wale heavy ACs.",
+            "Power Backup (Dual UPS & Diesel Generators): Grid cut hone par backup power, jiske liye generators aur diesel ka stock chahiye.",
+            "High-Speed Leased Line Internet: Tata, Airtel jaisi do alag-alag ISPs se dedicated fiber leased line.",
+            "Specialized Manpower: System Admins, Network Admins, Storage Engineers, 24x7 guards aur CCTV.",
+            "Diwali / Sale Traffic Ki Problem: Agar sale ke liye 50 servers khareed liye, toh sale ke baad 40 servers bekaar pade rahenge (huge money waste)."
           ],
-          "diagram": "+---------------------------------------------------------------------+\n|              TRADITIONAL ON-PREMISES DATA CENTER                     |\n+---------------------------------------------------------------------+\n|  [ Real Estate & Space ] ---> Millions upfront                      |\n|  [ Hardware Racks ]      ---> Dell / HP servers (High CapEx)        |\n|  [ SAN/NAS Storage ]     ---> Huge disks, failure risks             |\n|  [ Precision AC Cooling] ---> 24x7 HVAC cooling bills               |\n|  [ Dual UPS & Gen-Sets ] ---> 24x7 Power redundancy                 |\n|  [ Dual Leased Lines ]   ---> Dedicated ISP fiber                   |\n|  [ 24x7 Engineers Team]  ---> SysAdmins, NetAdmins, DBAs            |\n+---------------------------------------------------------------------+\n| Major Drawbacks on Board:                                           |\n| 1. High CapEx (करोड़ों रुपये का शुरुआती निवेश)                       |\n| 2. 3-6 Months Procurement (सर्वर खरीदने और लगाने में महीनों)         |\n| 3. Idle Capacity Waste (सेल खत्म होते ही सर्वर्स खाली बैठे रहते हैं)  |\n+---------------------------------------------------------------------+"
+          "diagram": "+---------------------------------------------------------------------+\n|              TRADITIONAL ON-PREMISES DATA CENTER                     |\n+---------------------------------------------------------------------+\n|  [ Real Estate & Space ] ---> Millions upfront                      |\n|  [ Hardware Racks ]      ---> Dell / HP servers (High CapEx)        |\n|  [ SAN/NAS Storage ]     ---> Huge disks, failure risks             |\n|  [ Precision AC Cooling] ---> 24x7 HVAC cooling bills               |\n|  [ Dual UPS & Gen-Sets ] ---> 24x7 Power redundancy                 |\n|  [ Dual Leased Lines ]   ---> Dedicated ISP fiber                   |\n|  [ 24x7 Engineers Team]  ---> SysAdmins, NetAdmins, DBAs            |\n+---------------------------------------------------------------------+\n| Major Drawbacks on Board:                                           |\n| 1. High CapEx (Crores upfront heavy investment)                       |\n| 2. 3-6 Months Procurement (Servers khareedne aur setup me mahino ka time)         |\n| 3. Idle Capacity Waste (Sale khatam hote hi servers idle pade rehte hain)  |\n+---------------------------------------------------------------------+"
         },
         {
-          "heading": "2. Real-World Whiteboard Analogies (बोर्ड पर समझाए गए रियल-लाइफ उदाहरण)",
-          "hindiNote": "क्लाउड कंप्यूटिंग को समझाने के लिए भूपिंदर जी ने दो बहुत ही सटीक और सरल उदाहरण बोर्ड पर समझाए:",
+          "heading": "2. Real-World Whiteboard Analogies (Board Par Samjhaye Gaye Real-Life Examples)",
+          "hindiNote": "Cloud computing ko samjhane ke liye Bhupinder ji ne do bohot hi sateek aur saral examples board par samjhaye:",
           "points": [
-            "बिजली ग्रिड उदाहरण (Electricity Board Analogy): आपको घर में पंखा या बल्ब जलाने के लिए अपना खुद का बिजली घर (Power Plant) नहीं लगाना पड़ता। सरकार/कंपनी पावर प्लांट बनाती है, आप सिर्फ स्विच ऑन करते हैं, यूनिट्स इस्तेमाल करते हैं और महीने के आखिर में जितने यूनिट जले सिर्फ उसका बिल (Pay-as-you-go) भरते हैं।",
-            "कैब / ओला-उबर उदाहरण (Ola/Uber Cab Analogy): अगर आपको दिल्ली से गुड़गांव जाना है, तो आप ₹50 लाख की नई गाड़ी (CapEx) नहीं खरीदते। आप ऐप से कैब बुक करते हैं, सफर पूरा करते हैं, मीटर का किराया देते हैं, और बात खत्म। क्लाउड में सर्वर भी ऐसे ही किराये पर मिलते हैं।"
+            "Electricity Board Analogy: Aapko ghar me fan ya bulb chalane ke liye apna khud ka power plant nahi lagana padta. Grid company power plant banati hai, aap sirf switch on karte hain, units consume karte hain aur month ke end me jitne units use huye sirf uska bill (Pay-as-you-go) pay karte hain.",
+            "Ola/Uber Cab Analogy: Agar aapko Delhi se Gurgaon jana hai, toh aap ₹50 lakh ki nayi car (CapEx) nahi khareedte. Aap app se cab book karte hain, travel complete karte hain, meter ka fare pay karte hain, aur baat khatam. Cloud me servers bhi aise hi rental par milte hain."
           ],
           "diagram": "[ Real Power Plant (Electricity Board) ]  ===> [ Home Wall Socket ] ===> Pay Monthly Units\n[ AWS Global Infrastructure (Cloud)    ]  ===> [ Your Laptop / App ] ===> Pay Per-Hour/Sec"
         },
         {
-          "heading": "3. 5 Essential Characteristics of Cloud (NIST 5 मुख्य नियम)",
-          "hindiNote": "बोर्ड पर लिखे गए क्लाउड के 5 बुनियादी नियम (SAA-C03 एग्जाम में बार-बार पूछे जाते हैं):",
+          "heading": "3. 5 Essential Characteristics of Cloud (NIST 5 Core Rules)",
+          "hindiNote": "Board par likhe gaye cloud ke 5 essential rules (SAA-C03 exam me frequently pooche jaate hain):",
           "points": [
-            "1. On-Demand Self-Service: बिना किसी इंसानी दखल या अप्रूवल के, जब चाहे 2 मिनट में सर्वर/स्टोरेज लॉन्च करो।",
-            "2. Broad Network Access: इंटरनेट के माध्यम से लैपटॉप, मोबाइल, टैबलेट या किसी भी लोकेशन से एक्सेस संभव।",
-            "3. Resource Pooling (Multi-Tenancy): एक ही विशाल फिजिकल इंफ्रास्ट्रक्चर पर कई कस्टमर्स के रिसोर्सेज सुरक्षित रूप से बांटे जाते हैं।",
-            "4. Rapid Elasticity: जरूरत पड़ने पर तुरंत स्केल-अप/स्केल-आउट करें, ट्रैफिक कम होने पर तुरंत स्केल-इन करें।",
-            "5. Measured Service: जितना CPU, RAM या डेटा ट्रांसफर इस्तेमाल हुआ, ठीक उतना ही चार्ज (Transparent Metered Billing)।"
+            "1. On-Demand Self-Service: Bina kisi human approval ke, jab chahe 2 minute me server/storage launch karo.",
+            "2. Broad Network Access: Internet ke through laptop, mobile, tablet ya kisi bhi location se access possible.",
+            "3. Resource Pooling (Multi-Tenancy): Ek hi large physical infrastructure par multiple customers ke resources securely share hote hain.",
+            "4. Rapid Elasticity: Requirement aane par turant scale-out karein, traffic kam hone par turant scale-in karein.",
+            "5. Measured Service: Jitna CPU, RAM ya bandwidth use hua, theek utna hi pay karein (Transparent Metered Billing)."
           ],
           "diagram": "       +---------------------------------------------+\n       |     NIST 5 ESSENTIAL CLOUD CHARACTERISTICS  |\n       +---------------------------------------------+\n       | 1. On-Demand Self Service  (Instant Click)  |\n       | 2. Broad Network Access    (Anywhere, HTTP) |\n       | 3. Resource Pooling        (Multi-Tenant)   |\n       | 4. Rapid Elasticity        (Scale In / Out) |\n       | 5. Measured Service        (Pay For Usage)  |\n       +---------------------------------------------+"
         },
         {
-          "heading": "4. CapEx vs OpEx Comparison (कैपेक्स बनाम ओपेक्स बोर्ड टेबल)",
-          "hindiNote": "अकाउंटिंग और फाइनेंस में क्लाउड का सबसे बड़ा फायदा CapEx को OpEx में बदलना है:",
+          "heading": "4. CapEx vs OpEx Comparison (CapEx vs OpEx Board Table)",
+          "hindiNote": "Accounting aur finance me cloud ka sabse bada benefit CapEx ko OpEx me convert karna hai:",
           "points": [
-            "CapEx (Capital Expenditure): हार्डवेयर खरीदने के लिए एकमुश्त भारी पूंजी। इसमें डेप्रिसिएशन (मूल्यह्रास) और घाटे का जोखिम ज्यादा होता है।",
-            "OpEx (Operational Expenditure): रनिंग कॉस्ट या किराया। जितना इस्तेमाल करो उतना ही बिजनेस एक्सपेंस दिखाओ, तुरंत टैक्स बेनिफिट मिलता है।"
+            "CapEx (Capital Expenditure): Hardware purchase karne ke liye upfront huge investment. Isme depreciation aur idle capacity ka risk hota hai.",
+            "OpEx (Operational Expenditure): Running cost ya monthly rent. Jitna consume karo utna expense declare karo, immediate operational flexibility milti hai."
           ],
           "diagram": "+----------------------+------------------------------------------------+\n| Parameter            | CapEx (On-Premises)    | OpEx (AWS Cloud)      |\n+----------------------+------------------------+-----------------------+\n| Upfront Cost         | Very High (Crores)     | Zero (zsh)             |\n| Procurement Time     | Weeks / Months         | Seconds / Minutes     |\n| Maintenance Risk     | 100% Customer          | Managed by AWS        |\n| Financial Risk       | High (Depreciation)    | Zero (Pay for usage)  |\n| Scalability          | Difficult & Rigid      | Instant & Elastic     |\n+----------------------+------------------------+-----------------------+"
         },
         {
-          "heading": "5. Cloud Deployment Models (डिप्लॉयमेंट मॉडल्स)",
-          "hindiNote": "बोर्ड पर चार प्रकार के क्लाउड डिप्लॉयमेंट मॉडल्स डायग्राम के साथ समझाए गए:",
+          "heading": "5. Cloud Deployment Models (Deployment Models)",
+          "hindiNote": "Board par 4 types ke cloud deployment models diagram ke sath explain kiye gaye:",
           "points": [
-            "Public Cloud: AWS, Google Cloud, Microsoft Azure - यह इंटरनेट पर आम जनता और सभी कंपनियों के लिए उपलब्ध है।",
-            "Private Cloud: किसी एक कंपनी (जैसे बैंक या मिलिट्री) का पूरी तरह से अपना प्राइवेट इंफ्रास्ट्रक्चर।",
-            "Hybrid Cloud: ऑन-प्रेमिसेज डेटा सेंटर और पब्लिक क्लाउड का संगम (AWS Direct Connect या VPN के ज़रिए)।",
-            "Community Cloud: एक जैसे मिशन या नियमों वाले संगठनों (जैसे यूनिवर्सिटीज या हॉस्पिटल्स) का साझा क्लाउड।"
+            "Public Cloud: AWS, Google Cloud, Microsoft Azure - Ye internet par general public aur all enterprises ke liye accessible hai.",
+            "Private Cloud: Kisi single organization (jaise Bank ya Defense) ka dedicated private infrastructure.",
+            "Hybrid Cloud: On-premises data center aur public cloud ka combination (via AWS Direct Connect ya Site VPN).",
+            "Community Cloud: Common compliance goals wale organizations (jaise Hospitals, Universities) ka shared cloud."
           ],
           "diagram": "[ Public Cloud (AWS/Azure) ] <==========> [ Private Cloud (On-Prem Data Center) ]\n                                    |\n                         [ HYBRID CLOUD BRIDGE ]\n                    (AWS Direct Connect / Site VPN)"
         },
         {
           "heading": "6. Cloud Service Models Pyramid (IaaS vs PaaS vs SaaS)",
-          "hindiNote": "यह पिरामिड डायग्राम बोर्ड पर विस्तार से बनाया गया - कौन सी चीज़ AWS संभालेगी और कौन सी आप:",
+          "hindiNote": "Ye pyramid diagram board par explain kiya gaya - kaunsa layer AWS manage karegi aur kaunsa aap:",
           "points": [
-            "IaaS (Infrastructure as a Service): AWS आपको हार्डवेयर और वर्चुअलाइजेशन देती है। OS, पैचिंग, सॉफ्टवेयर और डेटा आप संभालते हैं (जैसे EC2, VPC, EBS)।",
-            "PaaS (Platform as a Service): AWS हार्डवेयर, OS और रनटाइम एनवायरनमेंट देती है। आप सिर्फ अपना एप्लीकेशन कोड और डेटा संभालते हैं (जैसे Elastic Beanstalk, RDS)।",
-            "SaaS (Software as a Service): पूरा सॉफ्टवेयर तैयार मिलता है। आपको कुछ भी इंस्टॉल या मेंटेन नहीं करना (जैसे Gmail, Office 365, Google Drive)।"
+            "IaaS (Infrastructure as a Service): AWS hardware aur virtualization manage karti hai. OS, patching, runtime, aur data aap manage karte hain (jaise EC2, VPC, EBS).",
+            "PaaS (Platform as a Service): AWS hardware, OS, runtime aur patching manage karti hai. Aap sirf application code aur data deploy karte hain (jaise Elastic Beanstalk, RDS).",
+            "SaaS (Software as a Service): End-user ready-made software application. Kuch bhi install ya patch nahi karna (jaise Gmail, Office 365, Google Drive)."
           ],
           "diagram": "                    /\\ \n                   /  \\   SaaS (Software as a Service) -> Gmail, Salesforce\n                  /----\\  PaaS (Platform as a Service) -> Elastic Beanstalk, RDS\n                 /------\\ IaaS (Infrastructure as a Service) -> EC2, VPC, EBS\n                +--------+"
         },
         {
-          "heading": "7. AWS Global Infrastructure (ग्लोबल इंफ्रास्ट्रक्चर की रूपरेखा)",
-          "hindiNote": "बोर्ड पर बताया गया कि AWS का फैलाव पूरी दुनिया में कैसे है:",
+          "heading": "7. AWS Global Infrastructure (Global Infrastructure Overview)",
+          "hindiNote": "Board par bataya gaya ki AWS ka global footprint kaise structured hai:",
           "points": [
-            "Regions (रीजन): दुनिया भर के अलग-अलग भौगोलिक क्षेत्र (जैसे मुंबई ap-south-1, वर्जीनिया us-east-1)।",
-            "Availability Zones (AZs): एक रीजन के अंदर कम से कम 2 या 3 अलग-अलग फिजिकल डेटा सेंटर (जैसे ap-south-1a, ap-south-1b)। ये आपस में हाई-स्पीड डार्क फाइबर से जुड़े होते हैं ताकि बाढ़ या भूकंप में भी डेटा सुरक्षित रहे।",
-            "Edge Locations: दुनिया भर के प्रमुख शहरों में मौजूद कैशिंग सर्वर (CloudFront CDN) जो यूजर्स को तेज स्पीड देते हैं।"
+            "Regions: Worldwide alag-alag geographical locations (jaise Mumbai ap-south-1, Virginia us-east-1).",
+            "Availability Zones (AZs): Ek Region ke andar minimum 2 ya 3 isolated physical data centers (jaise ap-south-1a, ap-south-1b). Ye ultra-low latency dark fiber se connected hote hain taaki disaster me bhi high availability rahe.",
+            "Edge Locations: Global cities me distributed caching points (CloudFront CDN) jo users ko low-latency content serve karte hain."
           ],
           "diagram": "AWS REGION (e.g. ap-south-1 Mumbai)\n+--------------------------------------------------------------+\n|  [ AZ 1: ap-south-1a ] <==== Fiber ====> [ AZ 2: ap-south-1b ]|\n|  (Data Center A)                          (Data Center B)    |\n|           \\                                      /           |\n|            +===========< Ultra-Low Latency >====+            |\n|                                  |                           |\n|                         [ AZ 3: ap-south-1c ]                |\n|                         (Data Center C)                      |\n+--------------------------------------------------------------+"
         },
         {
-          "heading": "8. AWS Certification Tree & Common Doubts (सर्टिफिकेशन और अक्सर पूछे जाने वाले सवाल)",
-          "hindiNote": "लेक्चर के अंत में बोर्ड पर सर्टिफिकेशन का पूरा रास्ता और छात्रों के डर को दूर किया गया:",
+          "heading": "8. AWS Certification Tree & Common Doubts (Certifications & FAQ)",
+          "hindiNote": "Lecture ke end me board par certification roadmap aur students ke common doubts address kiye gaye:",
           "points": [
-            "रोडमैप: Cloud Practitioner (Level 1) -> Solutions Architect Associate SAA-C03 (Level 2) -> Solutions Architect Professional SAP-C02 (Level 3)।",
-            "क्या कोडिंग / प्रोग्रामिंग जरूरी है? -> बिल्कुल नहीं! Solutions Architect और SysOps में कोडिंग की जरूरत नहीं होती। आपको आर्किटेक्चर, नेटवर्किंग (IP, पोर्ट, सबनेट) और लिनक्स की बेसिक समझ होनी चाहिए।"
+            "Roadmap: Cloud Practitioner (Level 1) -> Solutions Architect Associate SAA-C03 (Level 2) -> Solutions Architect Professional SAP-C02 (Level 3).",
+            "Kya coding/programming zaroori hai? -> Bilkul nahi! Solutions Architect aur SysOps roles me coding compulsory nahi hai. Aapko architectural concepts, cloud networking (IP, Port, Subnet) aur basic Linux ki clear practical understanding honi chahiye."
           ],
           "diagram": "[ Level 1: Foundational ]  AWS Certified Cloud Practitioner\n           |\n[ Level 2: Associate ]     AWS Solutions Architect Associate (SAA-C03) <--- FOCUS\n           |\n[ Level 3: Professional ]  AWS Solutions Architect Professional (SAP-C02)\n           |\n[ Level 4: Specialty ]     Security / Advanced Networking / Database"
         }
