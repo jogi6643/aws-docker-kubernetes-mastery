@@ -456,9 +456,14 @@
             <div class="duration-info">
               <i class="fa-regular fa-clock"></i> ${escapeHtml(lec.duration)}
             </div>
-            <button class="open-lecture-btn btn-open-modal" data-id="${lec.id}" id="open-lecture-${lec.id}">
-              <span>View Notes</span> <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button class="card-lab-btn btn-open-lab" data-id="${lec.id}" title="Open Practical Live Lab">
+                <i class="fa-solid fa-flask-vial"></i> Live Lab
+              </button>
+              <button class="open-lecture-btn btn-open-modal" data-id="${lec.id}" id="open-lecture-${lec.id}">
+                <span>View Notes</span> <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
           </div>
         </article>
       `;
@@ -494,6 +499,17 @@
       `).join('');
 
       theoryPane.innerHTML = `
+        <div class="theory-lab-banner" data-jump-tab="lab" title="Click to open Hands-On Practical Live Lab">
+          <div class="theory-lab-banner-left">
+            <i class="fa-solid fa-flask-vial"></i>
+            <div>
+              <strong style="color: #10B981;">🔬 Practical Live Lab Available For This Topic!</strong>
+              <span style="display: block; font-size: 0.85rem; color: var(--text-secondary);">Layman real-world scenario, step-by-step console & CLI guide aur browser interactive terminal simulator ke saath hands-on practice karein.</span>
+            </div>
+          </div>
+          <span class="btn-lab-jump"><i class="fa-solid fa-flask"></i> Open Live Lab <i class="fa-solid fa-arrow-right"></i></span>
+        </div>
+
         <div class="theory-board-banner" data-jump-tab="board" title="Click to view digital whiteboard notes">
           <div class="theory-board-banner-left">
             <i class="fa-solid fa-chalkboard-user"></i>
@@ -526,6 +542,12 @@
     const boardPane = document.getElementById('pane-board');
     if (boardPane) {
       renderWhiteboardPane(lecture, boardPane);
+    }
+
+    // Populate Tab: Practical Live Lab
+    const labPane = document.getElementById('pane-lab');
+    if (labPane) {
+      renderLiveLabPane(lecture, labPane);
     }
 
     // Populate Tab 2: Architecture
@@ -648,7 +670,11 @@
     const tabBtns = document.querySelectorAll('.modal-tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
     tabBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+      const isActive = btn.getAttribute('data-tab') === tabName;
+      btn.classList.toggle('active', isActive);
+      if (isActive) {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
     });
     tabPanes.forEach(pane => {
       pane.classList.toggle('active', pane.id === `pane-${tabName}`);
@@ -790,6 +816,401 @@
         });
       });
     });
+  }
+
+  // Render Practical Live Lab
+  function renderLiveLabPane(lecture, container) {
+    if (!container) return;
+    const lab = lecture.liveLab;
+    if (!lab) {
+      container.innerHTML = `
+        <div style="padding: 2.5rem; text-align: center; color: var(--text-secondary);">
+          <i class="fa-solid fa-flask-vial" style="font-size: 2.5rem; color: #10B981; margin-bottom: 1rem; display: block;"></i>
+          <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Live Lab In Preparation</h3>
+          <p>Practical live lab for this lecture is being updated. In the meantime, please refer to the CLI & Commands tab.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const labKey = `lab_progress_${state.currentCourse}_lec_${lecture.id}`;
+    let savedProgress = [];
+    try {
+      savedProgress = JSON.parse(localStorage.getItem(labKey) || '[]');
+    } catch (e) {
+      savedProgress = [];
+    }
+
+    const totalSteps = (lab.steps || []).length;
+    const completedCount = savedProgress.length;
+    const progressPct = totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
+
+    // Steps HTML
+    const stepsHtml = (lab.steps || []).map((step, idx) => {
+      const stepNum = step.stepNum || (idx + 1);
+      const isDone = savedProgress.includes(stepNum);
+      const cmdText = step.command || '';
+      return `
+        <div class="livelab-step-card ${isDone ? 'completed' : ''}" id="lab-step-card-${stepNum}">
+          <div class="livelab-step-top">
+            <div class="livelab-step-title-wrap">
+              <span class="livelab-step-number">Step ${stepNum} of ${totalSteps}</span>
+              <h4 class="livelab-step-title">${escapeHtml(step.title)}</h4>
+            </div>
+            <label class="livelab-checkbox-label">
+              <input type="checkbox" class="lab-step-checkbox" data-step="${stepNum}" ${isDone ? 'checked' : ''}>
+              <span class="lab-step-checkbox-text">${isDone ? 'Completed' : 'Mark as Done'}</span>
+            </label>
+          </div>
+
+          ${step.laymanExplanation ? `
+            <div class="livelab-step-why">
+              <strong><i class="fa-solid fa-lightbulb"></i> Why this step (Asaan Bhasha Me):</strong> ${escapeHtml(step.laymanExplanation)}
+            </div>
+          ` : ''}
+
+          ${step.consoleAction ? `
+            <div class="livelab-console-box">
+              <i class="fa-solid fa-mouse-pointer"></i>
+              <div><strong>Console Navigation:</strong> ${escapeHtml(step.consoleAction)}</div>
+            </div>
+          ` : ''}
+
+          ${cmdText ? `
+            <div class="livelab-cmd-box">
+              <div class="livelab-cmd-header">
+                <span><i class="fa-solid fa-terminal"></i> Terminal CLI Command</span>
+                <button class="copy-btn copy-step-cmd-btn" data-clipboard="${escapeHtml(cmdText)}">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+              <pre class="livelab-cmd-pre">${escapeHtml(cmdText)}</pre>
+              ${step.commandExplanation ? `
+                <div class="livelab-cmd-expl">
+                  <i class="fa-solid fa-info-circle" style="color: #06B6D4;"></i> ${escapeHtml(step.commandExplanation)}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          ${step.expectedOutput ? `
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">
+                <i class="fa-solid fa-circle-check" style="color: #10B981;"></i> Expected Output / Verification:
+              </div>
+              <pre class="livelab-output-box">${escapeHtml(step.expectedOutput)}</pre>
+            </div>
+          ` : ''}
+
+          <div class="livelab-step-actions">
+            ${cmdText ? `
+              <button class="livelab-btn-simulator btn-run-step-sim" data-cmd="${escapeHtml(cmdText)}" data-step="${stepNum}">
+                <i class="fa-solid fa-play"></i> Run in Sandbox Simulator
+              </button>
+            ` : '<span></span>'}
+            <span style="font-size: 0.82rem; color: var(--text-muted);">
+              ${step.verification ? `<i class="fa-solid fa-magnifying-glass"></i> ${escapeHtml(step.verification)}` : ''}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Troubleshooting HTML
+    const troubleHtml = (lab.troubleshooting || []).map(t => `
+      <div class="livelab-trouble-item">
+        <div class="livelab-trouble-issue"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(t.issue)}</div>
+        ${t.cause ? `<div style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 0.3rem;"><strong>Cause:</strong> ${escapeHtml(t.cause)}</div>` : ''}
+        <div class="livelab-trouble-solution"><strong>Fix:</strong> ${escapeHtml(t.solution)}</div>
+      </div>
+    `).join('');
+
+    // Cleanup HTML
+    const cleanupHtml = (lab.cleanup || []).map(c => `
+      <li><i class="fa-solid fa-trash-can"></i> <span>${escapeHtml(c)}</span></li>
+    `).join('');
+
+    container.innerHTML = `
+      <div class="livelab-container">
+        <!-- Lab Header Card -->
+        <div class="livelab-header-card">
+          <div class="livelab-badge-row">
+            <span class="livelab-badge"><i class="fa-solid fa-flask-vial"></i> Practical Live Lab</span>
+            <span class="livelab-meta-tag"><i class="fa-regular fa-clock"></i> ${escapeHtml(lab.duration || '20 Mins')}</span>
+            <span class="livelab-meta-tag" style="color: #10B981;"><i class="fa-solid fa-shield-halved"></i> ${escapeHtml(lab.cost || '100% Free Tier ($0.00)')}</span>
+            <span class="livelab-meta-tag"><i class="fa-solid fa-layer-group"></i> ${escapeHtml(lab.difficulty || 'Beginner')}</span>
+          </div>
+          <h3 class="livelab-title">${escapeHtml(lab.title)}</h3>
+          
+          <div class="livelab-scenario-box">
+            <div class="livelab-scenario-heading">
+              <i class="fa-solid fa-lightbulb"></i> Layman Real-World Analogy (Asaan Bhasha Me)
+            </div>
+            <p class="livelab-scenario-text">${escapeHtml(lab.scenario)}</p>
+          </div>
+
+          <div class="livelab-objective-box">
+            <strong><i class="fa-solid fa-bullseye" style="color: #10B981; margin-right: 0.4rem;"></i> Lab Objective:</strong>
+            ${escapeHtml(lab.objective)}
+          </div>
+        </div>
+
+        <!-- Architecture Flow Diagram -->
+        ${lab.diagram ? `
+          <div class="livelab-diagram-box">
+            <div class="livelab-diagram-header">
+              <span><i class="fa-solid fa-diagram-project"></i> Hands-On Lab Architecture Schematic</span>
+              <button class="copy-btn copy-lab-diagram-btn" data-text="${escapeHtml(lab.diagram)}">
+                <i class="fa-regular fa-copy"></i> Copy Schematic
+              </button>
+            </div>
+            <pre class="livelab-diagram-content">${escapeHtml(lab.diagram)}</pre>
+          </div>
+        ` : ''}
+
+        <!-- Interactive Progress Tracker -->
+        <div class="livelab-progress-bar-card">
+          <div class="livelab-progress-header">
+            <span><i class="fa-solid fa-list-check" style="color: #10B981; margin-right: 0.4rem;"></i> Hands-On Lab Completion Checklist</span>
+            <span><span id="lab-completed-count">${completedCount}</span> / ${totalSteps} Steps (<span id="lab-progress-pct">${progressPct}%</span>)</span>
+          </div>
+          <div class="livelab-progress-track">
+            <div class="livelab-progress-fill" id="lab-progress-fill" style="width: ${progressPct}%;"></div>
+          </div>
+        </div>
+
+        <!-- Step-by-Step Hands-On Guide -->
+        <div class="livelab-steps-list">
+          <div class="section-heading" style="margin-bottom: 0;">
+            <i class="fa-solid fa-shoe-prints" style="color: #10B981;"></i> Step-by-Step Hands-On Guide
+          </div>
+          ${stepsHtml}
+        </div>
+
+        <!-- Embedded Interactive Terminal Simulator -->
+        <div class="livelab-terminal-window" id="livelab-sandbox-terminal">
+          <div class="livelab-terminal-header">
+            <div class="livelab-terminal-dots">
+              <span class="livelab-terminal-dot red"></span>
+              <span class="livelab-terminal-dot yellow"></span>
+              <span class="livelab-terminal-dot green"></span>
+            </div>
+            <div class="livelab-terminal-title">
+              <i class="fa-solid fa-terminal"></i> sandbox@${state.currentCourse}-lab:~ (Interactive Web Terminal)
+            </div>
+            <button class="copy-btn btn-reset-terminal" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;">
+              <i class="fa-solid fa-rotate-left"></i> Reset Terminal
+            </button>
+          </div>
+
+          <div class="livelab-terminal-body" id="lab-terminal-output">
+            <div class="terminal-welcome">
+              ${escapeHtml((lab.simulator && lab.simulator.welcomeMessage) || 'Interactive Sandbox Terminal Initialized.\nClick "Run in Sandbox Simulator" on any step above or type commands below!')}
+            </div>
+          </div>
+
+          <div class="livelab-terminal-input-row">
+            <span class="terminal-input-prompt">sandbox@${state.currentCourse}:~$</span>
+            <input type="text" class="terminal-input-field" id="lab-terminal-input" placeholder="Type command or click 'Run in Sandbox' above..." autocomplete="off">
+            <button class="terminal-run-btn" id="lab-terminal-submit-btn">Run</button>
+          </div>
+        </div>
+
+        <!-- Troubleshooting & Common Beginner Errors -->
+        ${(lab.troubleshooting && lab.troubleshooting.length > 0) ? `
+          <div class="livelab-troubleshooting-card">
+            <div class="livelab-trouble-title">
+              <i class="fa-solid fa-wrench"></i> Troubleshooting & Beginner Pitfalls (Common Errors)
+            </div>
+            ${troubleHtml}
+          </div>
+        ` : ''}
+
+        <!-- Clean-Up & Teardown Guide -->
+        ${(lab.cleanup && lab.cleanup.length > 0) ? `
+          <div class="livelab-cleanup-card">
+            <div class="livelab-cleanup-title">
+              <i class="fa-solid fa-hand-holding-dollar"></i> Safe Teardown & Resource Cleanup (Cost Saver)
+            </div>
+            <ul class="livelab-cleanup-list">
+              ${cleanupHtml}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    setupLiveLabListeners(lecture, container, labKey, totalSteps, lab);
+  }
+
+  function setupLiveLabListeners(lecture, container, labKey, totalSteps, lab) {
+    let savedProgress = [];
+    try {
+      savedProgress = JSON.parse(localStorage.getItem(labKey) || '[]');
+    } catch (e) {
+      savedProgress = [];
+    }
+
+    const updateProgressUI = () => {
+      const count = savedProgress.length;
+      const pct = totalSteps > 0 ? Math.round((count / totalSteps) * 100) : 0;
+      const countElem = container.querySelector('#lab-completed-count');
+      const pctElem = container.querySelector('#lab-progress-pct');
+      const fillElem = container.querySelector('#lab-progress-fill');
+      if (countElem) countElem.textContent = count;
+      if (pctElem) pctElem.textContent = `${pct}%`;
+      if (fillElem) fillElem.style.width = `${pct}%`;
+    };
+
+    // Checkbox toggles
+    const checkboxes = container.querySelectorAll('.lab-step-checkbox');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const step = parseInt(cb.getAttribute('data-step'), 10);
+        const card = container.querySelector(`#lab-step-card-${step}`);
+        const labelText = cb.parentElement.querySelector('.lab-step-checkbox-text');
+        if (cb.checked) {
+          if (!savedProgress.includes(step)) savedProgress.push(step);
+          if (card) card.classList.add('completed');
+          if (labelText) labelText.textContent = 'Completed';
+          showToast(`Step ${step} marked completed!`, 'fa-circle-check');
+        } else {
+          savedProgress = savedProgress.filter(s => s !== step);
+          if (card) card.classList.remove('completed');
+          if (labelText) labelText.textContent = 'Mark as Done';
+        }
+        localStorage.setItem(labKey, JSON.stringify(savedProgress));
+        updateProgressUI();
+      });
+    });
+
+    // Copy command buttons
+    const copyCmdBtns = container.querySelectorAll('.copy-step-cmd-btn');
+    copyCmdBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const text = btn.getAttribute('data-clipboard');
+        navigator.clipboard.writeText(text).then(() => {
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+          setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 2000);
+          showToast('Command copied to clipboard!');
+        });
+      });
+    });
+
+    // Copy diagram button
+    const copyDiagBtn = container.querySelector('.copy-lab-diagram-btn');
+    if (copyDiagBtn) {
+      copyDiagBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const text = copyDiagBtn.getAttribute('data-text');
+        navigator.clipboard.writeText(text).then(() => {
+          copyDiagBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+          setTimeout(() => { copyDiagBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Schematic'; }, 2000);
+          showToast('Architecture schematic copied!');
+        });
+      });
+    }
+
+    // Terminal logic
+    const termOutput = container.querySelector('#lab-terminal-output');
+    const termInput = container.querySelector('#lab-terminal-input');
+    const termSubmitBtn = container.querySelector('#lab-terminal-submit-btn');
+    const termResetBtn = container.querySelector('.btn-reset-terminal');
+
+    const executeCommand = (cmd, stepToMark) => {
+      if (!cmd || !termOutput) return;
+      const cleanCmd = cmd.trim();
+
+      // Append prompt and command line
+      const cmdLine = document.createElement('div');
+      cmdLine.className = 'terminal-line';
+      cmdLine.innerHTML = `<span class="terminal-prompt">sandbox@${state.currentCourse}:~$ </span><span class="terminal-cmd">${escapeHtml(cleanCmd)}</span>`;
+      termOutput.appendChild(cmdLine);
+
+      // Determine simulated response
+      let outputText = '';
+      if (lab.simulator && lab.simulator.commands) {
+        for (const [k, v] of Object.entries(lab.simulator.commands)) {
+          if (cleanCmd === k || cleanCmd.includes(k) || k.includes(cleanCmd)) {
+            outputText = v;
+            break;
+          }
+        }
+      }
+
+      if (!outputText) {
+        if (cleanCmd.startsWith('docker') || cleanCmd.startsWith('kubectl') || cleanCmd.startsWith('aws')) {
+          outputText = `[OK] Command '${cleanCmd}' executed successfully in sandbox.\nStatus: 200 OK | Process returned 0.`;
+        } else if (cleanCmd === 'clear') {
+          termOutput.innerHTML = '';
+          return;
+        } else if (cleanCmd === 'help') {
+          outputText = `Available lab commands:\n${Object.keys((lab.simulator && lab.simulator.commands) || {}).join('\n')}`;
+        } else {
+          outputText = `bash: command executed: ${cleanCmd}\n[Simulated Output: Success]`;
+        }
+      }
+
+      const outLine = document.createElement('div');
+      outLine.className = 'terminal-line terminal-out';
+      outLine.textContent = outputText;
+      termOutput.appendChild(outLine);
+
+      termOutput.scrollTop = termOutput.scrollHeight;
+
+      if (stepToMark) {
+        const cb = container.querySelector(`.lab-step-checkbox[data-step="${stepToMark}"]`);
+        if (cb && !cb.checked) {
+          cb.checked = true;
+          cb.dispatchEvent(new Event('change'));
+        }
+      }
+    };
+
+    // Run step in simulator buttons
+    const runSimBtns = container.querySelectorAll('.btn-run-step-sim');
+    runSimBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cmd = btn.getAttribute('data-cmd');
+        const step = parseInt(btn.getAttribute('data-step'), 10);
+        executeCommand(cmd, step);
+
+        const term = container.querySelector('#livelab-sandbox-terminal');
+        if (term) term.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
+
+    if (termSubmitBtn && termInput) {
+      termSubmitBtn.addEventListener('click', () => {
+        const val = termInput.value;
+        if (val) {
+          executeCommand(val);
+          termInput.value = '';
+        }
+      });
+
+      termInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const val = termInput.value;
+          if (val) {
+            executeCommand(val);
+            termInput.value = '';
+          }
+        }
+      });
+    }
+
+    if (termResetBtn && termOutput) {
+      termResetBtn.addEventListener('click', () => {
+        termOutput.innerHTML = `
+          <div class="terminal-welcome">
+            Terminal reset. Ready for new commands!
+          </div>
+        `;
+        showToast('Sandbox terminal reset!');
+      });
+    }
   }
 
   // Render Cheatsheets
@@ -1014,9 +1435,18 @@
           return;
         }
 
-        // Open modal
+        // Open modal or direct Live Lab
         const cardTitle = e.target.closest('.card-title');
         const openBtn = e.target.closest('.btn-open-modal');
+        const labBtn = e.target.closest('.btn-open-lab');
+        if (labBtn) {
+          e.stopPropagation();
+          const id = labBtn.getAttribute('data-id');
+          state.activeTab = 'lab';
+          openLectureModal(id);
+          switchModalTab('lab');
+          return;
+        }
         if (cardTitle || openBtn) {
           const id = (cardTitle || openBtn).getAttribute('data-id');
           openLectureModal(id);
@@ -1068,6 +1498,21 @@
         switchModalTab(tab);
       });
     });
+
+    // Modal Tabs Horizontal Scroll Arrow Controls
+    const tabScroller = document.getElementById('modal-tabs-scroller');
+    const scrollLeftBtn = document.getElementById('tab-scroll-left');
+    const scrollRightBtn = document.getElementById('tab-scroll-right');
+    if (scrollLeftBtn && tabScroller) {
+      scrollLeftBtn.addEventListener('click', () => {
+        tabScroller.scrollBy({ left: -200, behavior: 'smooth' });
+      });
+    }
+    if (scrollRightBtn && tabScroller) {
+      scrollRightBtn.addEventListener('click', () => {
+        tabScroller.scrollBy({ left: 200, behavior: 'smooth' });
+      });
+    }
 
     // Modal Prev/Next Navigation
     if (elements.prevLectureBtn) {

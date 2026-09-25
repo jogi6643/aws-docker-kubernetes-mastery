@@ -228,24 +228,35 @@
       </div>
 
       <!-- Modal Tab Bar -->
-      <div class="modal-tabs">
-        <button class="modal-tab-btn active" data-tab="theory" id="tab-btn-theory">
-          <i class="fa-solid fa-book-open"></i> Theory & Hinglish Notes
+      <div class="modal-tabs-wrapper">
+        <button class="modal-tab-scroll-btn left" id="tab-scroll-left" aria-label="Scroll tabs left" title="Scroll left">
+          <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <button class="modal-tab-btn" data-tab="board" id="tab-btn-board">
-          <i class="fa-solid fa-chalkboard-user"></i> Whiteboard Notes (Board)
-        </button>
-        <button class="modal-tab-btn" data-tab="architecture" id="tab-btn-arch">
-          <i class="fa-solid fa-diagram-project"></i> Architecture
-        </button>
-        <button class="modal-tab-btn" data-tab="commands" id="tab-btn-commands">
-          <i class="fa-solid fa-terminal"></i> CLI & Commands
-        </button>
-        <button class="modal-tab-btn" data-tab="exam" id="tab-btn-exam">
-          <i class="fa-solid fa-award"></i> Exam & Interview
-        </button>
-        <button class="modal-tab-btn" data-tab="video" id="tab-btn-video">
-          <i class="fa-brands fa-youtube" style="color: #FF0000;"></i> Watch Video
+        <div class="modal-tabs" id="modal-tabs-scroller">
+          <button class="modal-tab-btn active" data-tab="theory" id="tab-btn-theory">
+            <i class="fa-solid fa-book-open"></i> <span>Theory Notes</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="board" id="tab-btn-board">
+            <i class="fa-solid fa-chalkboard-user"></i> <span>Whiteboard Notes</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="lab" id="tab-btn-lab">
+            <i class="fa-solid fa-flask-vial"></i> <span>Practical Live Lab</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="architecture" id="tab-btn-arch">
+            <i class="fa-solid fa-diagram-project"></i> <span>Architecture</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="commands" id="tab-btn-commands">
+            <i class="fa-solid fa-terminal"></i> <span>CLI & Commands</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="exam" id="tab-btn-exam">
+            <i class="fa-solid fa-award"></i> <span>Exam & Interview</span>
+          </button>
+          <button class="modal-tab-btn" data-tab="video" id="tab-btn-video">
+            <i class="fa-brands fa-youtube" style="color: #FF0000;"></i> <span>Watch Video</span>
+          </button>
+        </div>
+        <button class="modal-tab-scroll-btn right" id="tab-scroll-right" aria-label="Scroll tabs right" title="Scroll right">
+          <i class="fa-solid fa-chevron-right"></i>
         </button>
       </div>
 
@@ -253,6 +264,7 @@
       <div class="modal-body">
         <div class="tab-pane active" id="pane-theory"></div>
         <div class="tab-pane" id="pane-board"></div>
+        <div class="tab-pane" id="pane-lab"></div>
         <div class="tab-pane" id="pane-architecture"></div>
         <div class="tab-pane" id="pane-commands"></div>
         <div class="tab-pane" id="pane-exam"></div>

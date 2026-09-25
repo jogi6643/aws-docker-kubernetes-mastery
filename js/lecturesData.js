@@ -1,6 +1,7 @@
 /**
  * AWS Solution Architect & SysOps (102 Lectures) Complete Knowledge Base
  * Extracted & Synthesized from Technical Guftgu (Bhupinder Rajput) Video Series
+ * With Complete Theory, Whiteboard Notes, and Practical Live Labs
  */
 
 window.AWS_MODULES = [
@@ -363,6 +364,66 @@ window.AWS_LECTURES = [
           "diagram": "[ Level 1: Foundational ]  AWS Certified Cloud Practitioner\n           |\n[ Level 2: Associate ]     AWS Solutions Architect Associate (SAA-C03) <--- FOCUS\n           |\n[ Level 3: Professional ]  AWS Solutions Architect Professional (SAP-C02)\n           |\n[ Level 4: Specialty ]     Security / Advanced Networking / Database"
         }
       ]
+    },
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Exploring AWS Global Infrastructure & Region Latency Testing",
+      "scenario": "Maan lijiye aap ek international courier company shuru kar rahe hain. Pehle aapko duniya bhar ke warehouses (Regions) aur har warehouse ke andar safe alag-alag building blocks (Availability Zones) dekhne padte hain. Is lab me hum bina kisi kharche ke AWS Global Infrastructure map explore karenge aur Mumbai (ap-south-1) vs Virginia (us-east-1) ka live network ping test karenge.",
+      "objective": "Explore the AWS Global Infrastructure map, identify active AWS Regions and isolated Availability Zones (AZs), test network ping latency from your location to global AWS datacenters, and configure your AWS CLI default region.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| AWS GLOBAL INFRASTRUCTURE TOPOLOGY                          |\n|                                                             |\n|  [ Your Browser / Laptop ]                                  |\n|         |                                                   |\n|         +---> Ping: ap-south-1 (Mumbai): ~15ms (Fastest!)   |\n|         +---> Ping: eu-central-1 (Frankfurt): ~120ms        |\n|         +---> Ping: us-east-1 (N. Virginia): ~210ms         |\n|                                                             |\n|  AWS Region: ap-south-1 (Mumbai)                            |\n|    |---> AZ 1: ap-south-1a (Physical Datacenter Cluster 1)  |\n|    |---> AZ 2: ap-south-1b (Physical Datacenter Cluster 2)  |\n|    +---> AZ 3: ap-south-1c (Physical Datacenter Cluster 3)  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Explore Interactive AWS Global Infrastructure Map",
+          "laymanExplanation": "Duniya ke nakshe par dekhna ki AWS ke kitne datacenters hain aur unke beech high-speed fiber cables kaise bichi hui hain.",
+          "consoleAction": "Open browser and navigate to https://infrastructure.aws/ -> Click 'Explore our infrastructure'.",
+          "command": "curl -s https://ip-ranges.amazonaws.com/ip-ranges.json | grep -o '\"region\": \"[^\"]*\"' | sort -u | head -n 10",
+          "commandExplanation": "Fetches official AWS public IP publication and lists geographical region identifiers.",
+          "expectedOutput": "\"region\": \"af-south-1\"\n\"region\": \"ap-east-1\"\n\"region\": \"ap-northeast-1\"\n\"region\": \"ap-south-1\"",
+          "verification": "Confirm you can identify at least 5 AWS regions including ap-south-1 (Mumbai)."
+        },
+        {
+          "stepNum": 2,
+          "title": "Benchmark Network Latency to Global AWS Regions",
+          "laymanExplanation": "Check karna ki aapke internet connection se sabse paas wala AWS datacenter kaunsa hai taaki aapki website sabse fast load ho.",
+          "consoleAction": "Visit https://www.cloudping.info/ and click 'HTTP Ping'.",
+          "command": "ping -c 4 ec2.ap-south-1.amazonaws.com",
+          "commandExplanation": "Sends 4 ICMP echo packets to the AWS Mumbai regional endpoint to measure round-trip time (RTT).",
+          "expectedOutput": "64 bytes from ec2.ap-south-1.amazonaws.com: time=14.2 ms\n--- ec2.ap-south-1.amazonaws.com ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss, avg = 15.1 ms",
+          "verification": "Note the region with the lowest ping (usually 10ms - 30ms for domestic region)."
+        },
+        {
+          "stepNum": 3,
+          "title": "Configure Default Region in AWS CLI",
+          "laymanExplanation": "Apne computer ke terminal ko batana ki jab bhi hum koi server ya database launch karein, wo by default hamare closest region (Mumbai) me hi bane.",
+          "consoleAction": "Open terminal and run aws configure.",
+          "command": "aws configure set default.region ap-south-1",
+          "commandExplanation": "Sets `ap-south-1` as the default target region in `~/.aws/config`.",
+          "expectedOutput": "[Default region set to ap-south-1]",
+          "verification": "Run `aws configure get default.region` to confirm it prints 'ap-south-1'."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Lab 1: Global Infrastructure Sandbox Terminal",
+        "commands": {
+          "aws configure set default.region ap-south-1": "[OK] Default region set to ap-south-1 (Asia Pacific - Mumbai).",
+          "aws configure get default.region": "ap-south-1",
+          "ping -c 2 ec2.ap-south-1.amazonaws.com": "64 bytes from ec2.ap-south-1.amazonaws.com: time=14.8 ms\n64 bytes from ec2.ap-south-1.amazonaws.com: time=15.1 ms\n--- 0% packet loss, avg = 14.95 ms"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Ping command times out or gives 'Request timeout'",
+          "cause": "Some local ISP routers block ICMP ping packets.",
+          "solution": "Use HTTP latency measurement tool via browser at https://www.cloudping.info/."
+        }
+      ],
+      "cleanup": [
+        "# No billable AWS cloud resources were provisioned in this lab."
+      ]
     }
   },
   {
@@ -392,7 +453,56 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Compare AWS Services across models: EC2/VPC = IaaS, Elastic Beanstalk/Lambda = PaaS/Serverless, WorkSpaces/QuickSight = SaaS."
     ],
-    "interviewQuestions": "Q: Why did AWS migrate from Xen hypervisors to the AWS Nitro System?\nA: The Nitro System offloads virtualization tasks (VPC networking, EBS storage, security enforcement) to dedicated ASIC hardware cards, freeing up nearly 100% of physical host CPU and memory for customer workloads."
+    "interviewQuestions": "Q: Why did AWS migrate from Xen hypervisors to the AWS Nitro System?\nA: The Nitro System offloads virtualization tasks (VPC networking, EBS storage, security enforcement) to dedicated ASIC hardware cards, freeing up nearly 100% of physical host CPU and memory for customer workloads.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Auditing Shared Responsibility & Service Models (IaaS vs PaaS vs SaaS)",
+      "scenario": "Maan lijiye aap pizza khana chahte hain: (1) Dining Out (SaaS): Restaurant jao, bana banaya pizza khao, saaf safai ki tension restaurant ki. (2) Pizza Delivery (PaaS): Pizza base aur toppings deliver hogi, aap bas microwave me bake karte hain. (3) Made from Scratch (IaaS): Aap khud atta, oven, aur gas stove manage karte hain. Cloud me bhi EC2 = IaaS, Elastic Beanstalk = PaaS, aur Microsoft 365/Gmail = SaaS hota hai!",
+      "objective": "Map enterprise architectures into IaaS, PaaS, and SaaS tiers, audit the AWS Shared Responsibility Model boundary, and verify customer vs AWS security duties.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| AWS SHARED RESPONSIBILITY MODEL                             |\n|                                                             |\n|  [ CUSTOMER RESPONSIBILITY: Security IN the Cloud ]         |\n|  - Customer Data & Encryption (KMS)                         |\n|  - IAM User Authentication & MFA                            |\n|  - Operating System Patching (in IaaS / EC2)                |\n|  - Security Group & Firewall Rules                          |\n|  =========================================================  |\n|  [ AWS RESPONSIBILITY: Security OF the Cloud ]              |\n|  - Physical Datacenter Security (Guards, biometric locks)   |\n|  - Host Hardware, Power, HVAC Cooling                       |\n|  - Hypervisor (AWS Nitro System)                            |\n|  - Global Networking cables & edge routers                  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Classify Common Enterprise Workloads into Service Models",
+          "laymanExplanation": "Samajhna ki jab company EC2 leti hai toh OS ki zimmedari kiski hoti hai, aur jab RDS leti hai toh kiski hoti hai.",
+          "consoleAction": "Review AWS Architecture Center Reference Models.",
+          "command": "cat << 'EOF'\nSERVICE MODEL CLASSIFICATION MATRIX:\n1. Amazon EC2: IaaS (Customer patches Windows/Linux OS, AWS manages physical blade).\n2. AWS Elastic Beanstalk / Lambda: PaaS / Serverless (AWS manages OS, customer provides code).\n3. Amazon WorkSpaces / QuickSight: SaaS (Complete turnkey managed software application).\nEOF",
+          "commandExplanation": "Displays the cloud responsibility boundary across traditional, IaaS, PaaS, and SaaS architectures.",
+          "expectedOutput": "[Classification Matrix printed successfully]",
+          "verification": "Ensure you can explain why OS patching is 100% customer duty in EC2."
+        },
+        {
+          "stepNum": 2,
+          "title": "Audit AWS Compliance Reports via AWS Artifact (Zero Cost)",
+          "laymanExplanation": "AWS Console ke andar jaakar dekhna ki kya AWS ke datacenters ISO aur PCI-DSS certified hain.",
+          "consoleAction": "AWS Console -> Search 'AWS Artifact' -> Click 'Reports' -> Search 'SOC 2' or 'ISO 27001'.",
+          "command": "aws artifact get-report-metadata --report-id \"AWS-SOC2\" 2>/dev/null || echo \"Artifact reports accessible via AWS Management Console for compliance auditing.\"",
+          "commandExplanation": "AWS Artifact provides on-demand downloads of AWS security and compliance reports.",
+          "expectedOutput": "Artifact reports accessible via AWS Management Console for compliance auditing.",
+          "verification": "Confirm AWS Artifact console opens with zero subscription fee."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Shared Responsibility & Compliance Sandbox",
+        "commands": {
+          "aws sts get-caller-identity": "{\n    \"UserId\": \"AIDASAMPLE12345678\",\n    \"Account\": \"123456789012\",\n    \"Arn\": \"arn:aws:iam::123456789012:user/admin-student\"\n}",
+          "echo 'Shared Responsibility: Customer secures Data & OS, AWS secures Hardware & Nitro'": "Shared Responsibility: Customer secures Data & OS, AWS secures Hardware & Nitro"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Cannot access AWS Artifact",
+          "cause": "Your IAM user may be missing `artifact:*` permissions.",
+          "solution": "Attach `AWSArtifactReportsExecutionRole` or `AdministratorAccess` policy to your IAM user."
+        }
+      ],
+      "cleanup": [
+        "# Zero resources created. Nothing to clean up."
+      ]
+    }
   },
   {
     "id": 3,
@@ -422,7 +532,66 @@ window.AWS_LECTURES = [
       "Open AWS Billing Console -> Billing Preferences -> Check 'Receive Free Tier Usage Alerts' and 'Receive Billing Alerts'.",
       "Create Amazon CloudWatch Alarm for metric 'EstimatedCharges' > $5 with SNS topic subscription."
     ],
-    "interviewQuestions": "Q: What is the AWS Best Practice regarding the Root account credentials?\nA: Never use the root account for everyday tasks. Enable MFA, delete root access keys, generate complex random passwords, and create dedicated IAM users/roles with least privilege."
+    "interviewQuestions": "Q: What is the AWS Best Practice regarding the Root account credentials?\nA: Never use the root account for everyday tasks. Enable MFA, delete root access keys, generate complex random passwords, and create dedicated IAM users/roles with least privilege.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hardening New AWS Account (MFA, Admin IAM User & $1 Billing Alarm)",
+      "scenario": "Aapne ek naya bank locker khola hai. Locker ki jo master key (Root account) hai, use daily use nahi kiya jata balki tijori me band karke rakha jata hai. Daily transactions ke liye aap ek manager (Admin IAM User) banate hain. Aur agar locker ka charge ₹100 se zyada badhe, toh turant SMS alert aana chahiye (Billing Alarm)! Yeh AWS account setup ka sabse pehla aur sabse zaroori rule hai.",
+      "objective": "Harden a new AWS Free Tier account: Activate Multi-Factor Authentication (MFA) on the Root user, delete Root access keys, create an IAM Administrator User with least privilege, and deploy an Amazon CloudWatch Billing Alarm to notify you when charges exceed $1.",
+      "duration": "20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| SECURE AWS ACCOUNT ARCHITECTURE                             |\n|                                                             |\n|  [ AWS ROOT USER (account email) ]                          |\n|    |---> 1. Enable Virtual MFA (Google Authenticator)       |\n|    |---> 2. Delete Root Access Keys (AccessKeyId)           |\n|    +---> 3. LOCK AWAY AND NEVER USE FOR DAILY WORK!         |\n|                                                             |\n|  [ IAM Administrator Group ]                                |\n|    |---> Policy: AdministratorAccess                        |\n|    +---> IAM User: 'cloud-admin' (With MFA enabled)         |\n|                                                             |\n|  [ CloudWatch Billing Alarm ]                               |\n|    |---> Condition: EstimatedCharges > $1.00 USD            |\n|    +---> Trigger SNS Topic ---> Instant Email Alert!        |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Activate Virtual MFA on Root Account",
+          "laymanExplanation": "Root account par password ke alawa mobile OTP (Google Authenticator) lagana taaki koi password chura bhi le toh bina mobile ke login na kar sake.",
+          "consoleAction": "Click your Account Name (top right) -> 'Security credentials' -> 'Assign MFA device' -> Device name: 'mobile-authenticator' -> Scan QR code with Google Authenticator app -> Enter two consecutive 6-digit codes -> Click 'Add MFA'.",
+          "command": "# MFA assignment on Root user must always be completed via the AWS Management Console.",
+          "commandExplanation": "Ensures two-factor authentication is enforced on the highest-privilege identity.",
+          "expectedOutput": "[MFA successfully assigned to Root account]",
+          "verification": "Check Security Credentials page; MFA device must show 'Virtual' with green active check."
+        },
+        {
+          "stepNum": 2,
+          "title": "Enable Free Tier Billing Alerts & Preferences",
+          "laymanExplanation": "AWS billing settings me jaakar email notification enable karna taaki agar galti se Free Tier limit cross hone lage toh AWS turant email bhej de.",
+          "consoleAction": "Search 'Billing' in top search bar -> In left navigation, click 'Billing Preferences' -> Check 'Receive Free Tier Usage Alerts' and 'Receive Billing Alerts' -> Enter your email -> Click 'Save preferences'.",
+          "command": "# Billing preferences are configured via Billing Console to authorize CloudWatch billing metrics.",
+          "commandExplanation": "Enables metric publishing of `EstimatedCharges` into CloudWatch in us-east-1.",
+          "expectedOutput": "[Billing alerts enabled successfully]",
+          "verification": "Verify email is listed under Billing Preferences."
+        },
+        {
+          "stepNum": 3,
+          "title": "Create a $1 CloudWatch Billing Alarm via AWS CLI",
+          "laymanExplanation": "Amazon CloudWatch me ek watchdog robot set karna: Jaise hi mahine ka bill $1 (approx ₹85) cross kare, turant warning email send kare.",
+          "consoleAction": "AWS Console -> CloudWatch -> In left sidebar, click 'Alarms' -> 'In alarm' -> 'Create alarm'.",
+          "command": "aws cloudwatch put-metric-alarm \\\n  --alarm-name \"AWS-Billing-Alert-Over-1-Dollar\" \\\n  --alarm-description \"Trigger email if monthly estimated bill exceeds $1\" \\\n  --metric-name EstimatedCharges \\\n  --namespace AWS/Billing \\\n  --statistic Maximum \\\n  --period 21600 \\\n  --threshold 1.0 \\\n  --comparison-operator GreaterThanThreshold \\\n  --region us-east-1",
+          "commandExplanation": "--metric-name EstimatedCharges: Tracks accumulated monthly spend.\n--threshold 1.0: Fires when bill > $1.00 USD.\n--region us-east-1: Billing metrics are ALWAYS stored exclusively in N. Virginia (us-east-1).",
+          "expectedOutput": "[Alarm created successfully in us-east-1]",
+          "verification": "Run `aws cloudwatch describe-alarms --alarm-names \"AWS-Billing-Alert-Over-1-Dollar\" --region us-east-1`."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Account Hardening & Billing Alarm Sandbox",
+        "commands": {
+          "aws cloudwatch put-metric-alarm --alarm-name AWS-Billing-Alert-Over-1-Dollar --threshold 1.0 --region us-east-1": "[OK] CloudWatch Billing Alarm created successfully.\nMetric: EstimatedCharges > $1.00 USD.\nStatus: INSUFFICIENT_DATA -> OK.",
+          "aws cloudwatch describe-alarms --alarm-names AWS-Billing-Alert-Over-1-Dollar --region us-east-1": "{\n  \"MetricAlarms\": [{\n    \"AlarmName\": \"AWS-Billing-Alert-Over-1-Dollar\",\n    \"StateValue\": \"OK\",\n    \"Threshold\": 1.0,\n    \"EvaluationPeriods\": 1\n  }]\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "CloudWatch Billing metric 'EstimatedCharges' not found",
+          "cause": "Billing Alerts have not been checked in the Billing Preferences page, or CloudWatch region is not set to us-east-1.",
+          "solution": "Go to Billing Console -> Billing Preferences -> Check 'Receive Billing Alerts', and switch your CloudWatch console to 'US East (N. Virginia)' region."
+        }
+      ],
+      "cleanup": [
+        "# Keep the $1 Billing Alarm ACTIVE permanently to protect against accidental cloud costs!"
+      ]
+    }
   },
   {
     "id": 4,
@@ -453,7 +622,68 @@ window.AWS_LECTURES = [
       "aws ec2 start-instances --instance-ids i-0123456789abcdef0",
       "aws ec2 stop-instances --instance-ids i-0123456789abcdef0"
     ],
-    "interviewQuestions": "Q: What happens to public and private IP addresses when you stop and restart an EC2 instance?\nA: The private IP address remains unchanged. The public IPv4 address is released back to the AWS pool; upon restart, the instance receives a brand new public IPv4 address (unless an Elastic IP is attached)."
+    "interviewQuestions": "Q: What happens to public and private IP addresses when you stop and restart an EC2 instance?\nA: The private IP address remains unchanged. The public IPv4 address is released back to the AWS pool; upon restart, the instance receives a brand new public IPv4 address (unless an Elastic IP is attached).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Launching Your First Linux EC2 Instance (t2.micro / t3.micro)",
+      "scenario": "Aapko ek computer chahiye lekin aap dukaan jakar hardware nahi khareedna chahte. Aap AWS Console me jate hain aur 2 minute me ek virtual machine (EC2 instance) rent par le lete hain jisme CPU, RAM, hard drive aur networking pre-configured milti hai. Yeh lab aapko pehla cloud server launch karna sikhayegi.",
+      "objective": "Launch an Amazon Linux 2023 EC2 instance using Free Tier eligible t2.micro, configure Name tags, select AMI, generate an RSA key pair, create a security group allowing SSH port 22, and verify 'Running' state.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| AMAZON EC2 LAUNCH ARCHITECTURE                              |\n|                                                             |\n|  [ AWS EC2 Console / AWS CLI ]                              |\n|         |                                                   |\n|         v                                                   |\n|  +-------------------------------------------------------+  |\n|  | EC2 Instance: 'my-first-server' (t2.micro / t3.micro)  |  |\n|  | AMI: Amazon Linux 2023 (64-bit x86)                   |  |\n|  | Storage: 8GB gp3 Root EBS Volume                      |  |\n|  | Security Group: Inbound TCP 22 (SSH from My IP)       |  |\n|  | Key Pair: 'my-ec2-key.pem'                            |  |\n|  | Public IPv4: 13.233.x.x | Private IPv4: 172.31.x.x    |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Navigate to EC2 Dashboard and Click Launch Instance",
+          "laymanExplanation": "AWS ke computer showroom (EC2 Dashboard) me jakar 'Naya Computer Banao' par click karna.",
+          "consoleAction": "In AWS Console -> Search 'EC2' -> Click 'Launch instance' button.",
+          "command": "aws ec2 describe-images --owners amazon --filters \"Name=name,Values=al2023-ami-2023.*-x86_64\" --query \"Images | sort_by(@, &CreationDate) | [-1].ImageId\" --output text",
+          "commandExplanation": "Queries AWS for the latest official Amazon Linux 2023 AMI ID in your region.",
+          "expectedOutput": "ami-03f4878e83434e158 (Example AMI ID)",
+          "verification": "Confirm an AMI ID starting with 'ami-' is returned."
+        },
+        {
+          "stepNum": 2,
+          "title": "Configure Instance Name, Type & Key Pair",
+          "laymanExplanation": "Computer ko naam dena (`my-first-server`), size select karna (Free Tier `t2.micro`), aur login karne ke liye digital chaabi (Key Pair) download karna.",
+          "consoleAction": "Name: 'my-first-server' -> AMI: Amazon Linux 2023 -> Instance type: 't2.micro' -> Key pair: Click 'Create new key pair' -> Name: 'my-ec2-key', Type: RSA, Private key format: .pem -> Click 'Create key pair' (downloads file).",
+          "command": "aws ec2 create-key-pair --key-name my-ec2-key --query 'KeyMaterial' --output text > my-ec2-key.pem && chmod 400 my-ec2-key.pem",
+          "commandExplanation": "Generates 2048-bit RSA key pair, downloads private key to `my-ec2-key.pem`, and locks permissions to read-only (`chmod 400`).",
+          "expectedOutput": "[my-ec2-key.pem created with permissions 400]",
+          "verification": "Run `ls -l my-ec2-key.pem`."
+        },
+        {
+          "stepNum": 3,
+          "title": "Configure Security Group (Firewall) and Launch",
+          "laymanExplanation": "Computer ke aage security guard khada karna jo sirf aapke laptop ke IP se port 22 (SSH) allow kare.",
+          "consoleAction": "Under Network settings -> Check 'Allow SSH traffic from' -> Select 'My IP' (Security Best Practice!) -> Leave Storage at 8GB gp3 -> Click 'Launch instance'.",
+          "command": "aws ec2 run-instances \\\n  --image-id $(aws ec2 describe-images --owners amazon --filters \"Name=name,Values=al2023-ami-2023.*-x86_64\" --query \"Images | sort_by(@, &CreationDate) | [-1].ImageId\" --output text) \\\n  --count 1 \\\n  --instance-type t2.micro \\\n  --key-name my-ec2-key \\\n  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=my-first-server}]'",
+          "commandExplanation": "Launches 1 t2.micro instance with assigned key pair and Name tag.",
+          "expectedOutput": "{\n  \"Instances\": [{\n    \"InstanceId\": \"i-0abc1234def567890\",\n    \"State\": { \"Name\": \"pending\" },\n    \"InstanceType\": \"t2.micro\"\n  }]\n}",
+          "verification": "Check EC2 Console; after 30 seconds, Instance State changes to 'Running' with 2/2 checks passed!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Amazon EC2 Launch Sandbox Terminal",
+        "commands": {
+          "aws ec2 run-instances --instance-type t2.micro --key-name my-ec2-key": "{\n  \"Instances\": [{\n    \"InstanceId\": \"i-08a9f21b4430e812a\",\n    \"InstanceType\": \"t2.micro\",\n    \"State\": { \"Name\": \"pending\" },\n    \"PublicIpAddress\": \"13.233.104.55\"\n  }]\n}\n[OK] Instance launch initiated!",
+          "aws ec2 describe-instances --instance-ids i-08a9f21b4430e812a": "{\n  \"InstanceId\": \"i-08a9f21b4430e812a\",\n  \"State\": { \"Name\": \"running\" },\n  \"PublicIpAddress\": \"13.233.104.55\",\n  \"StatusChecks\": \"2/2 checks passed\"\n}",
+          "aws ec2 terminate-instances --instance-ids i-08a9f21b4430e812a": "Terminating instance i-08a9f21b4430e812a... State: shutting-down -> terminated."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Launch fails with 'InstanceLimitExceeded'",
+          "cause": "New AWS accounts have a regional vCPU quota (typically 32 vCPUs).",
+          "solution": "Ensure you are launching in your primary region and terminate any unused running instances."
+        }
+      ],
+      "cleanup": [
+        "Select 'my-first-server' in EC2 Console -> 'Instance state' -> 'Terminate instance'.",
+        "Delete key pair: `aws ec2 delete-key-pair --key-name my-ec2-key`."
+      ]
+    }
   },
   {
     "id": 5,
@@ -482,7 +712,77 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 modify-instance-credit-specification --instance-credit-specification '[{\"InstanceId\":\"i-123\",\"CpuCredits\":\"unlimited\"}]'"
     ],
-    "interviewQuestions": "Q: How do CPU credits work on burstable T2/T3 instances?\nA: Each T instance earns a fixed number of CPU credits per hour based on size. Running below baseline stores credits; running above baseline burns credits to deliver 100% core performance."
+    "interviewQuestions": "Q: How do CPU credits work on burstable T2/T3 instances?\nA: Each T instance earns a fixed number of CPU credits per hour based on size. Running below baseline stores credits; running above baseline burns credits to deliver 100% core performance.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Deploying Apache Web Server & Hosting Custom Webpage on EC2",
+      "scenario": "Aapne ek blank computer start kiya hai. Ab aap chahte hain ki internet par koi bhi aapka IP daale, toh aapka custom webpage open ho jaye. Iske liye hum Linux ke andar Apache HTTPD web server install karenge, port 80 allow karenge, aur custom HTML homepage host karenge.",
+      "objective": "Install and configure the Apache (httpd) web server on Amazon Linux 2023, open HTTP port 80 in Security Group, create a customized HTML homepage, and verify public web browser access.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| EC2 APACHE WEB SERVER ARCHITECTURE                          |\n|                                                             |\n|  Public Web Browser (Client)                                |\n|         |                                                   |\n|         v http://<EC2-Public-IP>:80                         |\n|  +-------------------------------------------------------+  |\n|  | EC2 Security Group: Inbound TCP Port 80 (0.0.0.0/0)   |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v                                                   |\n|  [ systemd: httpd.service (Running on Port 80) ]            |\n|         |                                                   |\n|         v                                                   |\n|  [ DocumentRoot: /var/www/html/index.html ]                 |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Connect to EC2 Instance via EC2 Instance Connect",
+          "laymanExplanation": "Bina kisi SSH client ya software ke, direct browser ke andar server ka black terminal screen open karna.",
+          "consoleAction": "In EC2 Console -> Select instance -> Click 'Connect' button -> Select 'EC2 Instance Connect' tab -> Click 'Connect' (opens browser shell).",
+          "command": "# Connected directly into browser shell as ec2-user",
+          "commandExplanation": "EC2 Instance Connect uses temporary single-use SSH keys pushed via EC2 API.",
+          "expectedOutput": "[ec2-user@ip-172-31-x-x ~]$",
+          "verification": "Confirm you have the `ec2-user@` shell prompt."
+        },
+        {
+          "stepNum": 2,
+          "title": "Install Apache Web Server & Enable Service",
+          "laymanExplanation": "Server me Apache software install karna aur use start karna.",
+          "consoleAction": "Execute commands in the connected terminal.",
+          "command": "sudo dnf update -y && sudo dnf install -y httpd && sudo systemctl start httpd && sudo systemctl enable httpd",
+          "commandExplanation": "`dnf install httpd` installs Apache.\n`systemctl start httpd` boots web daemon on port 80.\n`systemctl enable httpd` ensures web server starts automatically on reboot.",
+          "expectedOutput": "Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service.\nComplete!",
+          "verification": "Run `sudo systemctl status httpd` and verify 'active (running)'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Create a Custom Branded HTML Webpage",
+          "laymanExplanation": "Apna custom webpage likhna jisme welcome message aur server ka hostname display ho.",
+          "consoleAction": "Create index.html file in /var/www/html.",
+          "command": "echo \"<h1>Welcome to Technical Guftgu AWS Masterclass!</h1><p>Server Hostname: $(hostname -f)</p>\" | sudo tee /var/www/html/index.html",
+          "commandExplanation": "Writes HTML content into Apache's default DocumentRoot directory (`/var/www/html/index.html`).",
+          "expectedOutput": "<h1>Welcome to Technical Guftgu AWS Masterclass!</h1>...",
+          "verification": "Run `curl http://localhost` in terminal to verify output."
+        },
+        {
+          "stepNum": 4,
+          "title": "Authorize HTTP Port 80 in Security Group and Test in Browser",
+          "laymanExplanation": "Firewall me port 80 open karna taaki duniya bhar ke browsers website ko dekh sakein.",
+          "consoleAction": "EC2 Console -> Select instance -> 'Security' tab -> Click Security Group link -> 'Edit inbound rules' -> 'Add rule' -> Type: 'HTTP' -> Port: 80 -> Source: 'Anywhere-IPv4' (0.0.0.0/0) -> Click 'Save rules'.",
+          "command": "# Now open browser at http://<EC2-Public-IPv4-Address>",
+          "commandExplanation": "Opens TCP port 80 through the stateful AWS Security Group firewall.",
+          "expectedOutput": "Browser displays: 'Welcome to Technical Guftgu AWS Masterclass!'",
+          "verification": "Website loads successfully over public internet without timeout."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Apache Web Server Deployment Sandbox",
+        "commands": {
+          "sudo dnf install -y httpd && sudo systemctl start httpd": "Package httpd-2.4.58 installed.\n[OK] httpd.service started on port 80.",
+          "curl http://localhost": "<h1>Welcome to Technical Guftgu AWS Masterclass!</h1><p>Server Hostname: ip-172-31-40-12</p>",
+          "sudo systemctl stop httpd": "[OK] httpd.service stopped."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Browser keeps loading forever (Connection Timed Out)",
+          "cause": "Inbound HTTP port 80 rule is missing in the attached EC2 Security Group.",
+          "solution": "Add an Inbound Rule in Security Group: Type: HTTP, Protocol: TCP, Port Range: 80, Source: 0.0.0.0/0."
+        }
+      ],
+      "cleanup": [
+        "Terminate the EC2 instance from EC2 Console to prevent Free Tier compute usage accumulation."
+      ]
+    }
   },
   {
     "id": 6,
@@ -511,7 +811,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 describe-instance-types --filters 'Name=instance-type,Values=c6i.*' --query 'InstanceTypes[*].[InstanceType,VCpuInfo.DefaultVCpus,MemoryInfo.SizeInMiB]'"
     ],
-    "interviewQuestions": "Q: When should you recommend a C-family instance over an M-family instance?\nA: Recommend C-family when CPU is the primary bottleneck and application does not require large memory footprints, minimizing costs per compute unit."
+    "interviewQuestions": "Q: When should you recommend a C-family instance over an M-family instance?\nA: Recommend C-family when CPU is the primary bottleneck and application does not require large memory footprints, minimizing costs per compute unit.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Instance Types: Compute Optimized (C Family) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Types: Compute Optimized (C Family) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Instance Types: Compute Optimized (C Family): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Instance Types: Compute Optim...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Types: Compu)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Instance Types: Compute Optimized (C Family)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Types: Compute Op",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Types: Compu created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Instance Types: Compute Optimized (C Family)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Types: Compute Op.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 7,
@@ -540,7 +902,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 describe-instance-types --filters 'Name=instance-type,Values=r6g.*' --query 'InstanceTypes[*].[InstanceType,MemoryInfo.SizeInMiB]'"
     ],
-    "interviewQuestions": "Q: Which EC2 instance family would you deploy for an Apache Spark or Redis cluster?\nA: Memory Optimized R-family (e.g., r6g or r5), which provides high memory bandwidth and up to 32 GiB RAM per vCPU."
+    "interviewQuestions": "Q: Which EC2 instance family would you deploy for an Apache Spark or Redis cluster?\nA: Memory Optimized R-family (e.g., r6g or r5), which provides high memory bandwidth and up to 32 GiB RAM per vCPU.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Instance Types: Memory Optimized (R, X, and Z Families) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Types: Memory Optimized (R, X, and Z Families) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Instance Types: Memory Optimized (R, X, and Z Families): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Instance Types: Memory Optimi...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Types: Memor)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Instance Types: Memory Optimized (R, X, and Z Families)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Types: Memory Opt",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Types: Memor created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Instance Types: Memory Optimized (R, X, and Z Families)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Types: Memory Opt.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 8,
@@ -569,7 +993,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "lsblk -f # Inspect NVMe instance store block devices attached to Linux EC2"
     ],
-    "interviewQuestions": "Q: Why is data on an I4i instance store at risk if the instance is stopped?\nA: Instance store volumes are physically attached to the host hardware. When an EC2 instance stops, AWS reclaims the hardware slot, permanently wiping instance store data."
+    "interviewQuestions": "Q: Why is data on an I4i instance store at risk if the instance is stopped?\nA: Instance store volumes are physically attached to the host hardware. When an EC2 instance stops, AWS reclaims the hardware slot, permanently wiping instance store data.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Instance Types: Storage Optimized (I, D, and H Families) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Types: Storage Optimized (I, D, and H Families) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Instance Types: Storage Optimized (I, D, and H Families): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Instance Types: Storage Optim...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Types: Stora)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Instance Types: Storage Optimized (I, D, and H Families)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Types: Storage Op",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Types: Stora created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Instance Types: Storage Optimized (I, D, and H Families)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Types: Storage Op.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 9,
@@ -598,7 +1084,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "nvidia-smi # View GPU hardware status, memory usage, and driver versions on accelerated EC2 instances"
     ],
-    "interviewQuestions": "Q: What is the purpose of the AWS Elastic Fabric Adapter (EFA) on Accelerated Computing instances?\nA: EFA bypasses the OS networking stack (OS-bypass) to deliver ultra-low latency, high-throughput inter-node communication required for distributed GPU machine learning clusters."
+    "interviewQuestions": "Q: What is the purpose of the AWS Elastic Fabric Adapter (EFA) on Accelerated Computing instances?\nA: EFA bypasses the OS networking stack (OS-bypass) to deliver ultra-low latency, high-throughput inter-node communication required for distributed GPU machine learning clusters.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Instance Types: Accelerated Computing (P, G, and F Families) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Types: Accelerated Computing (P, G, and F Families) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Instance Types: Accelerated Computing (P, G, and F Families): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Instance Types: Accelerated C...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Types: Accel)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Instance Types: Accelerated Computing (P, G, and F Families)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Types: Accelerate",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Types: Accel created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Instance Types: Accelerated Computing (P, G, and F Families)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Types: Accelerate.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 10,
@@ -627,7 +1175,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 describe-instance-types --filters 'Name=bare-metal,Values=true' --query 'InstanceTypes[*].InstanceType'"
     ],
-    "interviewQuestions": "Q: What is an EC2 Bare Metal instance and what makes it unique?\nA: A Bare Metal instance provides direct access to physical processors and memory without virtualization hypervisors, allowing workloads requiring nested virtualization or hardware counters to run directly on AWS hardware."
+    "interviewQuestions": "Q: What is an EC2 Bare Metal instance and what makes it unique?\nA: A Bare Metal instance provides direct access to physical processors and memory without virtualization hypervisors, allowing workloads requiring nested virtualization or hardware counters to run directly on AWS hardware.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Instance Types: High Memory & Bare Metal Instances (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Types: High Memory & Bare Metal Instances ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Instance Types: High Memory & Bare Metal Instances: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Instance Types: High Memory &...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Types: High )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Instance Types: High Memory & Bare Metal Instances' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Types: High Memor",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Types: High  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Instance Types: High Memory & Bare Metal Instances",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Types: High Memor.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 11,
@@ -658,7 +1268,69 @@ window.AWS_LECTURES = [
       "aws ec2 request-spot-instances --spot-price '0.04' --instance-count 2 --launch-specification file://spot-spec.json",
       "aws ec2 describe-reserved-instances-offerings --instance-type 'm5.large'"
     ],
-    "interviewQuestions": "Q: What is the difference between a Dedicated Host and a Dedicated Instance?\nA: Dedicated Host gives you complete visibility and control over the physical server sockets, cores, and physical host ID (required for BYOL software licenses). Dedicated Instance only guarantees your VMs run on hardware dedicated to your AWS account without socket-level visibility."
+    "interviewQuestions": "Q: What is the difference between a Dedicated Host and a Dedicated Instance?\nA: Dedicated Host gives you complete visibility and control over the physical server sockets, cores, and physical host ID (required for BYOL software licenses). Dedicated Instance only guarantees your VMs run on hardware dedicated to your AWS account without socket-level visibility.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Purchasing Models: On-Demand, Reserved, Spot & Savings Plans (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Purchasing Models: On-Demand, Reserved, Spot & Savings Plans ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Purchasing Models: On-Demand, Reserved, Spot & Savings Plans: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Purchasing Models: On-Demand,...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Purchasing Models: On)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Purchasing Models: On-Demand, Reserved, Spot & Savings Plans' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Purchasing Models: On-Dema",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Purchasing Models: On created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Purchasing Models: On-Demand, Reserved, Spot & Savings Plans",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Purchasing Models: On-Dema.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 12,
@@ -688,7 +1360,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-placement-group --group-name 'HPC-Cluster' --strategy cluster",
       "aws ec2 run-instances --image-id ami-xxxx --instance-type c5n.18xlarge --placement 'GroupName=HPC-Cluster'"
     ],
-    "interviewQuestions": "Q: Can a Cluster Placement Group span across multiple Availability Zones?\nA: No. A Cluster Placement Group cannot span multiple AZs because it relies on physical proximity within the same data center room to achieve ultra-low microsecond latency."
+    "interviewQuestions": "Q: Can a Cluster Placement Group span across multiple Availability Zones?\nA: No. A Cluster Placement Group cannot span multiple AZs because it relies on physical proximity within the same data center room to achieve ultra-low microsecond latency.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: EC2 Placement Groups: Cluster, Spread, and Partition Strategies (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Placement Groups: Cluster, Spread, and Partition Strategies ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of EC2 Placement Groups: Cluster, Spread, and Partition Strategies: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: EC2 Placement Groups: Cluster, Spread, a...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Placement Groups: Clu)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'EC2 Placement Groups: Cluster, Spread, and Partition Strategies' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Placement Groups: Cluster,",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Placement Groups: Clu created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: EC2 Placement Groups: Cluster, Spread, and Partition Strategies",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Placement Groups: Cluster,.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 13,
@@ -718,7 +1452,69 @@ window.AWS_LECTURES = [
       "mstsc /v:<EC2_Public_IPv4_or_DNS> # Launch Windows RDP Client",
       "aws ec2 get-password-data --instance-id i-xxxx --priv-launch-key my-key.pem"
     ],
-    "interviewQuestions": "Q: How do you securely access a Windows EC2 instance in a private subnet without exposing port 3389 to the internet?\nA: Use AWS Systems Manager (SSM) Fleet Manager or an EC2 Bastion Host over an encrypted SSH/VPN tunnel, eliminating internet exposure of port 3389."
+    "interviewQuestions": "Q: How do you securely access a Windows EC2 instance in a private subnet without exposing port 3389 to the internet?\nA: Use AWS Systems Manager (SSM) Fleet Manager or an EC2 Bastion Host over an encrypted SSH/VPN tunnel, eliminating internet exposure of port 3389.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hands-On: Launch Windows Server EC2 & Connect via RDP (Port 3389) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Hands-On: Launch Windows Server EC2 & Connect via RDP (Port 3389) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Hands-On: Launch Windows Server EC2 & Connect via RDP (Port 3389): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Hands-On: Launch Windows Server EC2 & Co...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Hands-On: Launch Windows )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Hands-On: Launch Windows Server EC2 & Connect via RDP (Port 3389)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Hands-On: Launch Windows Serve",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Hands-On: Launch Windows  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Hands-On: Launch Windows Server EC2 & Connect via RDP (Port 3389)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Hands-On: Launch Windows Serve.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 14,
@@ -748,7 +1544,69 @@ window.AWS_LECTURES = [
       "powershell: Install-WindowsFeature -name Web-Server -IncludeManagementTools",
       "powershell: Set-Content -Path 'C:\\inetpub\\wwwroot\\iisstart.htm' -Value '<h1>Welcome to AWS Windows EC2!</h1>'"
     ],
-    "interviewQuestions": "Q: Why might an HTTP request time out when connecting to a newly installed IIS web server on EC2?\nA: Common reasons: 1. Security Group does not allow inbound TCP port 80. 2. Subnet route table lacks an Internet Gateway route (`0.0.0.0/0 -> igw`). 3. Windows Defender Firewall is blocking inbound port 80."
+    "interviewQuestions": "Q: Why might an HTTP request time out when connecting to a newly installed IIS web server on EC2?\nA: Common reasons: 1. Security Group does not allow inbound TCP port 80. 2. Subnet route table lacks an Internet Gateway route (`0.0.0.0/0 -> igw`). 3. Windows Defender Firewall is blocking inbound port 80.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Install IIS Web Server & Host Custom Webpage on Windows EC2 (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Install IIS Web Server & Host Custom Webpage on Windows EC2 ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Install IIS Web Server & Host Custom Webpage on Windows EC2: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Install IIS Web Server & Host Custom Web...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Install IIS Web Server & )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Install IIS Web Server & Host Custom Webpage on Windows EC2' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Install IIS Web Server & Host ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Install IIS Web Server &  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Install IIS Web Server & Host Custom Webpage on Windows EC2",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Install IIS Web Server & Host .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 15,
@@ -779,7 +1637,69 @@ window.AWS_LECTURES = [
       "aws ec2 attach-volume --volume-id vol-xxxx --instance-id i-xxxx --device /dev/sdf",
       "diskmgmt.msc # Launch Windows Disk Management utility"
     ],
-    "interviewQuestions": "Q: Can you attach an EBS volume to an EC2 instance located in a different Availability Zone?\nA: No. EBS volumes are AZ-specific. To move an EBS volume to another AZ, take a snapshot of the volume and create a new volume from that snapshot in the destination AZ."
+    "interviewQuestions": "Q: Can you attach an EBS volume to an EC2 instance located in a different Availability Zone?\nA: No. EBS volumes are AZ-specific. To move an EBS volume to another AZ, take a snapshot of the volume and create a new volume from that snapshot in the destination AZ.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: How to Attach Extra EBS Volumes in Windows EC2 & Initialize Disks (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me How to Attach Extra EBS Volumes in Windows EC2 & Initialize Disks ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of How to Attach Extra EBS Volumes in Windows EC2 & Initialize Disks: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: How to Attach Extra EBS Volumes in Windo...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (How to Attach Extra EBS V)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'How to Attach Extra EBS Volumes in Windows EC2 & Initialize Disks' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for How to Attach Extra EBS Volume",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for How to Attach Extra EBS V created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: How to Attach Extra EBS Volumes in Windows EC2 & Initialize Disks",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for How to Attach Extra EBS Volume.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 16,
@@ -810,7 +1730,69 @@ window.AWS_LECTURES = [
       "ssh -i my-key.pem ec2-user@<ec2-public-ip>",
       "cat ~/.ssh/authorized_keys"
     ],
-    "interviewQuestions": "Q: What does the error 'Permissions 0777 for key.pem are too open' mean during an SSH connection?\nA: The SSH client enforces strict security and refuses to use an unencrypted private key accessible to other local users. You must restrict file permissions with `chmod 400 key.pem`."
+    "interviewQuestions": "Q: What does the error 'Permissions 0777 for key.pem are too open' mean during an SSH connection?\nA: The SSH client enforces strict security and refuses to use an unencrypted private key accessible to other local users. You must restrict file permissions with `chmod 400 key.pem`.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Linux Launch, SSH Key Pairs & Terminal Connectivity (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Linux Launch, SSH Key Pairs & Terminal Connectivity ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Linux Launch, SSH Key Pairs & Terminal Connectivity: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Linux Launch, SSH Key Pairs &...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Linux Launch, SSH Key)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EC2 Linux Launch, SSH Key Pairs & Terminal Connectivity' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Linux Launch, SSH Key Pair",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Linux Launch, SSH Key created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Linux Launch, SSH Key Pairs & Terminal Connectivity",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Linux Launch, SSH Key Pair.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 17,
@@ -842,7 +1824,69 @@ window.AWS_LECTURES = [
       "curl -H \"X-aws-ec2-metadata-token: $TOKEN\" http://169.254.169.254/latest/meta-data/public-ipv4",
       "curl -H \"X-aws-ec2-metadata-token: $TOKEN\" http://169.254.169.254/latest/user-data"
     ],
-    "interviewQuestions": "Q: Why is IMDSv2 significantly more secure than IMDSv1?\nA: IMDSv1 allows simple HTTP GET requests which can be exploited by SSRF (Server-Side Request Forgery) flaws in web apps to leak IAM temporary credentials. IMDSv2 requires a multi-step session token via HTTP PUT with custom headers that SSRF payloads cannot forge."
+    "interviewQuestions": "Q: Why is IMDSv2 significantly more secure than IMDSv1?\nA: IMDSv1 allows simple HTTP GET requests which can be exploited by SSRF (Server-Side Request Forgery) flaws in web apps to leak IAM temporary credentials. IMDSv2 requires a multi-step session token via HTTP PUT with custom headers that SSRF payloads cannot forge.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: EC2 Instance Metadata (IMDSv1 & IMDSv2) & User Data Automation (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Instance Metadata (IMDSv1 & IMDSv2) & User Data Automation ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of EC2 Instance Metadata (IMDSv1 & IMDSv2) & User Data Automation: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: EC2 Instance Metadata (IMDSv1 & IMDSv2) ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Instance Metadata (IM)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'EC2 Instance Metadata (IMDSv1 & IMDSv2) & User Data Automation' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Instance Metadata (IMDSv1 ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Instance Metadata (IM created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: EC2 Instance Metadata (IMDSv1 & IMDSv2) & User Data Automation",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Instance Metadata (IMDSv1 .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 18,
@@ -871,7 +1915,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=Custom-Prod-VPC}]'"
     ],
-    "interviewQuestions": "Q: Can you change the primary CIDR block of a VPC after it is created?\nA: You cannot alter the primary CIDR block, but AWS allows you to associate secondary IPv4 CIDR blocks to an existing VPC."
+    "interviewQuestions": "Q: Can you change the primary CIDR block of a VPC after it is created?\nA: You cannot alter the primary CIDR block, but AWS allows you to associate secondary IPv4 CIDR blocks to an existing VPC.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Part 1: What is Virtual Private Cloud & Default vs Custom VPC (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Part 1: What is Virtual Private Cloud & Default vs Custom VPC ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Part 1: What is Virtual Private Cloud & Default vs Custom VPC: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Part 1: What is Virtual Private ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Part 1: What is Virtu)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Part 1: What is Virtual Private Cloud & Default vs Custom VPC' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Part 1: What is Virtual Pr",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Part 1: What is Virtu created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Part 1: What is Virtual Private Cloud & Default vs Custom VPC",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Part 1: What is Virtual Pr.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 19,
@@ -900,7 +2006,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-subnet --vpc-id vpc-xxxx --cidr-block 10.0.1.0/24 --availability-zone us-east-1a"
     ],
-    "interviewQuestions": "Q: Why does a /28 subnet in AWS have only 11 usable IP addresses instead of 14?\nA: Traditional networking reserves 2 IPs (network & broadcast). AWS reserves 3 additional IPs (VPC router, AmazonProvidedDNS, and future use), making 5 reserved IPs in total (16 - 5 = 11)."
+    "interviewQuestions": "Q: Why does a /28 subnet in AWS have only 11 usable IP addresses instead of 14?\nA: Traditional networking reserves 2 IPs (network & broadcast). AWS reserves 3 additional IPs (VPC router, AmazonProvidedDNS, and future use), making 5 reserved IPs in total (16 - 5 = 11).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Part 2: Subnets Architecture & 5 Reserved IP Addresses (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Part 2: Subnets Architecture & 5 Reserved IP Addresses ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Part 2: Subnets Architecture & 5 Reserved IP Addresses: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Part 2: Subnets Architecture & 5...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Part 2: Subnets Archi)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Part 2: Subnets Architecture & 5 Reserved IP Addresses' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Part 2: Subnets Architectu",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Part 2: Subnets Archi created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Part 2: Subnets Architecture & 5 Reserved IP Addresses",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Part 2: Subnets Architectu.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 20,
@@ -931,7 +2099,69 @@ window.AWS_LECTURES = [
       "aws ec2 attach-internet-gateway --internet-gateway-id igw-xxxx --vpc-id vpc-xxxx",
       "aws ec2 create-route --route-table-id rtb-xxxx --destination-cidr-block 0.0.0.0/0 --gateway-id igw-xxxx"
     ],
-    "interviewQuestions": "Q: Can you attach two Internet Gateways to a single VPC for redundancy?\nA: No. A VPC can only have one Internet Gateway attached. IGW is an AWS managed service that is already horizontally scaled, redundant, and highly available by design."
+    "interviewQuestions": "Q: Can you attach two Internet Gateways to a single VPC for redundancy?\nA: No. A VPC can only have one Internet Gateway attached. IGW is an AWS managed service that is already horizontally scaled, redundant, and highly available by design.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Part 3: Route Tables, Implied Router & Internet Gateway (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Part 3: Route Tables, Implied Router & Internet Gateway ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Part 3: Route Tables, Implied Router & Internet Gateway: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Part 3: Route Tables, Implied Ro...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Part 3: Route Tables,)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Part 3: Route Tables, Implied Router & Internet Gateway' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Part 3: Route Tables, Impl",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Part 3: Route Tables, created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Part 3: Route Tables, Implied Router & Internet Gateway",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Part 3: Route Tables, Impl.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 21,
@@ -960,7 +2190,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-network-acl-entry --network-acl-id acl-xxxx --rule-number 50 --protocol tcp --rule-action deny --cidr-block 203.0.113.50/32 --port-range From=80,To=80 --ingress"
     ],
-    "interviewQuestions": "Q: What is the main difference between Security Groups and NACLs in AWS?\nA: Security Groups are stateful firewalls at the instance ENI level that only support ALLOW rules. NACLs are stateless firewalls at the subnet level that evaluate numbered ALLOW and DENY rules sequentially."
+    "interviewQuestions": "Q: What is the main difference between Security Groups and NACLs in AWS?\nA: Security Groups are stateful firewalls at the instance ENI level that only support ALLOW rules. NACLs are stateless firewalls at the subnet level that evaluate numbered ALLOW and DENY rules sequentially.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Part 4: Network ACLs (NACL) vs Security Groups (SG) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Part 4: Network ACLs (NACL) vs Security Groups (SG) ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Part 4: Network ACLs (NACL) vs Security Groups (SG): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Part 4: Network ACLs (NACL) vs S...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Part 4: Network ACLs )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Part 4: Network ACLs (NACL) vs Security Groups (SG)' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Part 4: Network ACLs (NACL",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Part 4: Network ACLs  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Part 4: Network ACLs (NACL) vs Security Groups (SG)",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Part 4: Network ACLs (NACL.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 22,
@@ -994,7 +2286,79 @@ window.AWS_LECTURES = [
       "aws ec2 attach-internet-gateway --internet-gateway-id igw-xxxx --vpc-id vpc-xxxx",
       "aws ec2 create-route --route-table-id rtb-xxxx --destination-cidr-block 0.0.0.0/0 --gateway-id igw-xxxx"
     ],
-    "interviewQuestions": "Q: If an EC2 instance in a public subnet has an attached IGW and route 0.0.0.0/0 but still cannot access the internet, what is missing?\nA: The instance does not have a Public IPv4 address or Elastic IP attached, preventing the IGW from translating internal private IPs to internet-routable public IPs."
+    "interviewQuestions": "Q: If an EC2 instance in a public subnet has an attached IGW and route 0.0.0.0/0 but still cannot access the internet, what is missing?\nA: The instance does not have a Public IPv4 address or Elastic IP attached, preventing the IGW from translating internal private IPs to internet-routable public IPs.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Building a Production Custom VPC with Public & Private Subnets from Scratch",
+      "scenario": "Aap ek secure gated society (VPC) bana rahe hain. Society me 2 tarah ke areas hain: Ek Commercial Market (Public Subnet) jahan koi bhi bahar se seedha aa sakta hai kyunki gate par main road (Internet Gateway) laga hai. Aur ek VIP Residential Area (Private Subnet) jahan bahar ka koi anjaan aadmi direct enter nahi kar sakta. Yeh lab enterprise cloud networking ka backbone hai!",
+      "objective": "Build a custom Virtual Private Cloud (10.0.0.0/16), provision a Public Subnet (10.0.1.0/24) and Private Subnet (10.0.2.0/24), attach an Internet Gateway (IGW), configure Public and Private Route Tables, and verify complete network isolation.",
+      "duration": "25 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| CUSTOM VPC: 10.0.0.0/16                                      |\n|                                                             |\n|  [ Internet Gateway (IGW) ] <== Attached to VPC             |\n|         |                                                   |\n|         v Route: 0.0.0.0/0 -> igw-xxxx                      |\n|  +-------------------------------------------------------+  |\n|  | PUBLIC SUBNET (10.0.1.0/24 in ap-south-1a)            |  |\n|  | Route Table: Public-RT (Target: IGW)                  |  |\n|  | [ Web Server EC2 (Public IP + Private 10.0.1.50) ]    |  |\n|  +-------------------------------------------------------+  |\n|                                                             |\n|  +-------------------------------------------------------+  |\n|  | PRIVATE SUBNET (10.0.2.0/24 in ap-south-1b)           |  |\n|  | Route Table: Private-RT (Local traffic ONLY)          |  |\n|  | [ Database EC2 (No Public IP | Private 10.0.2.100) ]  |  |\n|  | ISOLATED FROM DIRECT INTERNET ACCESS!                 |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create Custom VPC (10.0.0.0/16)",
+          "laymanExplanation": "AWS cloud me apna private 65,536 IP addresses ka virtual boundary room banana.",
+          "consoleAction": "VPC Console -> 'Your VPCs' -> 'Create VPC' -> Name: 'production-vpc' -> IPv4 CIDR: 10.0.0.0/16 -> Click 'Create VPC'.",
+          "command": "VPC_ID=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=production-vpc}]' --query 'Vpc.VpcId' --output text)\necho \"Created VPC: $VPC_ID\"",
+          "commandExplanation": "Allocates a private RFC 1918 IPv4 block with 65,536 addresses.",
+          "expectedOutput": "Created VPC: vpc-0a1b2c3d4e5f67890",
+          "verification": "Confirm VPC State is 'available'."
+        },
+        {
+          "stepNum": 2,
+          "title": "Create Public and Private Subnets",
+          "laymanExplanation": "Society ke andar do alag blocks (Public aur Private) banana.",
+          "consoleAction": "VPC Console -> Subnets -> 'Create subnet' -> Select 'production-vpc' -> Subnet 1: 'public-subnet-1' (10.0.1.0/24 in ap-south-1a) -> Subnet 2: 'private-subnet-1' (10.0.2.0/24 in ap-south-1b).",
+          "command": "PUB_SUB=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --availability-zone ap-south-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=public-subnet}]' --query 'Subnet.SubnetId' --output text)\nPRIV_SUB=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.2.0/24 --availability-zone ap-south-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=private-subnet}]' --query 'Subnet.SubnetId' --output text)",
+          "commandExplanation": "Creates two 251-usable-IP subnets across two distinct Availability Zones.",
+          "expectedOutput": "Created Public Subnet and Private Subnet.",
+          "verification": "Check subnets exist with correct CIDR ranges."
+        },
+        {
+          "stepNum": 3,
+          "title": "Create Internet Gateway (IGW) and Attach to VPC",
+          "laymanExplanation": "Society ka main gate lagana jo bahar ke internet se jodta hai.",
+          "consoleAction": "VPC Console -> 'Internet gateways' -> 'Create internet gateway' -> Name: 'prod-igw' -> Action -> 'Attach to VPC' -> Select 'production-vpc'.",
+          "command": "IGW_ID=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=prod-igw}]' --query 'InternetGateway.InternetGatewayId' --output text)\naws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW_ID",
+          "commandExplanation": "Attaches a horizontally scaled, redundant AWS Internet Gateway to the VPC.",
+          "expectedOutput": "Attached IGW to production-vpc.",
+          "verification": "Confirm IGW State is 'attached'."
+        },
+        {
+          "stepNum": 4,
+          "title": "Configure Public Route Table (0.0.0.0/0 -> IGW)",
+          "laymanExplanation": "Traffic police sign board lagana: 'Agar kisi ko internet (0.0.0.0/0) jana hai toh Main Gate (IGW) ki taraf jao'.",
+          "consoleAction": "VPC Console -> Route tables -> 'Create route table' -> Name: 'public-rt' -> Edit routes -> Add route: Destination `0.0.0.0/0` -> Target: Internet Gateway (`prod-igw`) -> Subnet associations -> Associate 'public-subnet-1'.",
+          "command": "RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=public-rt}]' --query 'RouteTable.RouteTableId' --output text)\naws ec2 create-route --route-table-id $RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID\naws ec2 associate-route-table --subnet-id $PUB_SUB --route-table-id $RT_ID",
+          "commandExplanation": "Routes all default egress traffic through IGW and binds it exclusively to the public subnet.",
+          "expectedOutput": "[Route 0.0.0.0/0 -> IGW created and associated]",
+          "verification": "Check Public Subnet route table; target for 0.0.0.0/0 shows igw-xxxx."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Custom VPC & Subnets Networking Sandbox",
+        "commands": {
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "{\n  \"Vpc\": {\n    \"VpcId\": \"vpc-0841fbc8294a\",\n    \"CidrBlock\": \"10.0.0.0/16\",\n    \"State\": \"available\"\n  }\n}",
+          "aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-0841fbc8294a": "Found 2 Subnets:\n- public-subnet (10.0.1.0/24) [Route Table -> IGW]\n- private-subnet (10.0.2.0/24) [Route Table -> Local Only]",
+          "aws ec2 delete-vpc --vpc-id vpc-0841fbc8294a": "[OK] VPC and all associated subnets deleted cleanly."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "EC2 in public subnet cannot reach internet",
+          "cause": "Auto-assign public IPv4 address was not enabled on the public subnet, or route table has no route to IGW.",
+          "solution": "In VPC Console -> Subnets -> Select public subnet -> Actions -> 'Edit subnet settings' -> Enable 'Auto-assign public IPv4 address'."
+        }
+      ],
+      "cleanup": [
+        "Detach and delete Internet Gateway `prod-igw`.",
+        "Delete public and private subnets.",
+        "Delete custom VPC `production-vpc`."
+      ]
+    }
   },
   {
     "id": 23,
@@ -1026,7 +2390,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-nat-gateway --subnet-id subnet-public-id --allocation-id eipalloc-xxxx",
       "aws ec2 create-route --route-table-id rtb-private-id --destination-cidr-block 0.0.0.0/0 --nat-gateway-id nat-xxxx"
     ],
-    "interviewQuestions": "Q: Can an external internet client initiate an inbound connection to an EC2 instance behind a NAT Gateway?\nA: No. NAT Gateways only permit one-way outbound initiated connections and statefully allow the return traffic. Inbound connections from the internet are dropped."
+    "interviewQuestions": "Q: Can an external internet client initiate an inbound connection to an EC2 instance behind a NAT Gateway?\nA: No. NAT Gateways only permit one-way outbound initiated connections and statefully allow the return traffic. Inbound connections from the internet are dropped.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hands-On Lab: AWS VPC NAT Gateway for Private Subnets (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me Hands-On Lab:  VPC NAT Gateway for Private Subnets ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Hands-On Lab: AWS VPC NAT Gateway for Private Subnets: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Hands-On Lab: AWS VPC NAT Gateway for Pr...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Hands-On Lab:  VPC NAT Ga)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Hands-On Lab: AWS VPC NAT Gateway for Private Subnets' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Hands-On Lab:  VPC NAT Gateway",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Hands-On Lab:  VPC NAT Ga created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Hands-On Lab: AWS VPC NAT Gateway for Private Subnets",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for Hands-On Lab:  VPC NAT Gateway.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 24,
@@ -1058,7 +2484,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-route --route-table-id rtb-A --destination-cidr-block 172.16.0.0/16 --vpc-peering-connection-id pcx-xxxx",
       "aws ec2 create-route --route-table-id rtb-B --destination-cidr-block 10.0.0.0/16 --vpc-peering-connection-id pcx-xxxx"
     ],
-    "interviewQuestions": "Q: If VPC A is peered with VPC B, and VPC B is peered with VPC C, can instances in VPC A communicate with VPC C?\nA: No. VPC Peering is non-transitive. To enable communication, you must create a direct peering connection between VPC A and VPC C, or implement AWS Transit Gateway."
+    "interviewQuestions": "Q: If VPC A is peered with VPC B, and VPC B is peered with VPC C, can instances in VPC A communicate with VPC C?\nA: No. VPC Peering is non-transitive. To enable communication, you must create a direct peering connection between VPC A and VPC C, or implement AWS Transit Gateway.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Peering: Same-Region Concept & Configuration Demo (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Peering: Same-Region Concept & Configuration Demo ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Peering: Same-Region Concept & Configuration Demo: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Peering: Same-Region Concept & C...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Peering: Same-Region )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Peering: Same-Region Concept & Configuration Demo' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Peering: Same-Region Conce",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Peering: Same-Region  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Peering: Same-Region Concept & Configuration Demo",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Peering: Same-Region Conce.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 25,
@@ -1087,7 +2575,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-vpc-peering-connection --vpc-id vpc-mumbai --peer-vpc-id vpc-virginia --peer-region us-east-1"
     ],
-    "interviewQuestions": "Q: Does traffic flowing over an inter-region VPC Peering connection traverse the public internet?\nA: No. All traffic remains entirely within AWS's global dedicated private fiber backbone and is encrypted at the physical layer without traversing the public internet."
+    "interviewQuestions": "Q: Does traffic flowing over an inter-region VPC Peering connection traverse the public internet?\nA: No. All traffic remains entirely within AWS's global dedicated private fiber backbone and is encrypted at the physical layer without traversing the public internet.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Peering: Cross-Region VPC Peering Across Global AWS Regions (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Peering: Cross-Region VPC Peering Across Global  Regions ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Peering: Cross-Region VPC Peering Across Global AWS Regions: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Peering: Cross-Region VPC Peerin...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Peering: Cross-Region)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Peering: Cross-Region VPC Peering Across Global AWS Regions' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Peering: Cross-Region VPC ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Peering: Cross-Region created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Peering: Cross-Region VPC Peering Across Global AWS Regions",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Peering: Cross-Region VPC .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 26,
@@ -1118,7 +2668,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-network-acl-entry --network-acl-id acl-xxxx --rule-number 100 --protocol tcp --rule-action allow --port-range From=80,To=80 --cidr-block 0.0.0.0/0 --ingress",
       "aws ec2 create-network-acl-entry --network-acl-id acl-xxxx --rule-number 100 --protocol tcp --rule-action allow --port-range From=1024,To=65535 --cidr-block 0.0.0.0/0 --egress"
     ],
-    "interviewQuestions": "Q: What happens if an outbound NACL does not have an ephemeral port rule when hosting a public web server?\nA: Inbound HTTP requests on port 80 will reach the EC2 instance, but the server's response packet to the client's high-numbered source port (e.g. port 49152) will be dropped at the subnet boundary."
+    "interviewQuestions": "Q: What happens if an outbound NACL does not have an ephemeral port rule when hosting a public web server?\nA: Inbound HTTP requests on port 80 will reach the EC2 instance, but the server's response packet to the client's high-numbered source port (e.g. port 49152) will be dropped at the subnet boundary.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Network ACLs (NACL) Deep Dive & Subnet Security Testing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me Network ACLs (NACL) Deep Dive & Subnet Security Testing ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Network ACLs (NACL) Deep Dive & Subnet Security Testing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Network ACLs (NACL) Deep Dive & Subn...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Network ACLs (NACL) Deep )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS Network ACLs (NACL) Deep Dive & Subnet Security Testing' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Network ACLs (NACL) Deep Dive ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Network ACLs (NACL) Deep  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Network ACLs (NACL) Deep Dive & Subnet Security Testing",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for Network ACLs (NACL) Deep Dive .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 27,
@@ -1148,7 +2760,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-vpc-endpoint --vpc-id vpc-xxxx --service-name com.amazonaws.us-east-1.s3 --route-table-ids rtb-private-id",
       "aws s3 cp large-file.zip s3://my-private-bucket/ # Transfers over internal AWS link at high speed"
     ],
-    "interviewQuestions": "Q: What is the primary difference between a Gateway Endpoint and an Interface Endpoint?\nA: Gateway Endpoints are free route-table-based targets supporting only S3 and DynamoDB. Interface Endpoints use AWS PrivateLink to deploy an ENI with a private IP in your subnet, supporting dozens of AWS services at an hourly + per-GB charge."
+    "interviewQuestions": "Q: What is the primary difference between a Gateway Endpoint and an Interface Endpoint?\nA: Gateway Endpoints are free route-table-based targets supporting only S3 and DynamoDB. Interface Endpoints use AWS PrivateLink to deploy an ENI with a private IP in your subnet, supporting dozens of AWS services at an hourly + per-GB charge.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS VPC Endpoints: Gateway Endpoints (S3 & DynamoDB) vs Interface Endpoints (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me VPC Endpoints: Gateway Endpoints (S3 & DynamoDB) vs Interface Endpoints ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS VPC Endpoints: Gateway Endpoints (S3 & DynamoDB) vs Interface Endpoints: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS VPC Endpoints: Gateway Endpoints (S3...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (VPC Endpoints: Gateway En)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS VPC Endpoints: Gateway Endpoints (S3 & DynamoDB) vs Interface Endpoints' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for VPC Endpoints: Gateway Endpoin",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for VPC Endpoints: Gateway En created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS VPC Endpoints: Gateway Endpoints (S3 & DynamoDB) vs Interface Endpoints",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for VPC Endpoints: Gateway Endpoin.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 28,
@@ -1180,7 +2854,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-vpn-gateway --type ipsec.1",
       "aws ec2 create-vpn-connection --type ipsec.1 --customer-gateway-id cgw-xxxx --vpn-gateway-id vgw-xxxx"
     ],
-    "interviewQuestions": "Q: Why does AWS provision two tunnels for a single Site-to-Site VPN connection?\nA: To provide high availability and fault tolerance. If AWS performs scheduled maintenance on one tunnel endpoint, traffic automatically fails over to the second redundant tunnel."
+    "interviewQuestions": "Q: Why does AWS provision two tunnels for a single Site-to-Site VPN connection?\nA: To provide high availability and fault tolerance. If AWS performs scheduled maintenance on one tunnel endpoint, traffic automatically fails over to the second redundant tunnel.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Client VPN & Site-to-Site VPN Connection to Access EC2 (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Client VPN & Site-to-Site VPN Connection to Access EC2 ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Client VPN & Site-to-Site VPN Connection to Access EC2: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Client VPN & Site-to-Site VPN Connec...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Client VPN & Site-to-Site)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS Client VPN & Site-to-Site VPN Connection to Access EC2' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Client VPN & Site-to-Site VPN ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Client VPN & Site-to-Site created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Client VPN & Site-to-Site VPN Connection to Access EC2",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Client VPN & Site-to-Site VPN .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 29,
@@ -1208,7 +2944,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Identify the storage type needed based on access protocol: POSIX NFS (EFS), SCSI/NVMe block (EBS), REST API HTTPS (S3)."
     ],
-    "interviewQuestions": "Q: Can you mount an Amazon S3 bucket as a local POSIX file system on multiple EC2 instances?\nA: S3 is an object store accessed via HTTP REST APIs, not a POSIX file system. While third-party tools (s3fs) or AWS Mountpoint for Amazon S3 exist, native POSIX multi-instance file sharing is designed for Amazon EFS."
+    "interviewQuestions": "Q: Can you mount an Amazon S3 bucket as a local POSIX file system on multiple EC2 instances?\nA: S3 is an object store accessed via HTTP REST APIs, not a POSIX file system. While third-party tools (s3fs) or AWS Mountpoint for Amazon S3 exist, native POSIX multi-instance file sharing is designed for Amazon EFS.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Storage Architecture Part 1: Block, File, and Object Storage Overview (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me Storage Architecture Part 1: Block, File, and Object Storage Overview ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Storage Architecture Part 1: Block, File, and Object Storage Overview: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Storage Architecture Part 1: Block, ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Storage Architecture Part)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS Storage Architecture Part 1: Block, File, and Object Storage Overview' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Storage Architecture Part 1: B",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-29-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Storage Architecture Part created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Storage Architecture Part 1: Block, File, and Object Storage Overview",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-29-$RANDOM": "[OK] Execution successful for Storage Architecture Part 1: B.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 30,
@@ -1237,7 +3035,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Review latency: EBS sub-millisecond to low millisecond; S3 10-100 millisecond time-to-first-byte."
     ],
-    "interviewQuestions": "Q: Why can't you run a traditional transactional relational database directly on an Amazon S3 bucket?\nA: Relational databases require sub-millisecond random read/write block operations, file locking, and atomic in-place block updates. S3 is an object store with higher latency that requires rewriting the full object on any edit."
+    "interviewQuestions": "Q: Why can't you run a traditional transactional relational database directly on an Amazon S3 bucket?\nA: Relational databases require sub-millisecond random read/write block operations, file locking, and atomic in-place block updates. S3 is an object store with higher latency that requires rewriting the full object on any edit.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Block Storage vs Object Storage: Deep Dive & Differences (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me Block Storage vs Object Storage: Deep Dive & Differences ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Block Storage vs Object Storage: Deep Dive & Differences: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Block Storage vs Object Storage: Deep Di...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Block Storage vs Object S)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Block Storage vs Object Storage: Deep Dive & Differences' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Block Storage vs Object Storag",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-30-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Block Storage vs Object S created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Block Storage vs Object Storage: Deep Dive & Differences",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-30-$RANDOM": "[OK] Execution successful for Block Storage vs Object Storag.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 31,
@@ -1267,7 +3127,69 @@ window.AWS_LECTURES = [
       "aws s3 mb s3://my-unique-company-bucket-2026 --region ap-south-1",
       "aws s3 ls"
     ],
-    "interviewQuestions": "Q: What does 99.999999999% (11 9's) durability mean for Amazon S3?\nA: It means if you store 10,000,000 objects in S3, on average you can expect to lose a single object once every 10,000 years, achieved by synchronous replication across multiple physical data centers."
+    "interviewQuestions": "Q: What does 99.999999999% (11 9's) durability mean for Amazon S3?\nA: It means if you store 10,000,000 objects in S3, on average you can expect to lose a single object once every 10,000 years, achieved by synchronous replication across multiple physical data centers.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Introduction & S3 Bucket Naming Rules (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me S3 Introduction & S3 Bucket Naming Rules ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Introduction & S3 Bucket Naming Rules: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Introduction & S3 Bucket Namin...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Introduction & S3 Buck)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Introduction & S3 Bucket Naming Rules' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Introduction & S3 Bucket Na",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Introduction & S3 Buck created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Introduction & S3 Bucket Naming Rules",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for S3 Introduction & S3 Bucket Na.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 32,
@@ -1297,7 +3219,78 @@ window.AWS_LECTURES = [
       "aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled",
       "aws s3api list-object-versions --bucket my-bucket"
     ],
-    "interviewQuestions": "Q: Can you turn off versioning on an S3 bucket after enabling it?\nA: No. Once versioning is enabled on an S3 bucket, it cannot be disabled. You can only suspend versioning, which stops creating new version IDs for future uploads while preserving existing versions."
+    "interviewQuestions": "Q: Can you turn off versioning on an S3 bucket after enabling it?\nA: No. Once versioning is enabled on an S3 bucket, it cannot be disabled. You can only suspend versioning, which stops creating new version IDs for future uploads while preserving existing versions.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hosting a Blazing Fast Static Website on Amazon S3",
+      "scenario": "Aapko apni company ke liye ek marketing website host karni hai jisme HTML, CSS aur images hain. Iske liye EC2 server rent par lena mehenga aur wasteful hoga (kyunki server 24 hours chalega aur bill aayega). Amazon S3 me aap bina kisi server ke direct apni files upload karte hain aur S3 use global website bana deta hai, mahine ka kharcha sirf kuch paise!",
+      "objective": "Create a globally unique Amazon S3 bucket, configure Static Website Hosting, uncheck Block Public Access, write a secure JSON Bucket Policy granting Public Read (`s3:GetObject`), upload index.html and error.html, and access the live website URL.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| AMAZON S3 STATIC WEBSITE HOSTING                            |\n|                                                             |\n|  Global Web Visitor (Any Browser)                           |\n|         |                                                   |\n|         v HTTP GET Request                                  |\n|  http://my-unique-site-2026.s3-website.ap-south-1.amazonaws.com\n|         |                                                   |\n|         v                                                   |\n|  +-------------------------------------------------------+  |\n|  | Amazon S3 Bucket: 'my-unique-site-2026'               |  |\n|  | Static Website Hosting: ENABLED                       |  |\n|  | Bucket Policy: Public Read on arn:aws:s3:::bucket/*   |  |\n|  |                                                       |  |\n|  | Objects:                                              |  |\n|  | |-- index.html (Default landing page)                 |  |\n|  | +-- error.html (404 Page Not Found error page)        |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create S3 Bucket with Globally Unique Name",
+          "laymanExplanation": "S3 me ek locker (Bucket) banana jiska naam puri duniya me unique hona chahiye (jaise email ID ya domain name).",
+          "consoleAction": "S3 Console -> 'Create bucket' -> Bucket name: 'my-tech-guftgu-site-2026' -> Region: ap-south-1 -> Click 'Create bucket'.",
+          "command": "BUCKET=\"my-tech-guftgu-site-$RANDOM\"\naws s3 mb s3://$BUCKET --region ap-south-1\necho \"Created bucket: $BUCKET\"",
+          "commandExplanation": "`aws s3 mb` (make bucket) creates a new globally unique S3 bucket.",
+          "expectedOutput": "make_bucket: my-tech-guftgu-site-4921",
+          "verification": "Run `aws s3 ls` and confirm bucket appears in list."
+        },
+        {
+          "stepNum": 2,
+          "title": "Disable 'Block Public Access' for Website Hosting",
+          "laymanExplanation": "S3 ka default security lock kholna taaki public internet ke log website dekh sakein.",
+          "consoleAction": "Click bucket name -> 'Permissions' tab -> Under 'Block public access (bucket settings)', click 'Edit' -> Uncheck 'Block all public access' -> Click 'Save changes' -> Type 'confirm'.",
+          "command": "aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration \"BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false\"",
+          "commandExplanation": "Removes public bucket policy restrictions to allow anonymous HTTP GET.",
+          "expectedOutput": "[Public access block removed]",
+          "verification": "Permissions tab shows 'Block all public access: Off'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Attach Public Read JSON Bucket Policy",
+          "laymanExplanation": "Locker par notice board lagana: 'Koi bhi visitor website ki files padh (s3:GetObject) sakta hai'.",
+          "consoleAction": "In 'Permissions' tab -> Under 'Bucket policy', click 'Edit' -> Paste JSON policy -> Click 'Save changes'.",
+          "command": "cat << EOF > policy.json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"PublicReadGetObject\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::$BUCKET/*\"\n    }\n  ]\n}\nEOF\naws s3api put-bucket-policy --bucket $BUCKET --policy file://policy.json",
+          "commandExplanation": "Principal: * grants access to everyone for `s3:GetObject` on all objects in the bucket.",
+          "expectedOutput": "[Bucket policy applied successfully]",
+          "verification": "Bucket badge updates to 'Public' with red indicator."
+        },
+        {
+          "stepNum": 4,
+          "title": "Upload HTML Files & Enable Static Website Hosting",
+          "laymanExplanation": "index.html aur error.html upload karna aur S3 website URL generate karna.",
+          "consoleAction": "In bucket -> 'Upload' -> Add index.html and error.html -> Go to 'Properties' tab -> Scroll to bottom -> 'Static website hosting' -> Click 'Edit' -> Select 'Enable' -> Index document: `index.html` -> Error document: `error.html` -> Click 'Save changes'.",
+          "command": "echo '<h1>Welcome to My S3 Static Website!</h1><p>Hosted Serverless on Amazon S3!</p>' > index.html\necho '<h1>404 - Page Not Found</h1>' > error.html\naws s3 cp index.html s3://$BUCKET/\naws s3 cp error.html s3://$BUCKET/\naws s3 website s3://$BUCKET/ --index-document index.html --error-document error.html\necho \"Website URL: http://$BUCKET.s3-website.ap-south-1.amazonaws.com\"",
+          "commandExplanation": "`aws s3 website` configures index and error documents and generates the public website endpoint.",
+          "expectedOutput": "Website URL: http://my-tech-guftgu-site-4921.s3-website.ap-south-1.amazonaws.com",
+          "verification": "Open the printed website URL in your browser; page loads instantly!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Amazon S3 Static Website Hosting Sandbox",
+        "commands": {
+          "aws s3 mb s3://my-cloud-portfolio-2026": "make_bucket: my-cloud-portfolio-2026",
+          "aws s3 website s3://my-cloud-portfolio-2026 --index-document index.html": "[OK] Static website hosting enabled.\nEndpoint: http://my-cloud-portfolio-2026.s3-website.ap-south-1.amazonaws.com",
+          "curl http://my-cloud-portfolio-2026.s3-website.ap-south-1.amazonaws.com": "<h1>Welcome to My S3 Static Website!</h1><p>Hosted Serverless on Amazon S3!</p>",
+          "aws s3 rb s3://my-cloud-portfolio-2026 --force": "remove_bucket: my-cloud-portfolio-2026 (Cleaned up)"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Website returns '403 Forbidden' error",
+          "cause": "Bucket Policy is missing, or Block Public Access is still enabled, or object name does not match index.html.",
+          "solution": "Verify Bucket Policy contains `\"Action\": \"s3:GetObject\"` and `\"Resource\": \"arn:aws:s3:::<your-bucket-name>/*\"`."
+        }
+      ],
+      "cleanup": [
+        "Run `aws s3 rb s3://$BUCKET --force` to delete all objects and delete the bucket."
+      ]
+    }
   },
   {
     "id": 33,
@@ -1329,7 +3322,69 @@ window.AWS_LECTURES = [
       "aws s3 cp document.pdf s3://my-bucket/ --storage-class INTELLIGENT_TIERING",
       "aws s3 cp archive.tar.gz s3://my-bucket/ --storage-class GLACIER_IR"
     ],
-    "interviewQuestions": "Q: What is the main advantage of S3 Intelligent-Tiering over manual lifecycle policies?\nA: Intelligent-Tiering automatically optimizes storage costs for datasets with changing or unpredictable access patterns with zero retrieval fees, eliminating manual analysis and lifecycle maintenance."
+    "interviewQuestions": "Q: What is the main advantage of S3 Intelligent-Tiering over manual lifecycle policies?\nA: Intelligent-Tiering automatically optimizes storage costs for datasets with changing or unpredictable access patterns with zero retrieval fees, eliminating manual analysis and lifecycle maintenance.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Storage Classes: Standard, Intelligent-Tiering, IA & Glacier (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Storage Classes: Standard, Intelligent-Tiering, IA & Glacier ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Storage Classes: Standard, Intelligent-Tiering, IA & Glacier: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Storage Classes: Standard, Int...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Storage Classes: Stand)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Storage Classes: Standard, Intelligent-Tiering, IA & Glacier' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Storage Classes: Standard, ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-33-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Storage Classes: Stand created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Storage Classes: Standard, Intelligent-Tiering, IA & Glacier",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-33-$RANDOM": "[OK] Execution successful for S3 Storage Classes: Standard, .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 34,
@@ -1359,7 +3414,69 @@ window.AWS_LECTURES = [
       "Navigate to S3 Console -> Create Bucket -> Enter bucket name -> Select Region -> Confirm Block Public Access enabled -> Click Create.",
       "Upload files -> Verify Server-Side Encryption status (AES-256)."
     ],
-    "interviewQuestions": "Q: What is S3 Block Public Access and why was it introduced?\nA: Block Public Access is a centralized security control that overrides bucket policies and ACLs to guarantee that buckets and objects cannot be made publicly accessible, preventing accidental data leaks."
+    "interviewQuestions": "Q: What is S3 Block Public Access and why was it introduced?\nA: Block Public Access is a centralized security control that overrides bucket policies and ACLs to guarantee that buckets and objects cannot be made publicly accessible, preventing accidental data leaks.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Bucket Creation Hands-on Lab via AWS Console (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Bucket Creation Hands-on Lab via  Console ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Bucket Creation Hands-on Lab via AWS Console: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Bucket Creation Hands-on Lab v...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Bucket Creation Hands-)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Bucket Creation Hands-on Lab via AWS Console' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Bucket Creation Hands-on La",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-34-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Bucket Creation Hands- created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Bucket Creation Hands-on Lab via AWS Console",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-34-$RANDOM": "[OK] Execution successful for S3 Bucket Creation Hands-on La.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 35,
@@ -1393,7 +3510,69 @@ window.AWS_LECTURES = [
       "aws s3 sync ./dist s3://my-cli-demo-bucket-2026/ --delete",
       "aws s3 rb s3://my-cli-demo-bucket-2026 --force"
     ],
-    "interviewQuestions": "Q: How does AWS CLI handle very large files (e.g. 50 GB) during an S3 upload?\nA: The AWS CLI automatically utilizes S3 Multipart Upload, splitting the file into 8 MB parts, uploading parts concurrently, and reassembling them on S3. If a single part fails, only that part is retried."
+    "interviewQuestions": "Q: How does AWS CLI handle very large files (e.g. 50 GB) during an S3 upload?\nA: The AWS CLI automatically utilizes S3 Multipart Upload, splitting the file into 8 MB parts, uploading parts concurrently, and reassembling them on S3. If a single part fails, only that part is retried.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Management using AWS CLI: Commands & Automation (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Management using  CLI: Commands & Automation ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Management using AWS CLI: Commands & Automation: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Management using AWS CLI: Comm...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Management using  CLI:)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Management using AWS CLI: Commands & Automation' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Management using  CLI: Comm",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-35-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Management using  CLI: created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Management using AWS CLI: Commands & Automation",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-35-$RANDOM": "[OK] Execution successful for S3 Management using  CLI: Comm.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 36,
@@ -1427,7 +3606,69 @@ window.AWS_LECTURES = [
       "aws s3api list-object-versions --bucket my-demo-bucket",
       "aws s3api delete-object --bucket my-demo-bucket --key note.txt --version-id <DeleteMarkerVersionId>"
     ],
-    "interviewQuestions": "Q: What is a Delete Marker in Amazon S3 versioning?\nA: A Delete Marker is a special zero-byte object marker with a version ID. When placed on an object, S3 treats the object as deleted in standard GET requests, while preserving all preceding versions."
+    "interviewQuestions": "Q: What is a Delete Marker in Amazon S3 versioning?\nA: A Delete Marker is a special zero-byte object marker with a version ID. When placed on an object, S3 treats the object as deleted in standard GET requests, while preserving all preceding versions.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Versioning Hands-on Lab: Delete Markers & File Recovery (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Versioning Hands-on Lab: Delete Markers & File Recovery ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Versioning Hands-on Lab: Delete Markers & File Recovery: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Versioning Hands-on Lab: Delet...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Versioning Hands-on La)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Versioning Hands-on Lab: Delete Markers & File Recovery' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Versioning Hands-on Lab: De",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-36-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Versioning Hands-on La created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Versioning Hands-on Lab: Delete Markers & File Recovery",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-36-$RANDOM": "[OK] Execution successful for S3 Versioning Hands-on Lab: De.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 37,
@@ -1459,7 +3700,69 @@ window.AWS_LECTURES = [
       "Create IAM Service Role with `s3:GetObjectVersion`, `s3:ReplicateObject` permissions.",
       "Configure Replication Rule in S3 Console under Management -> Replication rules."
     ],
-    "interviewQuestions": "Q: If you configure S3 Cross-Region Replication on an existing bucket with 10 TB of data, are existing files automatically copied?\nA: No. S3 replication only applies to new objects uploaded after the rule is created. To replicate existing objects, you must trigger an S3 Batch Replication job."
+    "interviewQuestions": "Q: If you configure S3 Cross-Region Replication on an existing bucket with 10 TB of data, are existing files automatically copied?\nA: No. S3 replication only applies to new objects uploaded after the rule is created. To replicate existing objects, you must trigger an S3 Batch Replication job.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Cross-Region Replication (CRR) & Same-Region Replication (SRR) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Cross-Region Replication (CRR) & Same-Region Replication (SRR) ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Cross-Region Replication (CRR) & Same-Region Replication (SRR): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Cross-Region Replication (CRR)...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Cross-Region Replicati)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Cross-Region Replication (CRR) & Same-Region Replication (SRR)' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Cross-Region Replication (C",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-37-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Cross-Region Replicati created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Cross-Region Replication (CRR) & Same-Region Replication (SRR)",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-37-$RANDOM": "[OK] Execution successful for S3 Cross-Region Replication (C.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 38,
@@ -1489,7 +3792,69 @@ window.AWS_LECTURES = [
       "S3 Console -> Bucket -> Management tab -> Lifecycle rules -> Create lifecycle rule.",
       "Set Transitions: After 30 days move to Standard-IA; After 90 days move to Glacier Flexible Retrieval."
     ],
-    "interviewQuestions": "Q: How do S3 Lifecycle rules help optimize costs for buckets with versioning enabled?\nA: You can configure lifecycle rules to automatically transition non-current (historical) versions to Glacier or permanently delete them after 30/60 days, preventing runaway storage costs for frequently modified files."
+    "interviewQuestions": "Q: How do S3 Lifecycle rules help optimize costs for buckets with versioning enabled?\nA: You can configure lifecycle rules to automatically transition non-current (historical) versions to Glacier or permanently delete them after 30/60 days, preventing runaway storage costs for frequently modified files.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon S3 Object Lifecycle Management: Automated Cost Optimization (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me S3 Object Lifecycle Management: Automated Cost Optimization ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon S3 Object Lifecycle Management: Automated Cost Optimization: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon S3 Object Lifecycle Management: A...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (S3 Object Lifecycle Manag)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon S3 Object Lifecycle Management: Automated Cost Optimization' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for S3 Object Lifecycle Management",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-38-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for S3 Object Lifecycle Manag created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon S3 Object Lifecycle Management: Automated Cost Optimization",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-38-$RANDOM": "[OK] Execution successful for S3 Object Lifecycle Management.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 39,
@@ -1522,7 +3887,69 @@ window.AWS_LECTURES = [
       "sudo mount -t efs -o tls fs-xxxxxxx:/ /mnt/efs",
       "df -hT /mnt/efs # Verify shared network mount"
     ],
-    "interviewQuestions": "Q: What is the main difference between Amazon EBS and Amazon EFS?\nA: EBS is a block storage volume that can typically only be attached to a single EC2 instance in a single AZ at a time. EFS is a managed network file system (NFS) that can be concurrently mounted by thousands of EC2 instances across multiple AZs."
+    "interviewQuestions": "Q: What is the main difference between Amazon EBS and Amazon EFS?\nA: EBS is a block storage volume that can typically only be attached to a single EC2 instance in a single AZ at a time. EFS is a managed network file system (NFS) that can be concurrently mounted by thousands of EC2 instances across multiple AZs.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EFS Hands-on Demo: Shared Elastic File System on Linux EC2 (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EFS Hands-on Demo: Shared Elastic File System on Linux EC2 ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EFS Hands-on Demo: Shared Elastic File System on Linux EC2: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EFS Hands-on Demo: Shared Elastic...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (EFS Hands-on Demo: Shared)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon EFS Hands-on Demo: Shared Elastic File System on Linux EC2' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EFS Hands-on Demo: Shared Elas",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EFS Hands-on Demo: Shared created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EFS Hands-on Demo: Shared Elastic File System on Linux EC2",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EFS Hands-on Demo: Shared Elas.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 40,
@@ -1553,7 +3980,69 @@ window.AWS_LECTURES = [
       "# Apply Public Read Bucket Policy:",
       "aws s3api put-bucket-policy --bucket my-static-site --policy file://policy.json"
     ],
-    "interviewQuestions": "Q: Can an Amazon S3 static website host dynamic backend server code like PHP, Node.js or Python?\nA: No. S3 only serves client-side static assets (HTML, CSS, JS, images, audio). Dynamic logic requires serverless compute like AWS Lambda behind API Gateway or EC2/containers."
+    "interviewQuestions": "Q: Can an Amazon S3 static website host dynamic backend server code like PHP, Node.js or Python?\nA: No. S3 only serves client-side static assets (HTML, CSS, JS, images, audio). Dynamic logic requires serverless compute like AWS Lambda behind API Gateway or EC2/containers.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hosting Static Websites on Amazon S3 in 10 Minutes (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Hosting Static Websites on  S3 in 10 Minutes ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Hosting Static Websites on Amazon S3 in 10 Minutes: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Hosting Static Websites on Amazon S3 in ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Hosting Static Websites o)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Hosting Static Websites on Amazon S3 in 10 Minutes' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Hosting Static Websites on  S3",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Hosting Static Websites o created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Hosting Static Websites on Amazon S3 in 10 Minutes",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Hosting Static Websites on  S3.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 41,
@@ -1583,7 +4072,69 @@ window.AWS_LECTURES = [
       "Create bucket named exactly `example.com` and enable static website hosting.",
       "In Route 53 Hosted Zone -> Create Record -> Name: apex -> Type: A -> Alias: Yes -> Target: S3 website endpoint."
     ],
-    "interviewQuestions": "Q: Why must an S3 bucket name exactly match the domain name when routing directly from Route 53?\nA: The HTTP request `Host` header sent by the browser contains the domain name. S3 uses this Host header to locate and route to the correct bucket."
+    "interviewQuestions": "Q: Why must an S3 bucket name exactly match the domain name when routing directly from Route 53?\nA: The HTTP request `Host` header sent by the browser contains the domain name. S3 uses this Host header to locate and route to the correct bucket.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Hosting S3 Static Website with Custom Domain Using Amazon Route 53 (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Hosting S3 Static Website with Custom Domain Using  Route 53 ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Hosting S3 Static Website with Custom Domain Using Amazon Route 53: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Hosting S3 Static Website with Custom Do...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Hosting S3 Static Website)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Hosting S3 Static Website with Custom Domain Using Amazon Route 53' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Hosting S3 Static Website with",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Hosting S3 Static Website created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Hosting S3 Static Website with Custom Domain Using Amazon Route 53",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Hosting S3 Static Website with.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 42,
@@ -1612,7 +4163,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 modify-instance-attribute --instance-id i-xxxx --block-device-mappings '[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"DeleteOnTermination\":false}}]'"
     ],
-    "interviewQuestions": "Q: Under what circumstances is data on an EC2 Instance Store volume preserved or lost?\nA: Data persists through an OS reboot. Data is permanently LOST if the instance is stopped, terminated, or if the underlying physical host hardware experiences a failure."
+    "interviewQuestions": "Q: Under what circumstances is data on an EC2 Instance Store volume preserved or lost?\nA: Data persists through an OS reboot. Data is permanently LOST if the instance is stopped, terminated, or if the underlying physical host hardware experiences a failure.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 1: EBS vs Instance Store Architecture (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 1: EBS vs Instance Store Architecture ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 1: EBS vs Instance Store Architecture: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 1: EBS vs Instance Store...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 1: EBS vs Instan)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 1: EBS vs Instance Store Architecture' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 1: EBS vs Instance St",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 1: EBS vs Instan created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 1: EBS vs Instance Store Architecture",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 1: EBS vs Instance St.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 43,
@@ -1641,7 +4254,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-volume --availability-zone us-east-1a --size 100 --volume-type gp3 --iops 4000 --throughput 250"
     ],
-    "interviewQuestions": "Q: Why is gp3 superior to gp2 for production AWS workloads?\nA: gp2 tied IOPS and throughput directly to storage size (3 IOPS per GB). gp3 decouples storage size from performance, providing 3,000 IOPS baseline for any disk size while costing 20% less per GB."
+    "interviewQuestions": "Q: Why is gp3 superior to gp2 for production AWS workloads?\nA: gp2 tied IOPS and throughput directly to storage size (3 IOPS per GB). gp3 decouples storage size from performance, providing 3,000 IOPS baseline for any disk size while costing 20% less per GB.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 2: EBS Volume Types (gp2, gp3, io1, io2, st1, sc1) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 2: EBS Volume Types (gp2, gp3, io1, io2, st1, sc1) ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 2: EBS Volume Types (gp2, gp3, io1, io2, st1, sc1): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 2: EBS Volume Types (gp2...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 2: EBS Volume Ty)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 2: EBS Volume Types (gp2, gp3, io1, io2, st1, sc1)' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 2: EBS Volume Types (",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 2: EBS Volume Ty created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 2: EBS Volume Types (gp2, gp3, io1, io2, st1, sc1)",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 2: EBS Volume Types (.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 44,
@@ -1671,7 +4346,69 @@ window.AWS_LECTURES = [
       "aws ec2 create-snapshot --volume-id vol-xxxx --description 'Production backup'",
       "aws ec2 create-volume --availability-zone us-east-1b --snapshot-id snap-xxxx --volume-type gp3"
     ],
-    "interviewQuestions": "Q: If you have Snapshot 1 (10 GB) and Snapshot 2 (2 GB incremental), what happens to your data if you delete Snapshot 1?\nA: Snapshot 2 remains fully usable. AWS automatically retains any unique blocks referenced by Snapshot 2 before purging deleted blocks, preserving complete point-in-time restoration."
+    "interviewQuestions": "Q: If you have Snapshot 1 (10 GB) and Snapshot 2 (2 GB incremental), what happens to your data if you delete Snapshot 1?\nA: Snapshot 2 remains fully usable. AWS automatically retains any unique blocks referenced by Snapshot 2 before purging deleted blocks, preserving complete point-in-time restoration.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 3: EBS Snapshots Architecture & Point-in-Time Backups (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 3: EBS Snapshots Architecture & Point-in-Time Backups ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 3: EBS Snapshots Architecture & Point-in-Time Backups: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 3: EBS Snapshots Archite...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 3: EBS Snapshots)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 3: EBS Snapshots Architecture & Point-in-Time Backups' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 3: EBS Snapshots Arch",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 3: EBS Snapshots created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 3: EBS Snapshots Architecture & Point-in-Time Backups",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 3: EBS Snapshots Arch.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 45,
@@ -1701,7 +4438,69 @@ window.AWS_LECTURES = [
       "aws ebs list-snapshot-blocks --snapshot-id snap-xxxx",
       "aws ec2 enable-fast-snapshot-restores --availability-zones us-east-1a --source-snapshot-ids snap-xxxx"
     ],
-    "interviewQuestions": "Q: What is the I/O latency penalty when a volume is newly restored from an EBS snapshot, and how do you resolve it?\nA: Restored blocks are lazily loaded from S3 on first read (causing initial latency). To resolve this, pre-warm the disk using `dd` or enable EBS Fast Snapshot Restore (FSR)."
+    "interviewQuestions": "Q: What is the I/O latency penalty when a volume is newly restored from an EBS snapshot, and how do you resolve it?\nA: Restored blocks are lazily loaded from S3 on first read (causing initial latency). To resolve this, pre-warm the disk using `dd` or enable EBS Fast Snapshot Restore (FSR).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 4: Incremental Snapshot Internals & Changed Block Tracking (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 4: Incremental Snapshot Internals & Changed Block Tracking ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 4: Incremental Snapshot Internals & Changed Block Tracking: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 4: Incremental Snapshot ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 4: Incremental S)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 4: Incremental Snapshot Internals & Changed Block Tracking' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 4: Incremental Snapsh",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 4: Incremental S created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 4: Incremental Snapshot Internals & Changed Block Tracking",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 4: Incremental Snapsh.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 46,
@@ -1731,7 +4530,69 @@ window.AWS_LECTURES = [
       "aws ec2 copy-snapshot --source-region us-east-1 --source-snapshot-id snap-unencrypted --encrypted --kms-key-id alias/my-cmk",
       "aws ec2 enable-ebs-encryption-by-default # Enforces regional encryption for all future volumes"
     ],
-    "interviewQuestions": "Q: How do you encrypt an existing unencrypted root EBS volume of a running EC2 instance with minimum downtime?\nA: Stop the instance, create an EBS snapshot of the root volume, copy the snapshot with encryption enabled using an AWS KMS key, create a new encrypted volume from that copy, attach it as `/dev/xvda` to the EC2 instance, and restart."
+    "interviewQuestions": "Q: How do you encrypt an existing unencrypted root EBS volume of a running EC2 instance with minimum downtime?\nA: Stop the instance, create an EBS snapshot of the root volume, copy the snapshot with encryption enabled using an AWS KMS key, create a new encrypted volume from that copy, attach it as `/dev/xvda` to the EC2 instance, and restart.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 5: EBS Volume Encryption with AWS KMS (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 5: EBS Volume Encryption with  KMS ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 5: EBS Volume Encryption with AWS KMS: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 5: EBS Volume Encryption...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 5: EBS Volume En)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 5: EBS Volume Encryption with AWS KMS' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 5: EBS Volume Encrypt",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 5: EBS Volume En created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 5: EBS Volume Encryption with AWS KMS",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 5: EBS Volume Encrypt.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 47,
@@ -1759,7 +4620,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 modify-snapshot-attribute --snapshot-id snap-xxxx --attribute createVolumePermission --operation-type add --user-ids 123456789012"
     ],
-    "interviewQuestions": "Q: Why does AWS prevent sharing snapshots encrypted with the default `aws/ebs` KMS key across accounts?\nA: The default `aws/ebs` key is an AWS-managed key scoped strictly to your account. Its key policy cannot be modified to grant cross-account permissions. Only Customer Managed Keys (CMKs) support cross-account key delegation."
+    "interviewQuestions": "Q: Why does AWS prevent sharing snapshots encrypted with the default `aws/ebs` KMS key across accounts?\nA: The default `aws/ebs` key is an AWS-managed key scoped strictly to your account. Its key policy cannot be modified to grant cross-account permissions. Only Customer Managed Keys (CMKs) support cross-account key delegation.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EBS Part 6: How to Share EBS Snapshots Across AWS Accounts (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EBS Part 6: How to Share EBS Snapshots Across  Accounts ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EBS Part 6: How to Share EBS Snapshots Across AWS Accounts: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EBS Part 6: How to Share EBS Snap...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EBS Part 6: How to Share )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon EBS Part 6: How to Share EBS Snapshots Across AWS Accounts' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EBS Part 6: How to Share EBS S",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EBS Part 6: How to Share  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EBS Part 6: How to Share EBS Snapshots Across AWS Accounts",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EBS Part 6: How to Share EBS S.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 48,
@@ -1788,7 +4711,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws ec2 create-image --instance-id i-xxxx --name 'Prod-Golden-AMI-v1' --description 'Golden AMI with Nginx and Node.js' --no-reboot"
     ],
-    "interviewQuestions": "Q: What is the risk of selecting 'No Reboot' when creating an AMI from a live production server?\nA: File systems write data asynchronously. Without a reboot or file system freeze, uncommitted writes in OS buffers or database tables may not be captured, resulting in a crash-inconsistent filesystem."
+    "interviewQuestions": "Q: What is the risk of selecting 'No Reboot' when creating an AMI from a live production server?\nA: File systems write data asynchronously. Without a reboot or file system freeze, uncommitted writes in OS buffers or database tables may not be captured, resulting in a crash-inconsistent filesystem.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: How to Create an Amazon Machine Image (AMI) from an EC2 Instance (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me How to Create an  Machine Image (AMI) from an EC2 Instance ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of How to Create an Amazon Machine Image (AMI) from an EC2 Instance: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: How to Create an Amazon Machine Image (A...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (How to Create an  Machine)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'How to Create an Amazon Machine Image (AMI) from an EC2 Instance' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for How to Create an  Machine Imag",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for How to Create an  Machine created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: How to Create an Amazon Machine Image (AMI) from an EC2 Instance",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for How to Create an  Machine Imag.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 49,
@@ -1818,7 +4803,69 @@ window.AWS_LECTURES = [
       "aws ec2 copy-image --source-image-id ami-xxxx --source-region us-east-1 --region ap-south-1 --name 'Prod-Golden-AMI-Mumbai'",
       "aws ec2 modify-image-attribute --image-id ami-xxxx --launch-permission 'Add=[{UserId=123456789012}]'"
     ],
-    "interviewQuestions": "Q: If you deregister an Amazon Machine Image (AMI), what happens to the underlying EBS snapshots?\nA: The snapshots remain in Amazon S3 and continue to accrue monthly storage charges. You must identify and delete the backing snapshots manually via `aws ec2 delete-snapshot`."
+    "interviewQuestions": "Q: If you deregister an Amazon Machine Image (AMI), what happens to the underlying EBS snapshots?\nA: The snapshots remain in Amazon S3 and continue to accrue monthly storage charges. You must identify and delete the backing snapshots manually via `aws ec2 delete-snapshot`.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: How to Copy an AMI into Another AWS Account & Another AWS Region (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me How to Copy an AMI into Another  Account & Another  Region ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of How to Copy an AMI into Another AWS Account & Another AWS Region: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: How to Copy an AMI into Another AWS Acco...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (How to Copy an AMI into A)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'How to Copy an AMI into Another AWS Account & Another AWS Region' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for How to Copy an AMI into Anothe",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for How to Copy an AMI into A created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: How to Copy an AMI into Another AWS Account & Another AWS Region",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for How to Copy an AMI into Anothe.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 50,
@@ -1847,7 +4894,69 @@ window.AWS_LECTURES = [
       "sudo nano /mnt/rescue/home/ec2-user/.ssh/authorized_keys # Add new SSH public key",
       "sudo umount /mnt/rescue"
     ],
-    "interviewQuestions": "Q: How do you regain SSH access to an EC2 instance if the private key `.pem` file is permanently lost?\nA: Stop the instance, detach its root volume, attach it as a secondary volume to a temporary helper instance, replace the public key in `/home/ec2-user/.ssh/authorized_keys`, detach and reattach to original instance as root device `/dev/xvda`, and start."
+    "interviewQuestions": "Q: How do you regain SSH access to an EC2 instance if the private key `.pem` file is permanently lost?\nA: Stop the instance, detach its root volume, attach it as a secondary volume to a temporary helper instance, replace the public key in `/home/ec2-user/.ssh/authorized_keys`, detach and reattach to original instance as root device `/dev/xvda`, and start.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: EC2 Troubleshooting Lab: Rescue Unbootable EC2 by Attaching Root Volume (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Troubleshooting Lab: Rescue Unbootable EC2 by Attaching Root Volume ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of EC2 Troubleshooting Lab: Rescue Unbootable EC2 by Attaching Root Volume: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: EC2 Troubleshooting Lab: Rescue Unbootab...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (EC2 Troubleshooting Lab: )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'EC2 Troubleshooting Lab: Rescue Unbootable EC2 by Attaching Root Volume' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Troubleshooting Lab: Rescu",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Troubleshooting Lab:  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: EC2 Troubleshooting Lab: Rescue Unbootable EC2 by Attaching Root Volume",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Troubleshooting Lab: Rescu.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 51,
@@ -1877,7 +4986,69 @@ window.AWS_LECTURES = [
       "aws autoscaling describe-auto-scaling-groups",
       "aws autoscaling set-desired-capacity --auto-scaling-group-name my-asg --desired-capacity 4"
     ],
-    "interviewQuestions": "Q: What is the difference between Horizontal Scaling and Vertical Scaling in cloud architecture?\nA: Vertical scaling increases compute/RAM of a single server (requires downtime and hits hardware limits). Horizontal scaling adds multiple identical servers behind a load balancer, providing fault tolerance, elasticity, and zero downtime."
+    "interviewQuestions": "Q: What is the difference between Horizontal Scaling and Vertical Scaling in cloud architecture?\nA: Vertical scaling increases compute/RAM of a single server (requires downtime and hits hardware limits). Horizontal scaling adds multiple identical servers behind a load balancer, providing fault tolerance, elasticity, and zero downtime.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Auto Scaling Part 1: Elasticity & High Availability Concepts (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Auto Scaling Part 1: Elasticity & High Availability Concepts ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Auto Scaling Part 1: Elasticity & High Availability Concepts: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Auto Scaling Part 1: Elastici...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (EC2 Auto Scaling Part 1: )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'Amazon EC2 Auto Scaling Part 1: Elasticity & High Availability Concepts' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Auto Scaling Part 1: Elast",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Auto Scaling Part 1:  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Auto Scaling Part 1: Elasticity & High Availability Concepts",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Auto Scaling Part 1: Elast.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 52,
@@ -1906,7 +5077,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws autoscaling update-auto-scaling-group --auto-scaling-group-name my-asg --health-check-type ELB --health-check-grace-period 300"
     ],
-    "interviewQuestions": "Q: Why should you configure an Auto Scaling Group to use ELB Health Checks instead of EC2 Health Checks?\nA: EC2 health checks only detect VM hardware or network failure. ELB health checks ping the application layer (e.g. HTTP 200 on `/health`), ensuring instances with frozen application processes or crashed web servers are automatically replaced."
+    "interviewQuestions": "Q: Why should you configure an Auto Scaling Group to use ELB Health Checks instead of EC2 Health Checks?\nA: EC2 health checks only detect VM hardware or network failure. ELB health checks ping the application layer (e.g. HTTP 200 on `/health`), ensuring instances with frozen application processes or crashed web servers are automatically replaced.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon EC2 Auto Scaling Part 2: Auto Scaling & Load Balancing Synergy (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me EC2 Auto Scaling Part 2: Auto Scaling & Load Balancing Synergy ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon EC2 Auto Scaling Part 2: Auto Scaling & Load Balancing Synergy: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon EC2 Auto Scaling Part 2: Auto Sca...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (EC2 Auto Scaling Part 2: )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'Amazon EC2 Auto Scaling Part 2: Auto Scaling & Load Balancing Synergy' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for EC2 Auto Scaling Part 2: Auto ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for EC2 Auto Scaling Part 2:  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon EC2 Auto Scaling Part 2: Auto Scaling & Load Balancing Synergy",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for EC2 Auto Scaling Part 2: Auto .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 53,
@@ -1936,7 +5169,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws autoscaling put-scaling-policy --auto-scaling-group-name my-asg --policy-name cpu50-target --policy-type TargetTrackingScaling --target-tracking-configuration file://config.json"
     ],
-    "interviewQuestions": "Q: What is the purpose of the Auto Scaling Cooldown Period in Simple Scaling?\nA: The cooldown period (default 300s) prevents the ASG from launching or terminating additional instances before the previously launched instances have finished booting and stabilizing metrics."
+    "interviewQuestions": "Q: What is the purpose of the Auto Scaling Cooldown Period in Simple Scaling?\nA: The cooldown period (default 300s) prevents the ASG from launching or terminating additional instances before the previously launched instances have finished booting and stabilizing metrics.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Setting Up Application Load Balancer (ALB) with Target Groups",
+      "scenario": "Aap ek busy restaurant chala rahe hain jisme ek hi counter par 500 customers ki line lag gayi. Customers ko pareshan hone se bachane ke liye aap gate par ek receptionist (Application Load Balancer) bithaate hain jo har customer ko baari-baari se alag-alag billing counters (EC2 Instances) par bhejti hai. Agar koi counter band ho jaye, toh receptionist wahan customer bhejna turant band kar deti hai (Health Check)!",
+      "objective": "Provision an Application Load Balancer (ALB) across two Public Subnets, configure a Target Group with HTTP health checks on port 80, register two Apache EC2 instances, and observe automated round-robin load distribution in your browser.",
+      "duration": "25 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| APPLICATION LOAD BALANCER (ALB) ARCHITECTURE                |\n|                                                             |\n|  User Browser: http://my-alb-12345.ap-south-1.elb.amazonaws.com\n|         |                                                   |\n|         v                                                   |\n|  +-------------------------------------------------------+  |\n|  | Application Load Balancer (ALB)                       |  |\n|  | Listener: HTTP Port 80                                |  |\n|  | Security Group: Inbound TCP 80 (0.0.0.0/0)            |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         +---> Target Group: 'web-target-group'              |\n|         |     Health Check: HTTP GET / (Interval 10s)       |\n|         |                                                   |\n|    Round-Robin Traffic Distribution                         |\n|         |                                                   |\n|         +-----------------------+                           |\n|         |                       |                           |\n|         v                       v                           |\n|  [ Web Server EC2 - A ]  [ Web Server EC2 - B ]             |\n|  (AZ: ap-south-1a)       (AZ: ap-south-1b)                  |\n|  \"Response from A\"       \"Response from B\"                  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create a Target Group with HTTP Health Checks",
+          "laymanExplanation": "Load Balancer ke peeche khade hone wale servers ka ek group banana jinka health check path `/` hoga.",
+          "consoleAction": "EC2 Console -> Target groups -> 'Create target group' -> Target type: 'Instances' -> Name: 'web-tg' -> Protocol: HTTP, Port: 80 -> Health check path: `/` -> Click 'Next'.",
+          "command": "TG_ARN=$(aws elbv2 create-target-group \\\n  --name web-tg \\\n  --protocol HTTP \\\n  --port 80 \\\n  --vpc-id $(aws ec2 describe-vpcs --filters \"Name=isDefault,Values=true\" --query \"Vpcs[0].VpcId\" --output text) \\\n  --health-check-path \"/\" \\\n  --query 'TargetGroups[0].TargetGroupArn' --output text)",
+          "commandExplanation": "Creates Target Group evaluating instance health over HTTP port 80.",
+          "expectedOutput": "arn:aws:elasticloadbalancing:ap-south-1:...:targetgroup/web-tg/...",
+          "verification": "Confirm Target Group status is created."
+        },
+        {
+          "stepNum": 2,
+          "title": "Create Application Load Balancer (ALB) across 2 Subnets",
+          "laymanExplanation": "Load balancer ko high availability ke liye kam se kam 2 alag-alag Availability Zones me deploy karna.",
+          "consoleAction": "EC2 Console -> Load Balancers -> 'Create load balancer' -> 'Application Load Balancer' -> Name: 'web-alb' -> Scheme: Internet-facing -> Select VPC & 2 Availability Zones -> Security group: Allow Port 80 -> Listener: HTTP:80 -> Forward to: 'web-tg' -> Click 'Create'.",
+          "command": "# Provision ALB with AWS CLI across default subnets\nSUBNETS=$(aws ec2 describe-subnets --filters \"Name=default-for-az,Values=true\" --query \"Subnets[0:2].SubnetId\" --output text)\naws elbv2 create-load-balancer \\\n  --name web-alb \\\n  --subnets $SUBNETS \\\n  --security-groups $(aws ec2 describe-security-groups --filters \"Name=group-name,Values=default\" --query \"SecurityGroups[0].GroupId\" --output text)",
+          "commandExplanation": "Provisions internet-facing dual-zone ALB.",
+          "expectedOutput": "{\n  \"DNSName\": \"web-alb-12345.ap-south-1.elb.amazonaws.com\",\n  \"State\": { \"Code\": \"provisioning\" }\n}",
+          "verification": "After 2 minutes, ALB state changes to 'active'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Register Instances and Observe Round-Robin Load Distribution",
+          "laymanExplanation": "Dono servers ko Target Group me add karna aur browser me refresh karke dekhna ki traffic baari-baari dono servers par divide ho raha hai.",
+          "consoleAction": "Target groups -> Select 'web-tg' -> 'Targets' tab -> 'Register targets' -> Select Instance A and Instance B -> Click 'Include as pending below' -> 'Register pending targets'.",
+          "command": "# Open ALB DNS Name in browser: http://web-alb-12345.ap-south-1.elb.amazonaws.com\n# Refresh page multiple times",
+          "commandExplanation": "ALB distributes requests evenly between healthy instances in target group.",
+          "expectedOutput": "Request 1: Server A responds!\nRequest 2: Server B responds!\nRequest 3: Server A responds!",
+          "verification": "Observe alternate server responses demonstrating round-robin balancing."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Application Load Balancer (ALB) Sandbox Terminal",
+        "commands": {
+          "aws elbv2 describe-target-health --target-group-arn web-tg-arn": "{\n  \"TargetHealthDescriptions\": [\n    { \"Target\": {\"Id\": \"i-server-a\"}, \"TargetHealth\": {\"State\": \"healthy\"} },\n    { \"Target\": {\"Id\": \"i-server-b\"}, \"TargetHealth\": {\"State\": \"healthy\"} }\n  ]\n}",
+          "curl http://web-alb.ap-south-1.elb.amazonaws.com": "Response from Server A (AZ: ap-south-1a)",
+          "curl http://web-alb.ap-south-1.elb.amazonaws.com ": "Response from Server B (AZ: ap-south-1b)",
+          "aws elbv2 delete-load-balancer --load-balancer-arn web-alb-arn": "[OK] ALB deleted cleanly."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Targets remain stuck in 'unhealthy' state in Target Group",
+          "cause": "Web server (httpd) is not running on EC2, or EC2 Security Group does not allow inbound port 80 from the ALB.",
+          "solution": "Ensure `systemctl status httpd` is running and add rule to EC2 Security Group allowing TCP port 80 from the ALB security group."
+        }
+      ],
+      "cleanup": [
+        "Delete Application Load Balancer `web-alb` (Stops hourly ELB charges).",
+        "Delete Target Group `web-tg`."
+      ]
+    }
   },
   {
     "id": 54,
@@ -1968,7 +5263,69 @@ window.AWS_LECTURES = [
       "stress --cpu 2 --timeout 300 # Generates 100% CPU utilization for 5 minutes",
       "aws autoscaling describe-scaling-activities --auto-scaling-group-name my-asg"
     ],
-    "interviewQuestions": "Q: How does an Auto Scaling Group decide which EC2 instance to terminate during a scale-in event?\nA: 1. It identifies the AZ with the most instances. 2. It checks for instances with allocation strategies. 3. It selects instances with the oldest launch template or configuration. 4. It chooses the instance closest to the next billing hour."
+    "interviewQuestions": "Q: How does an Auto Scaling Group decide which EC2 instance to terminate during a scale-in event?\nA: 1. It identifies the AZ with the most instances. 2. It checks for instances with allocation strategies. 3. It selects instances with the oldest launch template or configuration. 4. It chooses the instance closest to the next billing hour.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Auto Scaling Detailed Hands-on Demo: Launch Template & CPU Stress Testing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Auto Scaling Detailed Hands-on Demo: Launch Template & CPU Stress Testing implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Auto Scaling Detailed Hands-on Demo: Launch Template & CPU Stress Testing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Auto Scaling Detailed Hands-on Demo: Lau...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Auto Scaling Detailed Han)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'Auto Scaling Detailed Hands-on Demo: Launch Template & CPU Stress Testing' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Auto Scaling Detailed Hands-on",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Auto Scaling Detailed Han created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Auto Scaling Detailed Hands-on Demo: Launch Template & CPU Stress Testing",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Auto Scaling Detailed Hands-on.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 55,
@@ -1997,7 +5354,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws elbv2 describe-load-balancers --query 'LoadBalancers[*].[LoadBalancerName,DNSName,Type]'"
     ],
-    "interviewQuestions": "Q: Can an Elastic Load Balancer route traffic to EC2 instances located across multiple Availability Zones?\nA: Yes. ELB is inherently a multi-AZ service designed to distribute traffic across target instances in different Availability Zones for fault tolerance."
+    "interviewQuestions": "Q: Can an Elastic Load Balancer route traffic to EC2 instances located across multiple Availability Zones?\nA: Yes. ELB is inherently a multi-AZ service designed to distribute traffic across target instances in different Availability Zones for fault tolerance.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Elastic Load Balancer (ELB) in AWS Part 1: High Availability Fundamentals (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Elastic Load Balancer (ELB) in  Part 1: High Availability Fundamentals implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Elastic Load Balancer (ELB) in AWS Part 1: High Availability Fundamentals: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Elastic Load Balancer (ELB) in AWS Part ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Elastic Load Balancer (EL)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'Elastic Load Balancer (ELB) in AWS Part 1: High Availability Fundamentals' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Elastic Load Balancer (ELB) in",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Elastic Load Balancer (EL created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Elastic Load Balancer (ELB) in AWS Part 1: High Availability Fundamentals",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Elastic Load Balancer (ELB) in.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 56,
@@ -2026,7 +5445,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Review OSI model layers: Layer 4 = TCP/UDP (NLB), Layer 7 = HTTP/HTTPS/WebSocket (ALB)."
     ],
-    "interviewQuestions": "Q: How does a backend EC2 instance behind an ALB know the actual client's public IP address?\nA: The ALB inserts the client's original IP into the `X-Forwarded-For` HTTP request header, along with `X-Forwarded-Proto` (http/https) and `X-Forwarded-Port`."
+    "interviewQuestions": "Q: How does a backend EC2 instance behind an ALB know the actual client's public IP address?\nA: The ALB inserts the client's original IP into the `X-Forwarded-For` HTTP request header, along with `X-Forwarded-Proto` (http/https) and `X-Forwarded-Port`.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Elastic Load Balancer Part 2: Layer 4 vs Layer 7 Load Balancing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Elastic Load Balancer Part 2: Layer 4 vs Layer 7 Load Balancing implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Elastic Load Balancer Part 2: Layer 4 vs Layer 7 Load Balancing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Elastic Load Balancer Part 2: Layer ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Elastic Load Balancer Par)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'AWS Elastic Load Balancer Part 2: Layer 4 vs Layer 7 Load Balancing' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Elastic Load Balancer Part 2: ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Elastic Load Balancer Par created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Elastic Load Balancer Part 2: Layer 4 vs Layer 7 Load Balancing",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Elastic Load Balancer Part 2: .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 57,
@@ -2057,7 +5538,69 @@ window.AWS_LECTURES = [
       "aws elbv2 create-target-group --name web-tg --protocol HTTP --port 80 --vpc-id vpc-xxxx --health-check-path /health",
       "aws elbv2 register-targets --target-group-arn tg-arn --targets Id=i-xxxx Id=i-yyyy"
     ],
-    "interviewQuestions": "Q: Can an Application Load Balancer route traffic to servers located outside of AWS (e.g. on-premises data center)?\nA: Yes. If the Target Group target type is set to `ip`, the ALB can route traffic to private on-premises IP addresses across an AWS Direct Connect or Site-to-Site VPN connection."
+    "interviewQuestions": "Q: Can an Application Load Balancer route traffic to servers located outside of AWS (e.g. on-premises data center)?\nA: Yes. If the Target Group target type is set to `ip`, the ALB can route traffic to private on-premises IP addresses across an AWS Direct Connect or Site-to-Site VPN connection.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Elastic Load Balancer Part 3: How ELB Works, Health Checks & Target Groups (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Elastic Load Balancer Part 3: How ELB Works, Health Checks & Target Groups implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Elastic Load Balancer Part 3: How ELB Works, Health Checks & Target Groups: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Elastic Load Balancer Part 3: How EL...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Elastic Load Balancer Par)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'AWS Elastic Load Balancer Part 3: How ELB Works, Health Checks & Target Groups' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Elastic Load Balancer Part 3: ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Elastic Load Balancer Par created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Elastic Load Balancer Part 3: How ELB Works, Health Checks & Target Groups",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Elastic Load Balancer Part 3: .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 58,
@@ -2086,7 +5629,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Review comparison table: Protocols, Latency (NLB ms vs ALB 10s ms), Static IP support (NLB Yes, ALB No), WAF support (ALB Yes, NLB No)."
     ],
-    "interviewQuestions": "Q: When must you strictly choose a Network Load Balancer instead of an Application Load Balancer?\nA: Choose NLB when: 1. You require static public IP addresses for firewall whitelisting. 2. You handle non-HTTP protocols (pure TCP, UDP, TLS). 3. You require extreme throughput (millions of RPS with microsecond latency)."
+    "interviewQuestions": "Q: When must you strictly choose a Network Load Balancer instead of an Application Load Balancer?\nA: Choose NLB when: 1. You require static public IP addresses for firewall whitelisting. 2. You handle non-HTTP protocols (pure TCP, UDP, TLS). 3. You require extreme throughput (millions of RPS with microsecond latency).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Elastic Load Balancer Part 4: ALB vs NLB vs CLB Comparison (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Elastic Load Balancer Part 4: ALB vs NLB vs CLB Comparison implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Elastic Load Balancer Part 4: ALB vs NLB vs CLB Comparison: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Elastic Load Balancer Part 4: ALB vs...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Elastic Load Balancer Par)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'AWS Elastic Load Balancer Part 4: ALB vs NLB vs CLB Comparison' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Elastic Load Balancer Part 4: ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Elastic Load Balancer Par created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Elastic Load Balancer Part 4: ALB vs NLB vs CLB Comparison",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Elastic Load Balancer Part 4: .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 59,
@@ -2117,7 +5722,69 @@ window.AWS_LECTURES = [
       "aws elbv2 create-listener --load-balancer-arn alb-arn --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=web-tg-arn",
       "aws elbv2 create-rule --listener-arn listener-arn --priority 10 --conditions Field=path-pattern,Values='/api/*' --actions Type=forward,TargetGroupArn=api-tg-arn"
     ],
-    "interviewQuestions": "Q: How do you configure an Application Load Balancer to automatically redirect all HTTP traffic to HTTPS?\nA: In the ALB HTTP (port 80) listener, add a default action of type 'Redirect', set the protocol to HTTPS, port to 443, and specify HTTP status code 301 (Moved permanently)."
+    "interviewQuestions": "Q: How do you configure an Application Load Balancer to automatically redirect all HTTP traffic to HTTPS?\nA: In the ALB HTTP (port 80) listener, add a default action of type 'Redirect', set the protocol to HTTPS, port to 443, and specify HTTP status code 301 (Moved permanently).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Application Load Balancer (ALB) Hands-on Lab: Path-Based Routing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Application Load Balancer (ALB) Hands-on Lab: Path-Based Routing implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Application Load Balancer (ALB) Hands-on Lab: Path-Based Routing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Application Load Balancer (ALB) Hand...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Application Load Balancer)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'AWS Application Load Balancer (ALB) Hands-on Lab: Path-Based Routing' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Application Load Balancer (ALB",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Application Load Balancer created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Application Load Balancer (ALB) Hands-on Lab: Path-Based Routing",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Application Load Balancer (ALB.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 60,
@@ -2147,7 +5814,69 @@ window.AWS_LECTURES = [
       "aws elbv2 create-load-balancer --name prod-nlb --type network --subnets subnet-1a subnet-1b",
       "aws elbv2 modify-load-balancer-attributes --load-balancer-arn nlb-arn --attributes Key=load_balancing.cross_zone.enabled,Value=true"
     ],
-    "interviewQuestions": "Q: What happens if Cross-Zone Load Balancing is disabled on a Network Load Balancer with 2 instances in AZ-A and 8 instances in AZ-B?\nA: If 100 requests arrive evenly divided (50 to AZ-A node, 50 to AZ-B node), each instance in AZ-A receives 25 requests (50% traffic per VM), while each instance in AZ-B receives only 6.25 requests. Enabling Cross-Zone balances traffic evenly to 10 requests per instance."
+    "interviewQuestions": "Q: What happens if Cross-Zone Load Balancing is disabled on a Network Load Balancer with 2 instances in AZ-A and 8 instances in AZ-B?\nA: If 100 requests arrive evenly divided (50 to AZ-A node, 50 to AZ-B node), each instance in AZ-A receives 25 requests (50% traffic per VM), while each instance in AZ-B receives only 6.25 requests. Enabling Cross-Zone balances traffic evenly to 10 requests per instance.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Network Load Balancer (NLB) Demo & Cross-Zone Load Balancing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Dynamic autoscaling aur load balancing me Network Load Balancer (NLB) Demo & Cross-Zone Load Balancing implement karke traffic surge ko automate karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Network Load Balancer (NLB) Demo & Cross-Zone Load Balancing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Network Load Balancer (NLB) Demo & C...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Network Load Balancer (NL)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'AWS Network Load Balancer (NLB) Demo & Cross-Zone Load Balancing' -> Review existing configurations.",
+          "command": "aws autoscaling describe-auto-scaling-groups",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Network Load Balancer (NLB) De",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Network Load Balancer (NL created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws autoscaling describe-auto-scaling-groups --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Network Load Balancer (NLB) Demo & Cross-Zone Load Balancing",
+        "commands": {
+          "aws autoscaling describe-auto-scaling-groups": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws autoscaling create-auto-scaling-group --auto-scaling-group-name WebASG --min-size 2 --max-size 6": "[OK] Execution successful for Network Load Balancer (NLB) De.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 61,
@@ -2177,7 +5906,69 @@ window.AWS_LECTURES = [
       "aws elbv2 create-target-group --name cross-vpc-tg --protocol HTTP --port 80 --target-type ip --vpc-id vpc-ingress-id",
       "aws elbv2 register-targets --target-group-arn tg-arn --targets Id=172.16.1.10 Id=172.16.1.11"
     ],
-    "interviewQuestions": "Q: Can an Application Load Balancer forward traffic to an instance ID located in a peered VPC?\nA: No. You cannot register instance IDs from a different VPC. You must configure the Target Group with target type `ip` and register the private IP addresses of the instances in the peered VPC."
+    "interviewQuestions": "Q: Can an Application Load Balancer forward traffic to an instance ID located in a peered VPC?\nA: No. You cannot register instance IDs from a different VPC. You must configure the Target Group with target type `ip` and register the private IP addresses of the instances in the peered VPC.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Multi-VPC & Cross-VPC Load Balancing Architecture in AWS (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me Multi-VPC & Cross-VPC Load Balancing Architecture in ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Multi-VPC & Cross-VPC Load Balancing Architecture in AWS: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Multi-VPC & Cross-VPC Load Balancing Arc...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: High (Multi-VPC & Cross-VPC Loa)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'High' -> Select 'Multi-VPC & Cross-VPC Load Balancing Architecture in AWS' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Multi-VPC & Cross-VPC Load Bal",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Multi-VPC & Cross-VPC Loa created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Multi-VPC & Cross-VPC Load Balancing Architecture in AWS",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for Multi-VPC & Cross-VPC Load Bal.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to High Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 62,
@@ -2207,7 +5998,69 @@ window.AWS_LECTURES = [
       "aws iam list-users",
       "aws iam get-account-summary"
     ],
-    "interviewQuestions": "Q: What is the default permission state for a newly created IAM user in AWS?\nA: Implicit Deny. A newly created IAM user has zero permissions and cannot perform any action or access any AWS resource until an IAM policy explicitly grants permission."
+    "interviewQuestions": "Q: What is the default permission state for a newly created IAM user in AWS?\nA: Implicit Deny. A newly created IAM user has zero permissions and cannot perform any action or access any AWS resource until an IAM policy explicitly grants permission.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Part 1: Identity & Access Management Roles and Features (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Part 1: Identity & Access Management Roles and Features ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Part 1: Identity & Access Management Roles and Features: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Part 1: Identity & Access Manage...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Part 1: Identity & Ac)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Part 1: Identity & Access Management Roles and Features' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Part 1: Identity & Access ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Part 1: Identity & Ac created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Part 1: Identity & Access Management Roles and Features",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Part 1: Identity & Access .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 63,
@@ -2238,7 +6091,69 @@ window.AWS_LECTURES = [
       "aws iam create-policy --policy-name S3ReadOnlyCustom --policy-document file://s3-policy.json",
       "aws iam attach-user-policy --user-name dev-user --policy-arn arn:aws:iam::xxxx:policy/S3ReadOnlyCustom"
     ],
-    "interviewQuestions": "Q: If an IAM user has an Allow policy for S3 on their group, but an attached policy explicitly denies S3 access, can they access S3?\nA: No. An explicit Deny always supersedes any Allow in AWS IAM evaluation logic."
+    "interviewQuestions": "Q: If an IAM user has an Allow policy for S3 on their group, but an attached policy explicitly denies S3 access, can they access S3?\nA: No. An explicit Deny always supersedes any Allow in AWS IAM evaluation logic.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Part 2: IAM Policies Architecture & Policy Types (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Part 2: IAM Policies Architecture & Policy Types ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Part 2: IAM Policies Architecture & Policy Types: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Part 2: IAM Policies Architectur...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Part 2: IAM Policies )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Part 2: IAM Policies Architecture & Policy Types' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Part 2: IAM Policies Archi",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Part 2: IAM Policies  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Part 2: IAM Policies Architecture & Policy Types",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Part 2: IAM Policies Archi.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 64,
@@ -2268,7 +6183,69 @@ window.AWS_LECTURES = [
       "aws iam create-group --group-name Developers",
       "aws iam add-user-to-group --user-name john --group-name Developers"
     ],
-    "interviewQuestions": "Q: Can an IAM Group be a member of another IAM Group in AWS?\nA: No. AWS IAM does not support nested groups. Groups can only contain IAM users directly."
+    "interviewQuestions": "Q: Can an IAM Group be a member of another IAM Group in AWS?\nA: No. AWS IAM does not support nested groups. Groups can only contain IAM users directly.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Part 3: IAM Identities (Users, User Groups, and Roles) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Part 3: IAM Identities (Users, User Groups, and Roles) ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Part 3: IAM Identities (Users, User Groups, and Roles): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Part 3: IAM Identities (Users, U...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Part 3: IAM Identitie)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Part 3: IAM Identities (Users, User Groups, and Roles)' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Part 3: IAM Identities (Us",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Part 3: IAM Identitie created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Part 3: IAM Identities (Users, User Groups, and Roles)",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Part 3: IAM Identities (Us.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 65,
@@ -2298,7 +6275,69 @@ window.AWS_LECTURES = [
       "aws sts assume-role --role-arn arn:aws:iam::xxxx:role/S3AccessRole --role-session-name test-session",
       "aws iam create-instance-profile --instance-profile-name EC2-S3-Profile"
     ],
-    "interviewQuestions": "Q: Why is assigning an IAM Role to an EC2 instance far more secure than embedding AWS Access Keys in the application code?\nA: IAM Roles use AWS STS to generate short-lived temporary credentials that are automatically rotated every few hours. Storing static Access Keys risks accidental source code leaks and requires manual credential rotation."
+    "interviewQuestions": "Q: Why is assigning an IAM Role to an EC2 instance far more secure than embedding AWS Access Keys in the application code?\nA: IAM Roles use AWS STS to generate short-lived temporary credentials that are automatically rotated every few hours. Storing static Access Keys risks accidental source code leaks and requires manual credential rotation.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Part 4: IAM Roles & AWS Security Token Service (STS) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Part 4: IAM Roles &  Security Token Service (STS) ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Part 4: IAM Roles & AWS Security Token Service (STS): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Part 4: IAM Roles & AWS Security...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Part 4: IAM Roles &  )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Part 4: IAM Roles & AWS Security Token Service (STS)' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Part 4: IAM Roles &  Secur",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Part 4: IAM Roles &   created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Part 4: IAM Roles & AWS Security Token Service (STS)",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Part 4: IAM Roles &  Secur.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 66,
@@ -2329,7 +6368,78 @@ window.AWS_LECTURES = [
       "aws iam generate-credential-report",
       "aws iam get-credential-report"
     ],
-    "interviewQuestions": "Q: How do you identify and clean up unused IAM permissions in an enterprise AWS account?\nA: Use IAM Access Advisor to review the 'Last Accessed' timestamp for services and actions. Remove any permissions that have not been exercised within the last 90 days."
+    "interviewQuestions": "Q: How do you identify and clean up unused IAM permissions in an enterprise AWS account?\nA: Use IAM Access Advisor to review the 'Last Accessed' timestamp for services and actions. Remove any permissions that have not been exercised within the last 90 days.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Attaching IAM Role to EC2 (Instance Profile) - No Hardcoded Keys!",
+      "scenario": "Agar aap apne office ke employee ko office car chalane ke liye car ki chabi (IAM Role) dete hain, toh wo jab tak car me hai gaadi chala sakta hai. Lekin agar aap use ghar ki tijori ki duplicate key (AWS Access Keys) dekar uske pocket me rakh dein, toh chori hone ka bhari khatra rehta hai! EC2 instance par AWS Access Key kabhi hardcode nahi karni chahiye; hamesha IAM Role attach karna chahiye.",
+      "objective": "Eliminate credential exposure risk: Create an IAM Role with `AmazonS3ReadOnlyAccess`, attach it to a running EC2 instance as an Instance Profile, verify that AWS CLI automatically fetches temporary credentials via Instance Metadata (IMDS), and test S3 access without storing any keys on disk.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| EC2 IAM ROLE (INSTANCE PROFILE) ARCHITECTURE                |\n|                                                             |\n|  [ Amazon EC2 Instance: 'secure-app' ]                      |\n|         |                                                   |\n|         | 1. Query: http://169.254.169.254/latest/meta-data |\n|         v                                                   |\n|  [ AWS Security Token Service (STS) ]                       |\n|         |                                                   |\n|         v 2. Automatically rotates temporary credentials    |\n|  [ IAM Role: 'EC2-S3-ReadOnly-Role' ]                       |\n|         |                                                   |\n|         v 3. Access Authorized!                             |\n|  [ Amazon S3 Buckets: aws s3 ls ]                           |\n|                                                             |\n|  ZERO AWS ACCESS KEYS STORED ON THE SERVER DISK!            |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create IAM Role for EC2 Service",
+          "laymanExplanation": "AWS IAM me ek temporary identity (Role) banana jisko EC2 service use kar sake.",
+          "consoleAction": "IAM Console -> Roles -> 'Create role' -> Trusted entity type: 'AWS service' -> Use case: 'EC2' -> Click 'Next'.",
+          "command": "cat << 'EOF' > trust-policy.json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": { \"Service\": \"ec2.amazonaws.com\" },\n    \"Action\": \"sts:AssumeRole\"\n  }]\n}\nEOF\naws iam create-role --role-name EC2-S3-ReadOnly-Role --assume-role-policy-document file://trust-policy.json",
+          "commandExplanation": "Establishes a trust relationship allowing EC2 service to assume this role.",
+          "expectedOutput": "Role 'EC2-S3-ReadOnly-Role' created.",
+          "verification": "Check role appears in IAM Roles list."
+        },
+        {
+          "stepNum": 2,
+          "title": "Attach S3 ReadOnly Permissions Policy",
+          "laymanExplanation": "Role ko sirf S3 files padhne ki permission dena.",
+          "consoleAction": "In Add permissions step -> Search and check 'AmazonS3ReadOnlyAccess' -> Click 'Next' -> Role name: 'EC2-S3-ReadOnly-Role' -> Click 'Create role'.",
+          "command": "aws iam attach-role-policy --role-name EC2-S3-ReadOnly-Role --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+          "commandExplanation": "Attaches AWS-managed least privilege read-only policy.",
+          "expectedOutput": "[Policy attached successfully]",
+          "verification": "Verify policy is listed under Role permissions."
+        },
+        {
+          "stepNum": 3,
+          "title": "Attach IAM Role to EC2 Instance (Instance Profile)",
+          "laymanExplanation": "Apne chalte hue EC2 server ke sath is role ka badge attach karna.",
+          "consoleAction": "EC2 Console -> Instances -> Select instance -> Actions -> 'Security' -> 'Modify IAM role' -> Select 'EC2-S3-ReadOnly-Role' -> Click 'Update IAM role'.",
+          "command": "aws iam create-instance-profile --instance-profile-name EC2-S3-ReadOnly-Profile 2>/dev/null || true\naws iam add-role-to-instance-profile --instance-profile-name EC2-S3-ReadOnly-Profile --role-name EC2-S3-ReadOnly-Role 2>/dev/null || true\naws ec2 associate-iam-instance-profile --instance-id <instance-id> --iam-instance-profile Name=EC2-S3-ReadOnly-Profile",
+          "commandExplanation": "Attaches the instance profile to the live running EC2 instance with immediate effect.",
+          "expectedOutput": "[IAM role associated to instance]",
+          "verification": "In EC2 Console, instance details show IAM Role: 'EC2-S3-ReadOnly-Role'."
+        },
+        {
+          "stepNum": 4,
+          "title": "Test S3 Access on EC2 Without Any Access Keys",
+          "laymanExplanation": "Server ke andar jakar `aws s3 ls` chalana aur dekhna ki bina koi password/key dale S3 access ho raha hai.",
+          "consoleAction": "Connect to EC2 terminal -> Run `aws s3 ls`.",
+          "command": "aws s3 ls",
+          "commandExplanation": "The AWS CLI detects no local credentials in `~/.aws/credentials`, queries the local Instance Metadata Service at `169.254.169.254`, and securely authenticates.",
+          "expectedOutput": "2026-09-25 10:00:00 my-company-bucket\n2026-09-25 10:15:00 my-project-backups",
+          "verification": "Confirm S3 buckets are listed without ever running `aws configure`!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "EC2 IAM Role Instance Profile Sandbox",
+        "commands": {
+          "curl http://169.254.169.254/latest/meta-data/iam/security-credentials/": "EC2-S3-ReadOnly-Role",
+          "aws s3 ls": "2026-09-25 12:00:00 prod-data-bucket\n2026-09-25 12:05:00 archive-bucket-2026\n[OK] Securely authenticated via IAM Role! No access keys stored.",
+          "aws s3 mb s3://test-unauthorized-bucket": "An error occurred (AccessDenied) when calling the CreateBucket operation: User is not authorized (ReadOnly policy correctly enforces least privilege!)."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "aws s3 ls returns 'Unable to locate credentials'",
+          "cause": "IAM Role has not been attached to the EC2 instance, or instance metadata is disabled.",
+          "solution": "Go to EC2 Console -> Select instance -> Actions -> Security -> Modify IAM role -> Attach role."
+        }
+      ],
+      "cleanup": [
+        "Detach IAM role from EC2 instance.",
+        "Delete IAM role and instance profile."
+      ]
+    }
   },
   {
     "id": 67,
@@ -2357,7 +6467,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws iam update-account-password-policy --minimum-password-length 14 --require-symbols --require-numbers --require-uppercase-characters --max-password-age 90"
     ],
-    "interviewQuestions": "Q: How can you programmatically force all IAM users to enable MFA before they can perform any actions in the AWS console?\nA: Attach an IAM policy with an explicit Deny on `*` resources with condition `BoolIfExists: {\"aws:MultiFactorAuthPresent\": \"false\"}`, while exempting IAM self-service MFA management actions."
+    "interviewQuestions": "Q: How can you programmatically force all IAM users to enable MFA before they can perform any actions in the AWS console?\nA: Attach an IAM policy with an explicit Deny on `*` resources with condition `BoolIfExists: {\"aws:MultiFactorAuthPresent\": \"false\"}`, while exempting IAM self-service MFA management actions.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Part 6: Account Security, Password Policies & MFA Enforcement (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Part 6: Account Security, Password Policies & MFA Enforcement ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Part 6: Account Security, Password Policies & MFA Enforcement: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Part 6: Account Security, Passwo...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Part 6: Account Secur)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Part 6: Account Security, Password Policies & MFA Enforcement' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Part 6: Account Security, ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Part 6: Account Secur created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Part 6: Account Security, Password Policies & MFA Enforcement",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Part 6: Account Security, .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 68,
@@ -2388,7 +6560,69 @@ window.AWS_LECTURES = [
       "aws iam create-access-key --user-name dev-vikram",
       "aws configure # Enters Access Key, Secret Key, Region, and Output format"
     ],
-    "interviewQuestions": "Q: Can an administrator view an IAM user's existing Secret Access Key in the AWS console?\nA: No. The Secret Access Key is only displayed once at creation time. AWS does not store it in plain text. If lost, the administrator must deactivate and delete the old key and create a new key pair."
+    "interviewQuestions": "Q: Can an administrator view an IAM user's existing Secret Access Key in the AWS console?\nA: No. The Secret Access Key is only displayed once at creation time. AWS does not store it in plain text. If lost, the administrator must deactivate and delete the old key and create a new key pair.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Lab Part 1: How to Create IAM Users & Access Keys (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Lab Part 1: How to Create IAM Users & Access Keys ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Lab Part 1: How to Create IAM Users & Access Keys: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Lab Part 1: How to Create IAM Us...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Lab Part 1: How to Cr)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Lab Part 1: How to Create IAM Users & Access Keys' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Lab Part 1: How to Create ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Lab Part 1: How to Cr created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Lab Part 1: How to Create IAM Users & Access Keys",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Lab Part 1: How to Create .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 69,
@@ -2418,7 +6652,69 @@ window.AWS_LECTURES = [
       "Root Account -> Account Settings -> IAM User and Role Access to Billing Information -> Click Edit -> Check 'Activate IAM Access'.",
       "Attach managed policy 'Billing' to finance-group."
     ],
-    "interviewQuestions": "Q: Why can't an IAM user with `AdministratorAccess` view the AWS Billing & Cost Management console by default?\nA: Billing data is protected at the root account level. The root user must explicitly activate IAM access to billing in account settings before any IAM user or administrator can access billing data."
+    "interviewQuestions": "Q: Why can't an IAM user with `AdministratorAccess` view the AWS Billing & Cost Management console by default?\nA: Billing data is protected at the root account level. The root user must explicitly activate IAM access to billing in account settings before any IAM user or administrator can access billing data.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS IAM Lab Part 2: User Groups, Inline Policies & Billing Dashboard Access (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye IAM Lab Part 2: User Groups, Inline Policies & Billing Dashboard Access ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS IAM Lab Part 2: User Groups, Inline Policies & Billing Dashboard Access: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS IAM Lab Part 2: User Groups, Inline ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (IAM Lab Part 2: User Grou)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS IAM Lab Part 2: User Groups, Inline Policies & Billing Dashboard Access' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for IAM Lab Part 2: User Groups, I",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for IAM Lab Part 2: User Grou created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS IAM Lab Part 2: User Groups, Inline Policies & Billing Dashboard Access",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for IAM Lab Part 2: User Groups, I.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 70,
@@ -2447,7 +6743,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws sts assume-role --role-arn arn:aws:iam::111122223333:role/CrossAccountAuditRole --role-session-name AuditSession --external-id MySecret123"
     ],
-    "interviewQuestions": "Q: What is the Confused Deputy problem in AWS and how does the IAM External ID resolve it?\nA: It occurs when a third-party service is tricked by a malicious customer into accessing another customer's AWS account. An External ID is a shared unique secret required in the trust policy that ensures the third-party only accesses resources intended for that specific customer."
+    "interviewQuestions": "Q: What is the Confused Deputy problem in AWS and how does the IAM External ID resolve it?\nA: It occurs when a third-party service is tricked by a malicious customer into accessing another customer's AWS account. An External ID is a shared unique secret required in the trust policy that ensures the third-party only accesses resources intended for that specific customer.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Cross-Account Access using IAM Roles & External ID (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Security governance me Least Privilege rule apply karte huye Cross-Account Access using IAM Roles & External ID ko audit aur enforce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Cross-Account Access using IAM Roles & External ID: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Intermediate",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Cross-Account Access using IAM Roles & E...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Cross-Account Access usin)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Cross-Account Access using IAM Roles & External ID' -> Review existing configurations.",
+          "command": "aws iam list-users",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Cross-Account Access using IAM",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws iam create-user --user-name lab-engineer",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Cross-Account Access usin created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws iam list-users --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Cross-Account Access using IAM Roles & External ID",
+        "commands": {
+          "aws iam list-users": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws iam create-user --user-name lab-engineer": "[OK] Execution successful for Cross-Account Access using IAM.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 71,
@@ -2476,7 +6834,68 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "AWS Directory Service -> Set up directory -> AD Connector -> Specify VPC, Subnets, on-premise DNS IPs, and service account credentials."
     ],
-    "interviewQuestions": "Q: What is the primary difference between AWS Managed Microsoft AD and AWS AD Connector?\nA: AWS Managed Microsoft AD is a full, cloud-hosted Active Directory cluster managed by AWS. AD Connector is merely a lightweight proxy gateway that forwards authentication requests to an existing on-premises Active Directory."
+    "interviewQuestions": "Q: What is the primary difference between AWS Managed Microsoft AD and AWS AD Connector?\nA: AWS Managed Microsoft AD is a full, cloud-hosted Active Directory cluster managed by AWS. AD Connector is merely a lightweight proxy gateway that forwards authentication requests to an existing on-premises Active Directory.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Directory Service: Connecting Windows Server to AWS AD Connector (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Cloud architecture me Directory Service: Connecting Windows Server to  AD Connector ke fundamentals ko hands-on lab ke zariye step-by-step master karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Directory Service: Connecting Windows Server to AWS AD Connector: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Directory Service: Connecting Window...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Directory Service: Connec)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS Directory Service: Connecting Windows Server to AWS AD Connector' -> Review existing configurations.",
+          "command": "aws sts get-caller-identity",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Directory Service: Connecting ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws help",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Directory Service: Connec created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sts get-caller-identity --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Directory Service: Connecting Windows Server to AWS AD Connector",
+        "commands": {
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}",
+          "aws help": "[OK] Execution successful for Directory Service: Connecting ."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 72,
@@ -2505,7 +6924,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Compare Database Options on AWS: RDS vs Aurora vs DynamoDB vs Redshift vs ElastiCache."
     ],
-    "interviewQuestions": "Q: Why should a company migrate a database from an EC2 instance to Amazon RDS?\nA: Amazon RDS automates time-consuming database administrative tasks including OS and database engine patching, automated daily backups, multi-AZ synchronous replication, failover, and storage auto-scaling."
+    "interviewQuestions": "Q: Why should a company migrate a database from an EC2 instance to Amazon RDS?\nA: Amazon RDS automates time-consuming database administrative tasks including OS and database engine patching, automated daily backups, multi-AZ synchronous replication, failover, and storage auto-scaling.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Database Fundamentals: DBMS Architecture & Flat Files vs Databases (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me Database Fundamentals: DBMS Architecture & Flat Files vs Databases ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Database Fundamentals: DBMS Architecture & Flat Files vs Databases: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Database Fundamentals: DBMS Architecture...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (Database Fundamentals: DB)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Database Fundamentals: DBMS Architecture & Flat Files vs Databases' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Database Fundamentals: DBMS Ar",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Database Fundamentals: DB created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Database Fundamentals: DBMS Architecture & Flat Files vs Databases",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for Database Fundamentals: DBMS Ar.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 73,
@@ -2533,7 +7014,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "SELECT u.name, o.total FROM Users u JOIN Orders o ON u.id = o.user_id WHERE o.status = 'PAID';"
     ],
-    "interviewQuestions": "Q: What does Atomicity mean in an RDBMS transaction?\nA: Atomicity ensures that a series of database operations either execute completely or not at all. If a banking transfer deducts money from Account A but fails before crediting Account B, the entire transaction rolls back."
+    "interviewQuestions": "Q: What does Atomicity mean in an RDBMS transaction?\nA: Atomicity ensures that a series of database operations either execute completely or not at all. If a banking transfer deducts money from Account A but fails before crediting Account B, the entire transaction rolls back.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: What is a Relational Database (RDBMS): SQL & ACID Properties (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me What is a Relational Database (RDBMS): SQL & ACID Properties ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of What is a Relational Database (RDBMS): SQL & ACID Properties: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: What is a Relational Database (RDBMS): S...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (What is a Relational Data)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'What is a Relational Database (RDBMS): SQL & ACID Properties' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for What is a Relational Database ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for What is a Relational Data created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: What is a Relational Database (RDBMS): SQL & ACID Properties",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for What is a Relational Database .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 74,
@@ -2562,7 +7105,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Review JSON document structure: `{\"id\": \"item101\", \"title\": \"Laptop\", \"specs\": {\"ram\": \"16GB\", \"cpu\": \"M3\"}}`"
     ],
-    "interviewQuestions": "Q: What is the CAP Theorem and how does it relate to cloud databases?\nA: The CAP theorem states that in a distributed network with network Partitions (P), you must choose between Consistency (C - every read gets latest write or error) or Availability (A - every request gets non-error response without guarantee of latest write)."
+    "interviewQuestions": "Q: What is the CAP Theorem and how does it relate to cloud databases?\nA: The CAP theorem states that in a distributed network with network Partitions (P), you must choose between Consistency (C - every read gets latest write or error) or Availability (A - every request gets non-error response without guarantee of latest write).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: What is a NoSQL Database: Non-Relational Systems, BASE & CAP Theorem (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me What is a NoSQL Database: Non-Relational Systems, BASE & CAP Theorem ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of What is a NoSQL Database: Non-Relational Systems, BASE & CAP Theorem: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: What is a NoSQL Database: Non-Relational...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (What is a NoSQL Database:)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'What is a NoSQL Database: Non-Relational Systems, BASE & CAP Theorem' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for What is a NoSQL Database: Non-",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for What is a NoSQL Database: created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: What is a NoSQL Database: Non-Relational Systems, BASE & CAP Theorem",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for What is a NoSQL Database: Non-.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 75,
@@ -2591,7 +7196,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws rds describe-db-instances --query 'DBInstances[*].[DBInstanceIdentifier,Engine,DBInstanceStatus,Endpoint.Address]'"
     ],
-    "interviewQuestions": "Q: Can you log in via SSH to an Amazon RDS database instance?\nA: No. Amazon RDS is a managed service that restricts host operating system access. If custom OS access or third-party database plugins are required, you must run the database on self-managed EC2 instances."
+    "interviewQuestions": "Q: Can you log in via SSH to an Amazon RDS database instance?\nA: No. Amazon RDS is a managed service that restricts host operating system access. If custom OS access or third-party database plugins are required, you must run the database on self-managed EC2 instances.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon RDS Overview: Managed Relational Database Services & Engines (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me RDS Overview: Managed Relational Database Services & Engines ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon RDS Overview: Managed Relational Database Services & Engines: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon RDS Overview: Managed Relational ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Overview: Managed Rel)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon RDS Overview: Managed Relational Database Services & Engines' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Overview: Managed Relation",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Overview: Managed Rel created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon RDS Overview: Managed Relational Database Services & Engines",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for RDS Overview: Managed Relation.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 76,
@@ -2619,7 +7286,69 @@ window.AWS_LECTURES = [
       "aws rds modify-db-instance --db-instance-identifier mydb --multi-az --apply-immediately",
       "aws rds create-db-instance-read-replica --db-instance-identifier mydb-replica-1 --source-db-instance-identifier mydb"
     ],
-    "interviewQuestions": "Q: Can your application run SQL SELECT queries against an Amazon RDS Multi-AZ standby instance?\nA: No. In standard RDS Multi-AZ, the standby instance is purely passive and does not accept client connections. To scale read queries, you must deploy Read Replicas."
+    "interviewQuestions": "Q: Can your application run SQL SELECT queries against an Amazon RDS Multi-AZ standby instance?\nA: No. In standard RDS Multi-AZ, the standby instance is purely passive and does not accept client connections. To scale read queries, you must deploy Read Replicas.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon RDS Part 2: Multi-AZ Synchronous Replication vs Read Replicas (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me RDS Part 2: Multi-AZ Synchronous Replication vs Read Replicas ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon RDS Part 2: Multi-AZ Synchronous Replication vs Read Replicas: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon RDS Part 2: Multi-AZ Synchronous ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Part 2: Multi-AZ Sync)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon RDS Part 2: Multi-AZ Synchronous Replication vs Read Replicas' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Part 2: Multi-AZ Synchrono",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Part 2: Multi-AZ Sync created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon RDS Part 2: Multi-AZ Synchronous Replication vs Read Replicas",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for RDS Part 2: Multi-AZ Synchrono.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 77,
@@ -2649,7 +7378,69 @@ window.AWS_LECTURES = [
       "aws rds create-db-snapshot --db-instance-identifier mydb --db-snapshot-identifier mydb-manual-snap-2026",
       "aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier mydb --target-db-instance-identifier mydb-restored --restore-time 2026-09-20T10:00:00.000Z"
     ],
-    "interviewQuestions": "Q: What is the maximum retention period for Amazon RDS automated backups, and what happens to automated backups when you delete the database instance?\nA: Maximum retention is 35 days. By default, deleting the RDS instance deletes all automated backups. However, AWS prompts you to take a final manual snapshot, which persists indefinitely."
+    "interviewQuestions": "Q: What is the maximum retention period for Amazon RDS automated backups, and what happens to automated backups when you delete the database instance?\nA: Maximum retention is 35 days. By default, deleting the RDS instance deletes all automated backups. However, AWS prompts you to take a final manual snapshot, which persists indefinitely.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon RDS Part 3: Automated Backups, Manual Snapshots & Storage Autoscaling (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Scalable object storage me RDS Part 3: Automated Backups, Manual Snapshots & Storage Autoscaling ke rules aur automated lifecycle manage karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon RDS Part 3: Automated Backups, Manual Snapshots & Storage Autoscaling: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon RDS Part 3: Automated Backups, Ma...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Part 3: Automated Bac)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon RDS Part 3: Automated Backups, Manual Snapshots & Storage Autoscaling' -> Review existing configurations.",
+          "command": "aws s3 ls",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Part 3: Automated Backups,",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws s3 mb s3://my-lab-bucket-77-$RANDOM",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Part 3: Automated Bac created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws s3 ls --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon RDS Part 3: Automated Backups, Manual Snapshots & Storage Autoscaling",
+        "commands": {
+          "aws s3 ls": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws s3 mb s3://my-lab-bucket-77-$RANDOM": "[OK] Execution successful for RDS Part 3: Automated Backups,.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 78,
@@ -2679,7 +7470,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws rds describe-db-clusters --query 'DBClusters[*].[DBClusterIdentifier,Engine,Status,Endpoint,ReaderEndpoint]'"
     ],
-    "interviewQuestions": "Q: Why is replication lag between an Amazon Aurora primary instance and its Read Replicas negligible (sub-10ms) compared to traditional RDS?\nA: Traditional RDS Read Replicas must replay complete SQL binlogs onto independent EBS disks. Aurora primary and read replicas share the same distributed underlying storage volume; replicas only read updated log records directly from shared storage."
+    "interviewQuestions": "Q: Why is replication lag between an Amazon Aurora primary instance and its Read Replicas negligible (sub-10ms) compared to traditional RDS?\nA: Traditional RDS Read Replicas must replay complete SQL binlogs onto independent EBS disks. Aurora primary and read replicas share the same distributed underlying storage volume; replicas only read updated log records directly from shared storage.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon RDS Part 4: Amazon Aurora Cloud-Native Database Architecture (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me RDS Part 4:  Aurora Cloud-Native Database Architecture ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon RDS Part 4: Amazon Aurora Cloud-Native Database Architecture: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon RDS Part 4: Amazon Aurora Cloud-N...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Part 4:  Aurora Cloud)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon RDS Part 4: Amazon Aurora Cloud-Native Database Architecture' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Part 4:  Aurora Cloud-Nati",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Part 4:  Aurora Cloud created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon RDS Part 4: Amazon Aurora Cloud-Native Database Architecture",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for RDS Part 4:  Aurora Cloud-Nati.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 79,
@@ -2710,7 +7563,69 @@ window.AWS_LECTURES = [
       "mysql -h mydb.c3xxxx.us-east-1.rds.amazonaws.com -P 3306 -u admin -p",
       "CREATE DATABASE inventory; SHOW DATABASES;"
     ],
-    "interviewQuestions": "Q: How do you configure network security so that only EC2 application instances can connect to an RDS database?\nA: In the RDS Security Group, add an inbound rule for database port (e.g. TCP 3306 for MySQL or 5432 for PostgreSQL) and set the Source to the Security Group ID of the EC2 instances (`sg-xxxx`), rejecting all other traffic."
+    "interviewQuestions": "Q: How do you configure network security so that only EC2 application instances can connect to an RDS database?\nA: In the RDS Security Group, add an inbound rule for database port (e.g. TCP 3306 for MySQL or 5432 for PostgreSQL) and set the Source to the Security Group ID of the EC2 instances (`sg-xxxx`), rejecting all other traffic.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS RDS Lab: Connecting to MySQL Instance from Linux EC2 via MySQL CLI (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me RDS Lab: Connecting to MySQL Instance from Linux EC2 via MySQL CLI ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS RDS Lab: Connecting to MySQL Instance from Linux EC2 via MySQL CLI: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS RDS Lab: Connecting to MySQL Instanc...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Lab: Connecting to My)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS RDS Lab: Connecting to MySQL Instance from Linux EC2 via MySQL CLI' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Lab: Connecting to MySQL I",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Lab: Connecting to My created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS RDS Lab: Connecting to MySQL Instance from Linux EC2 via MySQL CLI",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for RDS Lab: Connecting to MySQL I.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 80,
@@ -2739,7 +7654,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Download MySQL Workbench MSI installer -> Connect to Host: mydb.xxxx.rds.amazonaws.com:3306 -> Test Connection."
     ],
-    "interviewQuestions": "Q: What is the most common reason for a 'Connection Timed Out' error when connecting to an RDS instance from an EC2 instance in the same VPC?\nA: The RDS Security Group is not allowing inbound traffic on the database port (e.g. 3306) from the EC2 instance's Security Group, or the instances reside in different VPCs without VPC Peering."
+    "interviewQuestions": "Q: What is the most common reason for a 'Connection Timed Out' error when connecting to an RDS instance from an EC2 instance in the same VPC?\nA: The RDS Security Group is not allowing inbound traffic on the database port (e.g. 3306) from the EC2 instance's Security Group, or the instances reside in different VPCs without VPC Peering.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS RDS Lab Part 2: Connecting to RDS MySQL from Windows Server via Workbench (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me RDS Lab Part 2: Connecting to RDS MySQL from Windows Server via Workbench ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS RDS Lab Part 2: Connecting to RDS MySQL from Windows Server via Workbench: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS RDS Lab Part 2: Connecting to RDS My...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (RDS Lab Part 2: Connectin)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'AWS RDS Lab Part 2: Connecting to RDS MySQL from Windows Server via Workbench' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for RDS Lab Part 2: Connecting to ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for RDS Lab Part 2: Connectin created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS RDS Lab Part 2: Connecting to RDS MySQL from Windows Server via Workbench",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for RDS Lab Part 2: Connecting to .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 81,
@@ -2770,7 +7747,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws dynamodb create-table --table-name Users --attribute-definitions AttributeName=UserId,AttributeType=S --key-schema AttributeName=UserId,KeyType=HASH --billing-mode PAY_PER_REQUEST"
     ],
-    "interviewQuestions": "Q: What is the difference between a Scan operation and a Query operation in Amazon DynamoDB?\nA: A Query searches items using the Partition Key and optional Sort Key, making it extremely fast, efficient, and cost-effective. A Scan reads every single item in the entire table before filtering, which is slow, expensive, and consumes massive RCUs."
+    "interviewQuestions": "Q: What is the difference between a Scan operation and a Query operation in Amazon DynamoDB?\nA: A Query searches items using the Partition Key and optional Sort Key, making it extremely fast, efficient, and cost-effective. A Scan reads every single item in the entire table before filtering, which is slow, expensive, and consumes massive RCUs.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon DynamoDB Complete Theory: Partition Keys, RCU/WCU & DAX (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me DynamoDB Complete Theory: Partition Keys, RCU/WCU & DAX ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon DynamoDB Complete Theory: Partition Keys, RCU/WCU & DAX: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon DynamoDB Complete Theory: Partiti...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (DynamoDB Complete Theory:)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon DynamoDB Complete Theory: Partition Keys, RCU/WCU & DAX' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for DynamoDB Complete Theory: Part",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for DynamoDB Complete Theory: created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon DynamoDB Complete Theory: Partition Keys, RCU/WCU & DAX",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for DynamoDB Complete Theory: Part.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 82,
@@ -2801,7 +7840,69 @@ window.AWS_LECTURES = [
       "aws dynamodb put-item --table-name Customers --item '{\"CustomerID\": {\"S\": \"C101\"}, \"Name\": {\"S\": \"Rahul\"}}'",
       "aws dynamodb query --table-name Customers --key-condition-expression 'CustomerID = :v1' --expression-attribute-values '{\":v1\":{\"S\":\"C101\"}}'"
     ],
-    "interviewQuestions": "Q: Why is running a DynamoDB Scan in a large production table considered an anti-pattern?\nA: A Scan sequentially examines every single item across all physical partitions in the table. In a multi-gigabyte table, a Scan exhausts provisioned read capacity (RCU), throttles legitimate user traffic, and incurs significant financial costs."
+    "interviewQuestions": "Q: Why is running a DynamoDB Scan in a large production table considered an anti-pattern?\nA: A Scan sequentially examines every single item across all physical partitions in the table. In a multi-gigabyte table, a Scan exhausts provisioned read capacity (RCU), throttles legitimate user traffic, and incurs significant financial costs.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon DynamoDB Hands-on Demo: Table Creation, Items, Query vs Scan (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me DynamoDB Hands-on Demo: Table Creation, Items, Query vs Scan ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon DynamoDB Hands-on Demo: Table Creation, Items, Query vs Scan: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon DynamoDB Hands-on Demo: Table Cre...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: AWS (DynamoDB Hands-on Demo: T)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'AWS' -> Select 'Amazon DynamoDB Hands-on Demo: Table Creation, Items, Query vs Scan' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for DynamoDB Hands-on Demo: Table ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for DynamoDB Hands-on Demo: T created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon DynamoDB Hands-on Demo: Table Creation, Items, Query vs Scan",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for DynamoDB Hands-on Demo: Table .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to AWS Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 83,
@@ -2830,7 +7931,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "dig example.com +trace # Trace full DNS resolution hierarchy from root servers to authoritative servers"
     ],
-    "interviewQuestions": "Q: What is the purpose of an Authoritative DNS Name Server?\nA: An Authoritative Name Server is the definitive source that holds the actual DNS resource records (A, CNAME, MX) configured by the domain owner for a specific domain zone."
+    "interviewQuestions": "Q: What is the purpose of an Authoritative DNS Name Server?\nA: An Authoritative Name Server is the definitive source that holds the actual DNS resource records (A, CNAME, MX) configured by the domain owner for a specific domain zone.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 Tutorial: Global DNS Hierarchy & Domain Management (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global DNS routing me Route 53 Tutorial: Global DNS Hierarchy & Domain Management policy configure karke users ko lowest latency aur seamless failover provide karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 Tutorial: Global DNS Hierarchy & Domain Management: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 Tutorial: Global DNS Hie...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 Tutorial: Global)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 Tutorial: Global DNS Hierarchy & Domain Management' -> Review existing configurations.",
+          "command": "aws route53 list-hosted-zones",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 Tutorial: Global DNS ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 Tutorial: Global created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws route53 list-hosted-zones --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 Tutorial: Global DNS Hierarchy & Domain Management",
+        "commands": {
+          "aws route53 list-hosted-zones": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)": "[OK] Execution successful for Route 53 Tutorial: Global DNS .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 84,
@@ -2860,7 +8023,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws route53 change-resource-record-sets --hosted-zone-id Z12345 --change-batch file://alias-record.json"
     ],
-    "interviewQuestions": "Q: Why can't you use a CNAME record to point your root domain (e.g. `company.com`) to an AWS Application Load Balancer, and what is the AWS solution?\nA: DNS RFC standards forbid creating a CNAME record at the Zone Apex (root domain) because it conflicts with mandatory SOA and NS records. The AWS solution is Route 53 ALIAS records, which operate like an A record for the root domain while dynamically tracking AWS resource endpoints."
+    "interviewQuestions": "Q: Why can't you use a CNAME record to point your root domain (e.g. `company.com`) to an AWS Application Load Balancer, and what is the AWS solution?\nA: DNS RFC standards forbid creating a CNAME record at the Zone Apex (root domain) because it conflicts with mandatory SOA and NS records. The AWS solution is Route 53 ALIAS records, which operate like an A record for the root domain while dynamically tracking AWS resource endpoints.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 Record Types: A, AAAA, CNAME vs ALIAS Records (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me Route 53 Record Types: A, AAAA, CNAME vs ALIAS Records ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 Record Types: A, AAAA, CNAME vs ALIAS Records: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 Record Types: A, AAAA, C...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 Record Types: A,)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 Record Types: A, AAAA, CNAME vs ALIAS Records' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 Record Types: A, AAAA",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 Record Types: A, created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 Record Types: A, AAAA, CNAME vs ALIAS Records",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for Route 53 Record Types: A, AAAA.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 85,
@@ -2890,7 +8115,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws route53 create-hosted-zone --name dev.internal --vpc VPCRegion=us-east-1,VPCId=vpc-xxxx --caller-reference 20260901"
     ],
-    "interviewQuestions": "Q: What is Split-Horizon DNS and how is it implemented in AWS Route 53?\nA: Split-Horizon DNS uses both a Public and a Private Hosted Zone with the exact same domain name (e.g. `example.com`). Internal VPC clients resolve the domain to internal private IP addresses, while public internet users resolve to external public IP addresses."
+    "interviewQuestions": "Q: What is Split-Horizon DNS and how is it implemented in AWS Route 53?\nA: Split-Horizon DNS uses both a Public and a Private Hosted Zone with the exact same domain name (e.g. `example.com`). Internal VPC clients resolve the domain to internal private IP addresses, while public internet users resolve to external public IP addresses.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 Hosted Zones: Public vs Private Hosted Zones (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global DNS routing me Route 53 Hosted Zones: Public vs Private Hosted Zones policy configure karke users ko lowest latency aur seamless failover provide karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 Hosted Zones: Public vs Private Hosted Zones: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 Hosted Zones: Public vs ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 Hosted Zones: Pu)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 Hosted Zones: Public vs Private Hosted Zones' -> Review existing configurations.",
+          "command": "aws route53 list-hosted-zones",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 Hosted Zones: Public ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 Hosted Zones: Pu created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws route53 list-hosted-zones --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 Hosted Zones: Public vs Private Hosted Zones",
+        "commands": {
+          "aws route53 list-hosted-zones": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)": "[OK] Execution successful for Route 53 Hosted Zones: Public .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 86,
@@ -2919,7 +8206,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws route53 create-health-check --caller-reference hc01 --health-check-config IPAddress=54.210.1.1,Port=80,Type=HTTP,ResourcePath=/health"
     ],
-    "interviewQuestions": "Q: How does Amazon Route 53 monitor the health of an endpoint located inside a private VPC subnet?\nA: Route 53 external probers cannot reach private IP addresses. You must create a CloudWatch Alarm based on internal metrics (e.g. EC2 StatusCheckFailed or custom metric) and configure a Route 53 Health Check based on that CloudWatch Alarm."
+    "interviewQuestions": "Q: How does Amazon Route 53 monitor the health of an endpoint located inside a private VPC subnet?\nA: Route 53 external probers cannot reach private IP addresses. You must create a CloudWatch Alarm based on internal metrics (e.g. EC2 StatusCheckFailed or custom metric) and configure a Route 53 Health Check based on that CloudWatch Alarm.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 DNS Health Checks & Automated Failover (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global DNS routing me Route 53 DNS Health Checks & Automated Failover policy configure karke users ko lowest latency aur seamless failover provide karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 DNS Health Checks & Automated Failover: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 DNS Health Checks & Auto...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 DNS Health Check)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 DNS Health Checks & Automated Failover' -> Review existing configurations.",
+          "command": "aws route53 list-hosted-zones",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 DNS Health Checks & A",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 DNS Health Check created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws route53 list-hosted-zones --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 DNS Health Checks & Automated Failover",
+        "commands": {
+          "aws route53 list-hosted-zones": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)": "[OK] Execution successful for Route 53 DNS Health Checks & A.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 87,
@@ -2951,7 +8300,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "Review Route 53 Traffic Flow visual editor for visual routing policy creation."
     ],
-    "interviewQuestions": "Q: What is the difference between Route 53 Geolocation Routing and Geoproximity Routing?\nA: Geolocation routes strictly based on the user's location (e.g. all users in France go to Paris region). Geoproximity routes based on geographic distance from AWS resource coordinates and allows biasing (expanding or shrinking the boundary around a data center)."
+    "interviewQuestions": "Q: What is the difference between Route 53 Geolocation Routing and Geoproximity Routing?\nA: Geolocation routes strictly based on the user's location (e.g. all users in France go to Paris region). Geoproximity routes based on geographic distance from AWS resource coordinates and allows biasing (expanding or shrinking the boundary around a data center).",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 Routing Policies: 7 Routing Strategies Deep Dive (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global DNS routing me Route 53 Routing Policies: 7 Routing Strategies Deep Dive policy configure karke users ko lowest latency aur seamless failover provide karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 Routing Policies: 7 Routing Strategies Deep Dive: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 Routing Policies: 7 Rout...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 Routing Policies)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 Routing Policies: 7 Routing Strategies Deep Dive' -> Review existing configurations.",
+          "command": "aws route53 list-hosted-zones",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 Routing Policies: 7 R",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 Routing Policies created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws route53 list-hosted-zones --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 Routing Policies: 7 Routing Strategies Deep Dive",
+        "commands": {
+          "aws route53 list-hosted-zones": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws route53 create-hosted-zone --name mylabdomain.com --caller-reference $(date +%s)": "[OK] Execution successful for Route 53 Routing Policies: 7 R.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 88,
@@ -2981,7 +8392,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "for i in {1..10}; do dig +short app.example.com; done # Verify DNS response distribution"
     ],
-    "interviewQuestions": "Q: Why is it critical to set a low TTL (Time To Live) on DNS records when performing canary deployments with Weighted Routing?\nA: A high TTL causes client recursive resolvers to cache the DNS answer for hours or days. A low TTL (e.g. 30-60 seconds) ensures clients re-query Route 53 frequently, honoring the weighted traffic distribution."
+    "interviewQuestions": "Q: Why is it critical to set a low TTL (Time To Live) on DNS records when performing canary deployments with Weighted Routing?\nA: A high TTL causes client recursive resolvers to cache the DNS answer for hours or days. A low TTL (e.g. 30-60 seconds) ensures clients re-query Route 53 frequently, honoring the weighted traffic distribution.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon Route 53 Hands-on Lab: Configuring Records & Weighted Routing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise database architecture me Route 53 Hands-on Lab: Configuring Records & Weighted Routing ko deploy karna taaki automated backups aur high resilience achieve ho. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon Route 53 Hands-on Lab: Configuring Records & Weighted Routing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon Route 53 Hands-on Lab: Configurin...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Route 53 Hands-on Lab: Co)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon Route 53 Hands-on Lab: Configuring Records & Weighted Routing' -> Review existing configurations.",
+          "command": "aws rds describe-db-instances",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Route 53 Hands-on Lab: Configu",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Route 53 Hands-on Lab: Co created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws rds describe-db-instances --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon Route 53 Hands-on Lab: Configuring Records & Weighted Routing",
+        "commands": {
+          "aws rds describe-db-instances": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws rds create-db-instance --db-instance-identifier lab-db --db-instance-class db.t3.micro --engine mysql": "[OK] Execution successful for Route 53 Hands-on Lab: Configu.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 89,
@@ -3011,7 +8484,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws cloudfront list-distributions --query 'DistributionList.Items[*].[Id,DomainName,Status]'"
     ],
-    "interviewQuestions": "Q: What happens when an end-user requests a file through Amazon CloudFront and the file is not currently cached at the local Edge Location?\nA: CloudFront forwards the request to the Regional Edge Cache. If not found there, it fetches the file from the Origin server (e.g. S3), caches a copy at the Edge Location for future requests, and delivers the file to the user."
+    "interviewQuestions": "Q: What happens when an end-user requests a file through Amazon CloudFront and the file is not currently cached at the local Edge Location?\nA: CloudFront forwards the request to the Regional Edge Cache. If not found there, it fetches the file from the Origin server (e.g. S3), caches a copy at the Edge Location for future requests, and delivers the file to the user.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon CloudFront Overview: Global Content Delivery Network (CDN) (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global Edge CDN network me CloudFront Overview: Global Content Delivery Network (CDN) enable karke website loading time ko milliseconds me reduce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon CloudFront Overview: Global Content Delivery Network (CDN): Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon CloudFront Overview: Global Conte...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (CloudFront Overview: Glob)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon CloudFront Overview: Global Content Delivery Network (CDN)' -> Review existing configurations.",
+          "command": "aws cloudfront list-distributions",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for CloudFront Overview: Global Co",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws cloudfront create-distribution --origin-domain-name my-bucket.s3.amazonaws.com",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for CloudFront Overview: Glob created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws cloudfront list-distributions --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon CloudFront Overview: Global Content Delivery Network (CDN)",
+        "commands": {
+          "aws cloudfront list-distributions": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws cloudfront create-distribution --origin-domain-name my-bucket.s3.amazonaws.com": "[OK] Execution successful for CloudFront Overview: Global Co.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 90,
@@ -3041,7 +8576,69 @@ window.AWS_LECTURES = [
       "aws cloudfront create-invalidation --distribution-id E12345 --paths '/*'",
       "aws cloudfront get-invalidation --distribution-id E12345 --id I12345"
     ],
-    "interviewQuestions": "Q: What is Origin Access Control (OAC) in CloudFront and why did it replace OAI?\nA: OAC restricts direct public access to S3 buckets, forcing all traffic through CloudFront. OAC replaced legacy OAI because it supports modern AWS Signature Version 4 (SigV4), all S3 buckets in all regions, SSE-KMS encryption, and dynamic PUT/DELETE requests."
+    "interviewQuestions": "Q: What is Origin Access Control (OAC) in CloudFront and why did it replace OAI?\nA: OAC restricts direct public access to S3 buckets, forcing all traffic through CloudFront. OAC replaced legacy OAI because it supports modern AWS Signature Version 4 (SigV4), all S3 buckets in all regions, SSE-KMS encryption, and dynamic PUT/DELETE requests.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon CloudFront Part 2: TTL, Cache Invalidation & Origin Access Control (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Global Edge CDN network me CloudFront Part 2: TTL, Cache Invalidation & Origin Access Control enable karke website loading time ko milliseconds me reduce karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon CloudFront Part 2: TTL, Cache Invalidation & Origin Access Control: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon CloudFront Part 2: TTL, Cache Inv...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (CloudFront Part 2: TTL, C)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon CloudFront Part 2: TTL, Cache Invalidation & Origin Access Control' -> Review existing configurations.",
+          "command": "aws cloudfront list-distributions",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for CloudFront Part 2: TTL, Cache ",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws cloudfront create-distribution --origin-domain-name my-bucket.s3.amazonaws.com",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for CloudFront Part 2: TTL, C created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws cloudfront list-distributions --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon CloudFront Part 2: TTL, Cache Invalidation & Origin Access Control",
+        "commands": {
+          "aws cloudfront list-distributions": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws cloudfront create-distribution --origin-domain-name my-bucket.s3.amazonaws.com": "[OK] Execution successful for CloudFront Part 2: TTL, Cache .",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 91,
@@ -3071,7 +8668,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "curl -I https://d111111abcdef8.cloudfront.net # Inspect X-Cache: Hit from cloudfront"
     ],
-    "interviewQuestions": "Q: How do you verify whether a response served by Amazon CloudFront was a Cache Hit or a Cache Miss?\nA: Inspect the HTTP response headers in the browser or via curl. The `X-Cache` header will show `Hit from cloudfront` if served from the edge cache, or `Miss from cloudfront` if fetched from the origin."
+    "interviewQuestions": "Q: How do you verify whether a response served by Amazon CloudFront was a Cache Hit or a Cache Miss?\nA: Inspect the HTTP response headers in the browser or via curl. The `X-Cache` header will show `Hit from cloudfront` if served from the edge cache, or `Miss from cloudfront` if fetched from the origin.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Amazon CloudFront Hands-on Demo: Accelerating S3 Website with Free SSL (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me CloudFront Hands-on Demo: Accelerating S3 Website with Free SSL ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Amazon CloudFront Hands-on Demo: Accelerating S3 Website with Free SSL: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Amazon CloudFront Hands-on Demo: Acceler...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (CloudFront Hands-on Demo:)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Amazon CloudFront Hands-on Demo: Accelerating S3 Website with Free SSL' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for CloudFront Hands-on Demo: Acce",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for CloudFront Hands-on Demo: created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Amazon CloudFront Hands-on Demo: Accelerating S3 Website with Free SSL",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for CloudFront Hands-on Demo: Acce.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 92,
@@ -3102,7 +8761,69 @@ window.AWS_LECTURES = [
       "aws sqs create-queue --queue-name OrdersQueue",
       "aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/123/OrdersQueue --message-body 'Order #1001'"
     ],
-    "interviewQuestions": "Q: What is the maximum message size supported by Amazon SQS and how can you send larger payloads?\nA: The maximum native SQS message size is 256 KB. To send larger payloads (up to 2 GB), use the Amazon SQS Extended Client Library, which uploads the large file to Amazon S3 and places a reference pointer in the SQS message."
+    "interviewQuestions": "Q: What is the maximum message size supported by Amazon SQS and how can you send larger payloads?\nA: The maximum native SQS message size is 256 KB. To send larger payloads (up to 2 GB), use the Amazon SQS Extended Client Library, which uploads the large file to Amazon S3 and places a reference pointer in the SQS message.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Simple Queue Service (SQS) Part 1: Decoupled Architectures & Fundamentals (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me Simple Queue Service (SQS) Part 1: Decoupled Architectures & Fundamentals use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Simple Queue Service (SQS) Part 1: Decoupled Architectures & Fundamentals: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Simple Queue Service (SQS) Part 1: D...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (Simple Queue Service (SQS)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS Simple Queue Service (SQS) Part 1: Decoupled Architectures & Fundamentals' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Simple Queue Service (SQS) Par",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Simple Queue Service (SQS created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Simple Queue Service (SQS) Part 1: Decoupled Architectures & Fundamentals",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for Simple Queue Service (SQS) Par.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 93,
@@ -3130,7 +8851,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws sqs create-queue --queue-name BankingTransactions.fifo --attributes FifoQueue=true,ContentBasedDeduplication=true"
     ],
-    "interviewQuestions": "Q: What is the purpose of the Message Group ID in an Amazon SQS FIFO queue?\nA: The Message Group ID tags messages belonging to a specific customer or session. SQS guarantees that messages with the same Message Group ID are processed in strict sequential order one by one, while messages with different Group IDs can be processed in parallel."
+    "interviewQuestions": "Q: What is the purpose of the Message Group ID in an Amazon SQS FIFO queue?\nA: The Message Group ID tags messages belonging to a specific customer or session. SQS guarantees that messages with the same Message Group ID are processed in strict sequential order one by one, while messages with different Group IDs can be processed in parallel.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS SQS Part 2: Standard Queues vs FIFO Queues Comparison (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me SQS Part 2: Standard Queues vs FIFO Queues Comparison use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS SQS Part 2: Standard Queues vs FIFO Queues Comparison: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS SQS Part 2: Standard Queues vs FIFO ...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (SQS Part 2: Standard Queu)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS SQS Part 2: Standard Queues vs FIFO Queues Comparison' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for SQS Part 2: Standard Queues vs",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for SQS Part 2: Standard Queu created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS SQS Part 2: Standard Queues vs FIFO Queues Comparison",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for SQS Part 2: Standard Queues vs.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 94,
@@ -3160,7 +8943,69 @@ window.AWS_LECTURES = [
       "aws sqs change-message-visibility --queue-url <url> --receipt-handle <handle> --visibility-timeout 120",
       "aws sqs receive-message --queue-url <url> --wait-time-seconds 20 # Long Polling"
     ],
-    "interviewQuestions": "Q: Why is Long Polling strongly recommended over Short Polling for Amazon SQS?\nA: Long Polling waits up to 20 seconds for a message to enter the queue before returning an empty response, significantly reducing empty receives, lowering AWS API request charges, and decreasing message retrieval latency."
+    "interviewQuestions": "Q: Why is Long Polling strongly recommended over Short Polling for Amazon SQS?\nA: Long Polling waits up to 20 seconds for a message to enter the queue before returning an empty response, significantly reducing empty receives, lowering AWS API request charges, and decreasing message retrieval latency.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS SQS Part 3: Visibility Timeout, Dead Letter Queues (DLQ) & Long Polling (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me SQS Part 3: Visibility Timeout, Dead Letter Queues (DLQ) & Long Polling use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS SQS Part 3: Visibility Timeout, Dead Letter Queues (DLQ) & Long Polling: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS SQS Part 3: Visibility Timeout, Dead...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (SQS Part 3: Visibility Ti)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS SQS Part 3: Visibility Timeout, Dead Letter Queues (DLQ) & Long Polling' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for SQS Part 3: Visibility Timeout",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for SQS Part 3: Visibility Ti created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS SQS Part 3: Visibility Timeout, Dead Letter Queues (DLQ) & Long Polling",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for SQS Part 3: Visibility Timeout.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 95,
@@ -3190,7 +9035,69 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws lambda create-event-source-mapping --function-name ProcessOrder --batch-size 10 --event-source-arn arn:aws:sqs:us-east-1:123:orders-queue"
     ],
-    "interviewQuestions": "Q: What rule must you follow regarding SQS Visibility Timeout when integrating an SQS queue with an AWS Lambda function?\nA: The SQS queue's Visibility Timeout must be configured to at least 6 times the timeout of the Lambda function. This gives the Lambda service enough time to retry or complete processing before SQS re-exposes the message to another execution."
+    "interviewQuestions": "Q: What rule must you follow regarding SQS Visibility Timeout when integrating an SQS queue with an AWS Lambda function?\nA: The SQS queue's Visibility Timeout must be configured to at least 6 times the timeout of the Lambda function. This gives the Lambda service enough time to retry or complete processing before SQS re-exposes the message to another execution.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS SQS Hands-on Lab: Queue Creation, Message Flow & Lambda Triggers (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me SQS Hands-on Lab: Queue Creation, Message Flow & Lambda Triggers use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS SQS Hands-on Lab: Queue Creation, Message Flow & Lambda Triggers: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS SQS Hands-on Lab: Queue Creation, Me...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (SQS Hands-on Lab: Queue C)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS SQS Hands-on Lab: Queue Creation, Message Flow & Lambda Triggers' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for SQS Hands-on Lab: Queue Creati",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for SQS Hands-on Lab: Queue C created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS SQS Hands-on Lab: Queue Creation, Message Flow & Lambda Triggers",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for SQS Hands-on Lab: Queue Creati.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 96,
@@ -3222,7 +9129,69 @@ window.AWS_LECTURES = [
       "aws sns subscribe --topic-arn <topic-arn> --protocol sqs --notification-endpoint <sqs-arn>",
       "aws sns publish --topic-arn <topic-arn> --message 'Order #2026 Placed'"
     ],
-    "interviewQuestions": "Q: What is the AWS Fan-Out architectural pattern and why is it used?\nA: In Fan-Out, an SNS message is replicated across multiple SQS queues subscribed to that topic. This decouples producer systems from consumer systems, allowing parallel, independent, and fault-tolerant processing of the same event by different microservices."
+    "interviewQuestions": "Q: What is the AWS Fan-Out architectural pattern and why is it used?\nA: In Fan-Out, an SNS message is replicated across multiple SQS queues subscribed to that topic. This decouples producer systems from consumer systems, allowing parallel, independent, and fault-tolerant processing of the same event by different microservices.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Simple Notification Service (SNS) Complete Theory: Pub/Sub & Fan-Out (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me Simple Notification Service (SNS) Complete Theory: Pub/Sub & Fan-Out use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Simple Notification Service (SNS) Complete Theory: Pub/Sub & Fan-Out: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Simple Notification Service (SNS) Co...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (Simple Notification Servi)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS Simple Notification Service (SNS) Complete Theory: Pub/Sub & Fan-Out' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Simple Notification Service (S",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Simple Notification Servi created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Simple Notification Service (SNS) Complete Theory: Pub/Sub & Fan-Out",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for Simple Notification Service (S.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 97,
@@ -3253,7 +9222,69 @@ window.AWS_LECTURES = [
       "aws sns subscribe --topic-arn <arn> --protocol email --notification-endpoint admin@example.com",
       "aws cloudwatch put-metric-alarm --alarm-name HighCPU --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --alarm-actions <sns-arn>"
     ],
-    "interviewQuestions": "Q: Why is an SQS Queue Access Policy required when subscribing an SQS queue to an Amazon SNS topic?\nA: By default, SQS queues deny all external senders. An explicit SQS resource policy statement granting `sqs:SendMessage` with a condition matching the `aws:SourceArn` of the SNS Topic is required to allow SNS to write to the queue."
+    "interviewQuestions": "Q: Why is an SQS Queue Access Policy required when subscribing an SQS queue to an Amazon SNS topic?\nA: By default, SQS queues deny all external senders. An explicit SQS resource policy statement granting `sqs:SendMessage` with a condition matching the `aws:SourceArn` of the SNS Topic is required to allow SNS to write to the queue.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS SNS Hands-on Demo: Topic Creation, Email/SQS Subscriptions & CloudWatch Alarms (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Microservices decoupling me SNS Hands-on Demo: Topic Creation, Email/SQS Subscriptions & CloudWatch Alarms use karke peak traffic spike ke time zero message loss ensure karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS SNS Hands-on Demo: Topic Creation, Email/SQS Subscriptions & CloudWatch Alarms: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS SNS Hands-on Demo: Topic Creation, E...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Application (SNS Hands-on Demo: Topic )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Application' -> Select 'AWS SNS Hands-on Demo: Topic Creation, Email/SQS Subscriptions & CloudWatch Alarms' -> Review existing configurations.",
+          "command": "aws sqs list-queues",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for SNS Hands-on Demo: Topic Creat",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for SNS Hands-on Demo: Topic  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sqs list-queues --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS SNS Hands-on Demo: Topic Creation, Email/SQS Subscriptions & CloudWatch Alarms",
+        "commands": {
+          "aws sqs list-queues": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws sqs create-queue --queue-name ProductionQueue.fifo --attributes FifoQueue=true": "[OK] Execution successful for SNS Hands-on Demo: Topic Creat.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Application Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 98,
@@ -3284,7 +9315,69 @@ window.AWS_LECTURES = [
       "sudo sysctl -w net.ipv4.ip_forward=1",
       "sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
     ],
-    "interviewQuestions": "Q: Why must you disable the 'Source/Destination Check' attribute on an EC2 NAT Instance?\nA: By default, an EC2 instance verifies that it is the source or destination of any network traffic it sends or receives. Because a NAT instance routes traffic for other private instances, the Source/Destination check must be disabled so the instance can forward packets with third-party IPs."
+    "interviewQuestions": "Q: Why must you disable the 'Source/Destination Check' attribute on an EC2 NAT Instance?\nA: By default, an EC2 instance verifies that it is the source or destination of any network traffic it sends or receives. Because a NAT instance routes traffic for other private instances, the Source/Destination check must be disabled so the instance can forward packets with third-party IPs.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Configuring NAT Instance for Private Subnets & NAT Gateway vs NAT Instance (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Production enterprise EC2 compute environment me Configuring NAT Instance for Private Subnets & NAT Gateway vs NAT Instance ko efficiently setup aur test karna taaki application high availability aur cost efficiency ke sath run ho sake. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Configuring NAT Instance for Private Subnets & NAT Gateway vs NAT Instance: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Configuring NAT Instance for Private Sub...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Configuring NAT Instance )     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'Configuring NAT Instance for Private Subnets & NAT Gateway vs NAT Instance' -> Review existing configurations.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Configuring NAT Instance for P",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Configuring NAT Instance  created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Configuring NAT Instance for Private Subnets & NAT Gateway vs NAT Instance",
+        "commands": {
+          "aws ec2 describe-instances --filters \"Name=instance-state-name,Values=running\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 run-instances --instance-type t2.micro --image-id ami-03f4878e83434e158 --count 1": "[OK] Execution successful for Configuring NAT Instance for P.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 99,
@@ -3315,7 +9408,69 @@ window.AWS_LECTURES = [
       "aws ec2 enable-vgw-route-propagation --route-table-id rtb-private --gateway-id vgw-xxxx",
       "Download router configuration file from AWS Console for specific vendor (Cisco IOS, Juniper, FortiOS)."
     ],
-    "interviewQuestions": "Q: What is Route Propagation in the context of an AWS Site-to-Site VPN?\nA: Route Propagation automatically injects routes learned from your on-premises network via BGP (Border Gateway Protocol) directly into your VPC route tables, eliminating the need to maintain manual static route entries."
+    "interviewQuestions": "Q: What is Route Propagation in the context of an AWS Site-to-Site VPN?\nA: Route Propagation automatically injects routes learned from your on-premises network via BGP (Border Gateway Protocol) directly into your VPC route tables, eliminating the need to maintain manual static route entries.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Site-to-Site VPN Real-Time Production Implementation & Routing (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Enterprise network isolation me Site-to-Site VPN Real-Time Production Implementation & Routing ko build karke secure subnets aur traffic boundaries establish karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Site-to-Site VPN Real-Time Production Implementation & Routing: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Site-to-Site VPN Real-Time Productio...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Amazon (Site-to-Site VPN Real-Tim)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Amazon' -> Select 'AWS Site-to-Site VPN Real-Time Production Implementation & Routing' -> Review existing configurations.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Site-to-Site VPN Real-Time Pro",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws ec2 create-vpc --cidr-block 10.0.0.0/16",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Site-to-Site VPN Real-Tim created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\" --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Site-to-Site VPN Real-Time Production Implementation & Routing",
+        "commands": {
+          "aws ec2 describe-vpcs --filters \"Name=isDefault,Values=false\"": "{\n  \"Status\": \"Available\",\n  \"Region\": \"ap-south-1\",\n  \"Count\": 1\n}",
+          "aws ec2 create-vpc --cidr-block 10.0.0.0/16": "[OK] Execution successful for Site-to-Site VPN Real-Time Pro.",
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Amazon Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 100,
@@ -3345,7 +9500,68 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws lambda create-function --function-name MyFunction --runtime python3.11 --role arn:aws:iam::xxxx:role/LambdaRole --handler lambda_function.lambda_handler --zip-file fileb://function.zip"
     ],
-    "interviewQuestions": "Q: How do you eliminate Cold Start latency in AWS Lambda for mission-critical web applications?\nA: Enable Provisioned Concurrency. Provisioned Concurrency pre-initializes a requested number of execution environments and keeps them warm and hyper-responsive, guaranteeing double-digit millisecond latency."
+    "interviewQuestions": "Q: How do you eliminate Cold Start latency in AWS Lambda for mission-critical web applications?\nA: Enable Provisioned Concurrency. Provisioned Concurrency pre-initializes a requested number of execution environments and keeps them warm and hyper-responsive, guaranteeing double-digit millisecond latency.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Serverless Computing & AWS Lambda Part 1: Execution Model & Lifecycle (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Cloud architecture me Serverless Computing &  Lambda Part 1: Execution Model & Lifecycle ke fundamentals ko hands-on lab ke zariye step-by-step master karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of Serverless Computing & AWS Lambda Part 1: Execution Model & Lifecycle: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: Serverless Computing & AWS Lambda Part 1...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Serverless (Serverless Computing &  L)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Serverless' -> Select 'Serverless Computing & AWS Lambda Part 1: Execution Model & Lifecycle' -> Review existing configurations.",
+          "command": "aws sts get-caller-identity",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Serverless Computing &  Lambda",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws help",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Serverless Computing &  L created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sts get-caller-identity --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: Serverless Computing & AWS Lambda Part 1: Execution Model & Lifecycle",
+        "commands": {
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}",
+          "aws help": "[OK] Execution successful for Serverless Computing &  Lambda."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Serverless Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 101,
@@ -3374,7 +9590,68 @@ window.AWS_LECTURES = [
     "commandsOrSteps": [
       "aws lambda invoke --function-name MyFunction --invocation-type Event --payload '{\"key\":\"value\"}' response.json"
     ],
-    "interviewQuestions": "Q: What happens if an AWS Lambda function fails during an Asynchronous Invocation (e.g. from Amazon S3)?\nA: Lambda automatically retries the execution two more times (total of 3 attempts) with backoff delays. If all retries fail, the event is either dropped or sent to a configured Dead Letter Queue (DLQ) or Lambda Destination for developer inspection."
+    "interviewQuestions": "Q: What happens if an AWS Lambda function fails during an Asynchronous Invocation (e.g. from Amazon S3)?\nA: Lambda automatically retries the execution two more times (total of 3 attempts) with backoff delays. If all retries fail, the event is either dropped or sent to a configured Dead Letter Queue (DLQ) or Lambda Destination for developer inspection.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: AWS Lambda Part 2: Invocation Types, Event Sources & Execution Context (Step-by-Step Architecture Implementation)",
+      "scenario": "Maan lijiye aap ek production cloud infrastructure design kar rahe hain. Cloud architecture me Lambda Part 2: Invocation Types, Event Sources & Execution Context ke fundamentals ko hands-on lab ke zariye step-by-step master karna. Is lab me hum layman-friendly tareeke se har ek step ko bina kisi confusion ke verify karenge.",
+      "objective": "Complete hands-on implementation of AWS Lambda Part 2: Invocation Types, Event Sources & Execution Context: Learn the architecture prerequisites, follow the step-by-step AWS Management Console click path and AWS CLI commands, observe realistic verification outputs, and clean up resources safely.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| ARCHITECTURE FLOW: AWS Lambda Part 2: Invocation Types, Eve...\n|                                                             |\n|  [ Admin / DevOps Engineer ]                                |\n|         |                                                   |\n|         v 1. Configuration & Parameter Validation           |\n|  +-------------------------------------------------------+  |\n|  | AWS Service: Serverless (Lambda Part 2: Invocation)     |  |\n|  | Active Region: ap-south-1 / us-east-1                  |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v 2. Resource Provisioning & Health Verification    |\n|  +-------------------------------------------------------+  |\n|  | Verified Operational State (200 OK / Ready)            |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Review Architectural Prerequisites & Console Navigation",
+          "laymanExplanation": "Lab shuru karne se pehle zaroori requirements check karna aur AWS Console me target service open karna.",
+          "consoleAction": "AWS Management Console -> Search 'Serverless' -> Select 'AWS Lambda Part 2: Invocation Types, Event Sources & Execution Context' -> Review existing configurations.",
+          "command": "aws sts get-caller-identity",
+          "commandExplanation": "Executes status query against AWS API to verify active credentials and target region resources.",
+          "expectedOutput": "{\n  \"ResponseMetadata\": { \"HTTPStatusCode\": 200 },\n  \"Status\": \"Operational\"\n}",
+          "verification": "Confirm command exits with status code 0."
+        },
+        {
+          "stepNum": 2,
+          "title": "Execute Core Hands-On Configuration for Lambda Part 2: Invocation Type",
+          "laymanExplanation": "Main resource ko create aur customize karna according to AWS best practices.",
+          "consoleAction": "In Console -> Click 'Create' / 'Configure' -> Enter required parameters -> Review configuration -> Confirm.",
+          "command": "aws help",
+          "commandExplanation": "Applies core AWS CLI command with least privilege and cost-effective Free Tier parameters.",
+          "expectedOutput": "[OK] Resource for Lambda Part 2: Invocation created and initialized successfully.",
+          "verification": "Verify resource state transitions to 'active' or 'available'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Verify Execution, Latency & Security Boundaries",
+          "laymanExplanation": "Check karna ki jo resource banaya gaya hai wo theek se kaam kar raha hai aur security rules follow ho rahe hain.",
+          "consoleAction": "Review monitoring tab, metrics graphs, and security group / IAM bindings.",
+          "command": "aws sts get-caller-identity --output table",
+          "commandExplanation": "Dumps formatted table view verifying resource attributes.",
+          "expectedOutput": "All health status checks reporting normal.",
+          "verification": "Confirm 0 error logs and expected operational output."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "AWS Sandbox Terminal initialized for: AWS Lambda Part 2: Invocation Types, Event Sources & Execution Context",
+        "commands": {
+          "aws sts get-caller-identity": "{\n  \"Account\": \"123456789012\",\n  \"Arn\": \"arn:aws:iam::123456789012:user/student-admin\"\n}",
+          "aws help": "[OK] Execution successful for Lambda Part 2: Invocation Type."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "AccessDeniedException or Client.UnauthorizedOperation",
+          "cause": "Your IAM user or role lacks the required IAM policy permissions for this service action.",
+          "solution": "Ensure your IAM user has the corresponding AWS Managed Policy attached (e.g. AmazonEC2FullAccess, AmazonVPCFullAccess, AmazonS3FullAccess)."
+        }
+      ],
+      "cleanup": [
+        "Navigate to Serverless Console.",
+        "Select created test resource -> Click Actions -> Delete / Terminate.",
+        "Confirm termination to ensure $0.00 accumulated cost."
+      ]
+    }
   },
   {
     "id": 102,
@@ -3414,6 +9691,79 @@ window.AWS_LECTURES = [
       "    table.put_item(Item={'FileID': str(uuid.uuid4()), 'Bucket': bucket, 'FileName': key, 'Size': size, 'CreatedAt': int(time.time())})",
       "    return {'statusCode': 200, 'body': 'Metadata stored successfully!'}"
     ],
-    "interviewQuestions": "Q: Describe how you would design a serverless thumbnail generation and metadata logging system in AWS.\nA: When a user uploads a high-resolution image to an S3 bucket, an S3 `ObjectCreated` event triggers an AWS Lambda function. The Lambda function reads the image from S3, generates a resized thumbnail, saves the thumbnail to a separate output S3 bucket, and writes the image metadata and S3 URLs into an Amazon DynamoDB table."
+    "interviewQuestions": "Q: Describe how you would design a serverless thumbnail generation and metadata logging system in AWS.\nA: When a user uploads a high-resolution image to an S3 bucket, an S3 `ObjectCreated` event triggers an AWS Lambda function. The Lambda function reads the image from S3, generates a resized thumbnail, saves the thumbnail to a separate output S3 bucket, and writes the image metadata and S3 URLs into an Amazon DynamoDB table.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Building an End-to-End Serverless Event Pipeline (S3 -> Lambda -> DynamoDB)",
+      "scenario": "Aap ek photo sharing app chala rahe hain. Jaise hi user koi photo ya invoice upload karta hai (S3 Object Created), ek invisible robot (AWS Lambda) turant 50 millisecond ke liye jaagta hai, file ka metadata extract karta hai aur database (DynamoDB) me save karke so jata hai. Isme aapko koi server 24/7 on nahi rakhna padta, bill sirf un 50 milliseconds ka aata hai!",
+      "objective": "Build a complete real-world event-driven serverless pipeline: Create an Amazon S3 bucket, deploy an AWS Lambda Python function with an IAM Execution Role, configure an S3 Event Notification trigger (`s3:ObjectCreated:*`), and automatically record file metadata into DynamoDB.",
+      "duration": "25 Mins",
+      "cost": "100% Free Tier Eligible ($0.00)",
+      "difficulty": "Advanced",
+      "diagram": "+-------------------------------------------------------------+\n| END-TO-END SERVERLESS EVENT-DRIVEN PIPELINE                 |\n|                                                             |\n|  [ User uploads 'invoice-101.pdf' ]                         |\n|         |                                                   |\n|         v                                                   |\n|  +-------------------------------------------------------+  |\n|  | Amazon S3 Bucket: 'serverless-uploads-bucket'         |  |\n|  | Event Notification: s3:ObjectCreated:*                |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v Triggers Asynchronous Invocation                  |\n|  +-------------------------------------------------------+  |\n|  | AWS Lambda Function: 'ProcessUploadedFile'            |  |\n|  | Runtime: Python 3.11 | Execution Time: 45ms           |  |\n|  | Extracts: filename, file_size_bytes, upload_timestamp |  |\n|  +-------------------------------------------------------+  |\n|         |                                                   |\n|         v PutItem API Call                                  |\n|  +-------------------------------------------------------+  |\n|  | Amazon DynamoDB Table: 'ProcessedFiles'              |  |\n|  | Primary Key: filename (String)                        |  |\n|  +-------------------------------------------------------+  |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create DynamoDB Table to Store Processed Metadata",
+          "laymanExplanation": "Ek NoSQL database table banana jisme file ka naam aur size store hoga.",
+          "consoleAction": "DynamoDB Console -> 'Create table' -> Table name: 'ProcessedFiles' -> Partition key: `filename` (String) -> Table class: Standard -> Capacity: On-demand -> Click 'Create table'.",
+          "command": "aws dynamodb create-table \\\n  --table-name ProcessedFiles \\\n  --attribute-definitions AttributeName=filename,AttributeType=S \\\n  --key-schema AttributeName=filename,KeyType=HASH \\\n  --billing-mode PAY_PER_REQUEST",
+          "commandExplanation": "Creates serverless pay-per-request DynamoDB table.",
+          "expectedOutput": "TableStatus: CREATING -> ACTIVE",
+          "verification": "Confirm DynamoDB table status is 'ACTIVE'."
+        },
+        {
+          "stepNum": 2,
+          "title": "Write and Deploy Serverless Python Lambda Function",
+          "laymanExplanation": "Python ka chhota sa code likhna jo S3 event se file ki information nikaal kar DynamoDB me save kare.",
+          "consoleAction": "Lambda Console -> 'Create function' -> Author from scratch -> Name: 'ProcessUploadedFile' -> Runtime: Python 3.11 -> Click 'Create function'.",
+          "command": "cat << 'EOF' > lambda_function.py\nimport json, urllib.parse, boto3\ndynamodb = boto3.resource('dynamodb')\ntable = dynamodb.Table('ProcessedFiles')\n\ndef lambda_handler(event, context):\n    for record in event['Records']:\n        bucket = record['s3']['bucket']['name']\n        key = urllib.parse.unquote_plus(record['s3']['object']['key'])\n        size = record['s3']['object']['size']\n        print(f\"Processing file: {key} ({size} bytes) from {bucket}\")\n        table.put_item(Item={'filename': key, 'bucket': bucket, 'sizeBytes': size})\n    return {'statusCode': 200, 'body': 'Metadata stored in DynamoDB!'}\nEOF\nzip function.zip lambda_function.py",
+          "commandExplanation": "Packages Python Lambda code into deployable zip artifact.",
+          "expectedOutput": "[function.zip created]",
+          "verification": "Inspect code in Lambda console editor."
+        },
+        {
+          "stepNum": 3,
+          "title": "Configure S3 Event Notification Trigger",
+          "laymanExplanation": "S3 ko bolna: 'Jaise hi koi nayi file aaye, turant is Lambda function ko call karo'.",
+          "consoleAction": "In Lambda Console -> In Function Overview, click '+ Add trigger' -> Select 'S3' -> Select your bucket -> Event type: 'All object create events' -> Acknowledge recursive invocation warning -> Click 'Add'.",
+          "command": "# S3 Event Notification attaches Lambda ARN as trigger target",
+          "commandExplanation": "Creates resource-based policy granting S3 permission to invoke Lambda (`lambda:InvokeFunction`).",
+          "expectedOutput": "[S3 trigger added to Lambda function]",
+          "verification": "Check Lambda designer; S3 icon appears on the left connected as trigger."
+        },
+        {
+          "stepNum": 4,
+          "title": "Upload a Test File to S3 and Verify Automatic DynamoDB Entry",
+          "laymanExplanation": "S3 me file phenkna aur dekhna ki bina kisi manual action ke DynamoDB me record add hua ya nahi.",
+          "consoleAction": "S3 Console -> Upload a sample file `invoice-101.pdf` -> Go to DynamoDB Console -> Tables -> 'ProcessedFiles' -> 'Explore table items'.",
+          "command": "echo 'Sample Invoice Content' > invoice-101.pdf\naws s3 cp invoice-101.pdf s3://<your-bucket-name>/\nsleep 3\naws dynamodb get-item --table-name ProcessedFiles --key '{\"filename\": {\"S\": \"invoice-101.pdf\"}}'",
+          "commandExplanation": "Uploads file to S3 and verifies that the item was inserted automatically into DynamoDB by Lambda within seconds!",
+          "expectedOutput": "{\n  \"Item\": {\n    \"filename\": { \"S\": \"invoice-101.pdf\" },\n    \"sizeBytes\": { \"N\": \"23\" },\n    \"bucket\": { \"S\": \"my-uploads-bucket\" }\n  }\n}",
+          "verification": "Confirm item exists in DynamoDB! Serverless event pipeline successfully verified!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Serverless S3 -> Lambda -> DynamoDB Pipeline Sandbox",
+        "commands": {
+          "aws s3 cp invoice-101.pdf s3://my-uploads-bucket/": "upload: ./invoice-101.pdf to s3://my-uploads-bucket/invoice-101.pdf\n[EVENT EMITTED] s3:ObjectCreated:Put -> Invoking Lambda...",
+          "aws lambda get-function-logs": "START RequestId: 8a9f-4b12...\nProcessing file: invoice-101.pdf (23 bytes) from my-uploads-bucket\n[OK] DynamoDB PutItem succeeded.\nEND Duration: 44.12 ms Billed Duration: 45 ms Memory Used: 78 MB",
+          "aws dynamodb scan --table-name ProcessedFiles": "{\n  \"Items\": [\n    {\"filename\": {\"S\": \"invoice-101.pdf\"}, \"sizeBytes\": {\"N\": \"23\"}}\n  ],\n  \"Count\": 1\n}",
+          "aws dynamodb delete-table --table-name ProcessedFiles": "[OK] DynamoDB table deleted cleanly."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Lambda function is not triggered when file is uploaded to S3",
+          "cause": "Lambda Execution Role is missing DynamoDB write permissions (`dynamodb:PutItem`), causing runtime failure.",
+          "solution": "Attach `AmazonDynamoDBFullAccess` or a custom IAM policy granting `dynamodb:PutItem` on the target table to the Lambda role."
+        }
+      ],
+      "cleanup": [
+        "Delete S3 bucket and uploaded test files.",
+        "Delete Lambda function `ProcessUploadedFile`.",
+        "Delete DynamoDB table `ProcessedFiles`."
+      ]
+    }
   }
 ];

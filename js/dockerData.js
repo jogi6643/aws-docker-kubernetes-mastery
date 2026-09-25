@@ -1,6 +1,6 @@
 /**
  * Docker Masterclass Knowledge Base (Technical Guftgu - Bhupinder Rajput)
- * Complete Theory, Hands-On Commands, Whiteboard Notes, Cheatsheets & Quiz
+ * Complete Theory, Hands-On Commands, Whiteboard Notes, Live Labs, Cheatsheets & Quiz
  */
 
 window.DOCKER_MODULES = [
@@ -97,34 +97,34 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 01 - Docker)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "49:53",
-      "summary": "Bhupinder Rajput ji ne digital board par samjhaya ki puraane time me software kaise deploy hota tha, developers aur operations team ke beech conflict ('Mere laptop me chal raha tha, production me kyu crash hua?') kyu hoti thi, aur kaise Docker ne shipping container model ke through is problem ko permanently solve kiya.",
+      "summary": "भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर समझाया कि पुराने समय में सॉफ्टवेयर कैसे डिप्लॉय होता था, डेवलपर्स और ऑपरेशन टीम के बीच झगड़े ('मेरे लैपटॉप में चल रहा था, प्रोडक्शन में क्यों फटा?') क्यों होते थे, और कैसे डॉकर ने शिपिंग कंटेनर मॉडल पर इस समस्या को हमेशा के लिए खत्म किया।",
       "sections": [
         {
           "heading": "1. The Traditional Deployment Problem ('Works on My Machine')",
-          "hindiNote": "Board par ek developer aur ek server admin ka scenario draw karke samjhaya gaya:",
+          "hindiNote": "बोर्ड पर एक डेवलपर और एक सर्वर एडमिन का केस बनाया गया:",
           "points": [
-            "Developer ke laptop par: Python 3.9, Ubuntu 22.04, SQLite library. Code bilkul badhiya chal raha hai.",
-            "Production server par: Python 3.6, RedHat Enterprise Linux, different SSL libraries. Code deploy karte hi crash aur dependency errors!",
-            "Result: Developer bolta hai 'Mere machine par code chal raha hai', aur System Admin bolta hai 'Production server par fail ho gaya'."
+            "डेवलपर के लैपटॉप पर: Python 3.9, Ubuntu 22.04, SQLite लाइब्रेरी। कोड बहुत बढ़िया चल रहा है।",
+            "प्रोडक्शन सर्वर पर: Python 3.6, RedHat Enterprise Linux, अलग SSL लाइब्रेरी। कोड प्रोडक्शन में डालते ही एरर दे देता है!",
+            "परिणाम: डेवलपर कहता है 'मेरे कोड में कोई गलती नहीं है', और सिस्टम एडमिन कहता है 'सर्वर पर नहीं चल रहा'।"
           ],
           "diagram": "[ Developer Laptop ] (Python 3.9, Ubuntu) ===> Code Works Perfectly!\n       |\n       +--- Deploy to Production ---> [ Production Server ] (Python 3.6, CentOS)\n                                             |\n                                             v\n                                   [ FAILED / CRASHED ] (Dependency Mismatch!)"
         },
         {
-          "heading": "2. The Cargo Shipping Analogy (Cargo Shipping Container Example)",
-          "hindiNote": "Docker ka name aur logo 'Whale carrying containers' kyu hai? Board par shipping industry ka historic analogy draw kiya gaya:",
+          "heading": "2. The Cargo Shipping Analogy (कार्गो शिपिंग कंटेनर उदाहरण)",
+          "hindiNote": "डॉकर का नाम और लोगो 'व्हेल पर रखे कंटेनर' क्यों है? बोर्ड पर इतिहास का बहुत सुंदर उदाहरण समझाया गया:",
           "points": [
-            "Pre-1950s Shipping: Ships me goods (fruits, clothes, machines, spices) open sacks me load hote the. Har port par loading/unloading me weeks lagte the aur damage hota tha.",
-            "Standard Intermodal Containers: Malcolm McLean ne standard size steel container introduce kiya. Ab andar chahe kuch bhi ho, crane bina modify kiye ship, truck ya train par transfer kar sakti hai.",
-            "Docker bhi exactly yahi karta hai: Aapka application code, dependencies aur runtime ek isolated 'Software Container' me package ho jaate hain. Ye container local laptop, AWS EC2 ya on-prem data center me identical run karta hai."
+            "1950 से पहले: जहाजों में सामान (केले, कपड़े, गाड़ियां, मसाले) खुले बोरों में रखा जाता था। हर पोर्ट पर उतारने-चढ़ाने में हफ्तों लगते थे और सामान खराब हो जाता था।",
+            "स्टैंडर्ड शिपिंग कंटेनर: फिर एक फिक्स साइज का स्टील का कंटेनर बनाया गया। अब चाहे अंदर कुछ भी हो, क्रेन उसे उठाकर जहाज, ट्रक या ट्रेन पर बिना बदले रख देती है।",
+            "डॉकर भी यही करता है: आपका कोड, उसकी लाइब्रेरी, कॉन्फ़िगरेशन एक 'सॉफ्टवेयर कंटेनर' में बंद हो जाती है। यह कंटेनर लैपटॉप, EC2, या डेटा सेंटर में बिना किसी बदलाव के चलता है।"
           ],
           "diagram": "+-------------------------------------------------------------+\n| DOCKER CONTAINER (Standardized Software Package)            |\n|                                                             |\n|  [ Your Application Code ]                                  |\n|  [ Exact Python/Node Runtime ]                              |\n|  [ Exact Dependencies & Libraries ]                         |\n|  [ Environment Configs ]                                    |\n+-------------------------------------------------------------+\n         |                        |                       |\n         v                        v                       v\n[ Developer Laptop ]     [ AWS EC2 Instance ]     [ Google Cloud / Azure ]"
         },
         {
           "heading": "3. Monolithic Architecture vs Microservices",
-          "hindiNote": "Cloud aur DevOps architecture me Docker itna essential kyu ban gaya?",
+          "hindiNote": "क्लाउड और डेवॉप्स में डॉकर इतना जरूरी क्यों बन गया?",
           "points": [
-            "Monolithic Architecture: Poora software (Login, Payment, Cart, Invoice) ek hi single huge code repository me hota hai. Agar payment module me bug aaya toh poori website down!",
-            "Microservices Architecture: Har service ka isolated lightweight container hota hai (Login Container, Payment Container, Cart Container). Agar Cart container crash bhi ho jaye, tab bhi poori website active rehti hai."
+            "Monolithic (मोनोलिथिक): पूरा सॉफ्टवेयर (यूजर लॉगिन, पेमेंट, कार्ट, इनवॉइस) एक ही 10GB के बड़े प्रोग्राम में होता है। अगर पेमेंट में बग आया तो पूरी वेबसाइट डाउन!",
+            "Microservices (माइक्रोसर्विसेज): हर सर्विस का अपना अलग छोटा कंटेनर (Login Container, Payment Container, Cart Container)। अगर कार्ट क्रैश भी हुआ तो बाकी वेबसाइट चलती रहती है।"
           ],
           "diagram": "MONOLITHIC:     [ UI + Login + Cart + Payment + DB ] ---> Single Huge Failure Point\n\nMICROSERVICES:  [ UI Container ]   ---> [ Login Container ]\n                       |          ---> [ Cart Container ]\n                       +          ---> [ Payment Container ]"
         }
@@ -136,7 +136,80 @@ window.DOCKER_LECTURES = [
       "docker run hello-world (First test container execution)"
     ],
     "examTips": "DevOps / DCA Exam Tip: A Docker Container packages application user-space code and dependencies, sharing the underlying host Linux OS kernel.",
-    "interviewQuestions": "Q: What problem does Docker solve in DevOps?\nA: Docker eliminates environment inconsistency and dependency drift across development, staging, and production environments, enabling true 'Build Once, Run Anywhere' CI/CD pipelines."
+    "interviewQuestions": "Q: What problem does Docker solve in DevOps?\nA: Docker eliminates environment inconsistency and dependency drift across development, staging, and production environments, enabling true 'Build Once, Run Anywhere' CI/CD pipelines.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Your First Container Run & Lifecycle Inspection",
+      "scenario": "Sochiye aap ek nayi car chalana seekh rahe hain. Pehle din aap car ke engine ko kholne ke bajaye sirf ignition on karke test drive lete hain. Is lab me hum bina kisi complex setup ke Docker ka pehla container run karenge aur dekhenge ki Docker background me images aur containers ko kaise manage karta hai.",
+      "objective": "Verify Docker installation, pull the official 'hello-world' and 'alpine' images, run your first isolated container, inspect its execution lifecycle, and verify exit status codes.",
+      "duration": "10-15 Mins",
+      "cost": "100% Free (Runs on local laptop or AWS Free Tier EC2)",
+      "difficulty": "Complete Beginner",
+      "diagram": "+-------------------------------------------------------------+\n| Your Host Machine (Laptop or EC2)                           |\n|                                                             |\n|  [ User Terminal ]                                          |\n|         |                                                   |\n|         | 1. 'docker run hello-world'                       |\n|         v                                                   |\n|  [ Docker Daemon (dockerd) ]                                |\n|         |                                                   |\n|         +---> Check local cache: Not found                  |\n|         +---> 2. Pull layer from Docker Hub (hub.docker.com)|\n|         +---> 3. Instantiate isolated container             |\n|         +---> 4. Print message to stdout                    |\n|         +---> 5. Exit cleanly with status code 0            |\n+-------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Verify Docker Daemon Health & Version",
+          "laymanExplanation": "Car me baithkar check karna ki engine aur dashboard dono theek se kaam kar rahe hain ya nahi.",
+          "consoleAction": "Docker Desktop user: Check top status bar to ensure the whale icon is green ('Docker Desktop is running').",
+          "command": "docker version",
+          "commandExplanation": "`docker version` shows both Client (CLI interface) and Server (dockerd background engine) architecture details and API version.",
+          "expectedOutput": "Client: Docker Engine - Community\n Version:           24.0.7\n OS/Arch:           linux/amd64\nServer: Docker Engine - Community\n Engine:\n  Version:          24.0.7",
+          "verification": "Confirm that both 'Client' and 'Server' sections appear without 'Cannot connect to the Docker daemon' error."
+        },
+        {
+          "stepNum": 2,
+          "title": "Run First Lightweight Hello-World Container",
+          "laymanExplanation": "Docker Hub se sabse chhota test container download karke run karna jo verify karta hai ki download, image creation aur container execution pipeline 100% working hai.",
+          "consoleAction": "In Docker Desktop -> Search 'hello-world' -> Click Run.",
+          "command": "docker run hello-world",
+          "commandExplanation": "`docker run` is a compound command that internally performs: (1) `docker pull` if missing locally, (2) `docker create`, and (3) `docker start`.",
+          "expectedOutput": "Hello from Docker!\nThis message shows that your installation appears to be working correctly.\n\nTo generate this message, Docker took the following steps:\n 1. The Docker client contacted the Docker daemon.\n 2. The Docker daemon pulled the \"hello-world\" image from the Docker Hub.\n 3. The Docker daemon created a new container from that image which runs the\n    executable that produces the output you are currently reading.",
+          "verification": "Read 'Hello from Docker!' confirmation on your screen."
+        },
+        {
+          "stepNum": 3,
+          "title": "Inspect Stopped Containers & Exit Codes",
+          "laymanExplanation": "Jab container apna kaam khatam kar leta hai, toh wo band ho jata hai. Hum check karte hain ki pichle chale hue containers ka history record kya hai.",
+          "consoleAction": "In Docker Desktop -> Go to 'Containers' tab -> Select 'Exited' filter.",
+          "command": "docker ps -a",
+          "commandExplanation": "`docker ps` shows only currently active running containers. Adding `-a` (all) reveals stopped and exited containers along with exit codes (Exited (0) means success).",
+          "expectedOutput": "CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES\n3c7f91a21e0b   hello-world   \"/hello\"   30 seconds ago   Exited (0) 29 seconds ago             relaxed_turing",
+          "verification": "Notice 'Exited (0)' in the STATUS column indicating graceful execution."
+        },
+        {
+          "stepNum": 4,
+          "title": "Run an Interactive Alpine Linux Micro-Container",
+          "laymanExplanation": "Alpine Linux sirf 5MB ka ek complete Linux OS hai. Hum iske andar live bash shell kholkar explore karenge.",
+          "consoleAction": "Docker Desktop -> Search 'alpine' -> Click Run with interactive terminal flag.",
+          "command": "docker run -it --name my-alpine-box alpine sh",
+          "commandExplanation": "-i: Keep STDIN open (interactive).\n-t: Allocate pseudo-TTY terminal.\n--name: Custom container name.\nalpine: Image name from Docker Hub.\nsh: Shell command to execute inside container.",
+          "expectedOutput": "/ # uname -a\nLinux my-alpine-box 5.15.0 #1 SMP Alpine Linux\n/ # cat /etc/os-release\nNAME=\"Alpine Linux\"\nID=alpine\nVERSION_ID=3.18.4",
+          "verification": "Type `exit` to close the shell session and return to your host terminal."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Welcome to Docker Live Lab 1 Sandbox Terminal!\nType or click commands below to test container execution.",
+        "commands": {
+          "docker version": "Client: Docker Engine - Community\n Version: 24.0.7\n API version: 1.43\n OS/Arch: linux/amd64\n\nServer: Docker Engine - Community\n Engine: Version 24.0.7\n containerd: Version 1.7.1",
+          "docker run hello-world": "Unable to find image 'hello-world:latest' locally\nlatest: Pulling from library/hello-world\n7190e5904de7: Pull complete\nDigest: sha256:d58e752f82a9f1c2c866f502032ea10b7115ffbfa76736e84f369b0522dd946\nStatus: Downloaded newer image for hello-world:latest\n\nHello from Docker!\nThis message shows that your installation appears to be working correctly!",
+          "docker ps -a": "CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES\n3c7f91a21e0b   hello-world   \"/hello\"   30 seconds ago   Exited (0) 29 seconds ago             relaxed_turing",
+          "docker run -it --name my-alpine-box alpine sh": "Interactive shell opened: / # uname -a\nLinux my-alpine-box 5.15.0 Alpine Linux x86_64\n/ # cat /etc/os-release\nNAME=\"Alpine Linux\"\nVERSION_ID=3.18.4\n/ # [Session exited cleanly]",
+          "docker rm my-alpine-box": "my-alpine-box\n[OK] Cleaned up container my-alpine-box."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Cannot connect to the Docker daemon at unix:///var/run/docker.sock",
+          "cause": "Docker service is not running or current user does not have permission.",
+          "solution": "On Linux/EC2 run `sudo systemctl start docker` and `sudo usermod -aG docker $USER`. On Mac/Windows start Docker Desktop application."
+        }
+      ],
+      "cleanup": [
+        "docker rm $(docker ps -a -q) # Removes all stopped containers",
+        "docker rmi hello-world alpine # Cleans up test images"
+      ]
+    }
   },
   {
     "id": 2,
@@ -166,11 +239,11 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 02 - Virtualization)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "27:40",
-      "summary": "Board par Virtual Machine (VM) aur Docker Container ke architecture layers draw karke exact technical difference explain kiya gaya. Ye top interview question hai.",
+      "summary": "बोर्ड पर वर्चुअल मशीन (VM) और डॉकर कंटेनर की लेयर्स बनाकर दोनों के बीच का तकनीकी फर्क समझाया गया। यह इंटरव्यू का सबसे महत्वपूर्ण सवाल है।",
       "sections": [
         {
           "heading": "1. Virtual Machine (VM) Architecture on Board",
-          "hindiNote": "VM architecture layers aur iske heavyweight hone ke reasons:",
+          "hindiNote": "VM में क्या-क्या लेयर्स होती हैं और यह भारी क्यों होती है:",
           "points": [
             "Hardware: Physical Server (CPU, RAM, Disks)",
             "Host OS: Physical server ka OS",
@@ -182,7 +255,7 @@ window.DOCKER_LECTURES = [
         },
         {
           "heading": "2. Docker Container Architecture on Board",
-          "hindiNote": "Docker me Guest OS ki zaroorat nahi hoti (OS-level virtualization):",
+          "hindiNote": "डॉकर में गेस्ट OS की कोई जरूरत नहीं होती:",
           "points": [
             "Hardware + Host OS + Linux Kernel",
             "Docker Engine (dockerd Daemon)",
@@ -194,10 +267,10 @@ window.DOCKER_LECTURES = [
         },
         {
           "heading": "3. The Secret Behind Isolation: Namespaces & Cgroups",
-          "hindiNote": "Agar containers same Host OS Kernel share karte hain, toh isolation kaise maintain hota hai?",
+          "hindiNote": "अगर कंटेनर एक ही कर्नल शेयर करते हैं, तो वे आपस में टकराते क्यों नहीं?",
           "points": [
-            "Linux Namespaces (Isolation Boundary): Container 1 ko lagta hai system me wo akela hai. Uska apna isolated PID 1, network IP stack, mount points aur user namespace hota hai.",
-            "Control Groups / Cgroups (Resource Limiting): Koi container host machine ki saari RAM ya CPU consume nahi kar sakta. Hard limits enforce kiye jaate hain (e.g. 'docker run -m 512m --cpus=1')."
+            "Namespaces (पर्दा / Isolation): कंटेनर 1 को लगता है कि दुनिया में वही अकेला है। उसका अपना PID 1 होता है, अपना IP एड्रेस, अपना रूट डायरेक्टरी।",
+            "Cgroups (लिमिट / कंट्रोल): कोई भी कंटेनर पूरे सर्वर की रैम या CPU नहीं खा सकता। हम लिमिट लगा सकते हैं (जैसे 'docker run -m 512m')."
           ],
           "diagram": "HOST KERNEL:\n  |--> Namespaces ===> PID (Process ID), NET (Network), MNT (Mount), IPC, UTS\n  |--> Cgroups    ===> CPU Throttling, Memory Limits, Disk I/O Throttling"
         }
@@ -209,7 +282,80 @@ window.DOCKER_LECTURES = [
       "docker pull alpine (Pull ultra-lightweight 5MB Alpine Linux image)"
     ],
     "examTips": "Core Rule: A single physical host can run 10-20 Virtual Machines, but the exact same host can run 200-500 Docker Containers because containers share the host kernel.",
-    "interviewQuestions": "Q: What is the fundamental architectural difference between Docker containers and Virtual Machines?\nA: VMs virtualize the physical hardware layer and require a complete Guest OS for each instance. Containers virtualize the operating system layer, running directly as isolated processes sharing the host Linux kernel."
+    "interviewQuestions": "Q: What is the fundamental architectural difference between Docker containers and Virtual Machines?\nA: VMs virtualize the physical hardware layer and require a complete Guest OS for each instance. Containers virtualize the operating system layer, running directly as isolated processes sharing the host Linux kernel.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Comparing VM vs Container Resource Footprint & Linux Namespaces",
+      "scenario": "Maan lijiye aapke paas 10 dost aa rahe hain. Agar har dost ke liye ek alag 3-bedroom flat rent par lenge (VM with full OS), toh kharcha aur maintenance bohot zyada hoga. Lekin agar ek hi bade hall me 10 alag-alag study table laga diye jayein (Docker Containers with shared OS Kernel), toh sabka kaam 5 minute me aur 95% kam kharche me ho jayega!",
+      "objective": "Demonstrate OS-level virtualization by comparing memory footprint between VM and Docker, inspect process isolation using Linux PID namespaces, and explore official images on Docker Hub.",
+      "duration": "15-20 Mins",
+      "cost": "100% Free",
+      "difficulty": "Complete Beginner",
+      "diagram": "+--------------------------------------------------------------+\n| Host Kernel: PID Space                                       |\n|  Host PID 12450: dockerd                                     |\n|  Host PID 12890: container-shim                              |\n|         |                                                    |\n|         +---> [ Container PID Namespace ]                    |\n|                     |                                        |\n|                     +---> Inside Container: PID 1 (sh)       |\n|                     +---> Isolated filesystem (Alpine 5MB)   |\n|                     +---> Zero Guest OS overhead             |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Search Official Pre-Built Images on Docker Hub",
+          "laymanExplanation": "Jaise mobile me Google Play Store ya Apple App Store se verified apps search karte hain, waise hi terminal se Docker Hub par verified images search karna.",
+          "consoleAction": "Visit https://hub.docker.com and search for 'alpine' or 'ubuntu'.",
+          "command": "docker search --filter is-official=true alpine",
+          "commandExplanation": "`docker search` queries the Docker Hub API. `--filter is-official=true` filters out unofficial third-party images.",
+          "expectedOutput": "NAME      DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED\nalpine    A minimal Docker image based on Alpine Linux…   10340     [OK]",
+          "verification": "Look for '[OK]' in the OFFICIAL column."
+        },
+        {
+          "stepNum": 2,
+          "title": "Inspect Image Size: Alpine (5MB) vs Ubuntu (77MB)",
+          "laymanExplanation": "Ek full Ubuntu VM 15,000MB (15GB) ki hoti hai, jabki Docker container me wahi Ubuntu sirf 77MB aur Alpine sirf 5MB leta hai!",
+          "consoleAction": "In Docker Desktop -> 'Images' tab -> Check size column.",
+          "command": "docker pull alpine && docker pull ubuntu:22.04 && docker images",
+          "commandExplanation": "Pulls both images and lists their size on disk. Notice how small container base images are compared to traditional ISO files.",
+          "expectedOutput": "REPOSITORY   TAG       IMAGE ID       CREATED        SIZE\nubuntu       22.04     5a81c4b612d3   2 weeks ago    77.8MB\nalpine       latest    7e01a0d0a1da   1 month ago    7.34MB",
+          "verification": "Notice Alpine is ~7MB while traditional VM operating systems take 10GB-20GB."
+        },
+        {
+          "stepNum": 3,
+          "title": "Observe PID Namespace Isolation in Action",
+          "laymanExplanation": "Container ke andar chalne wala process sochta hai ki wo system ka pehla aur akela process hai (PID 1), jabki host machine par wo ek aam process hota hai.",
+          "consoleAction": "Run container in background with sleep command.",
+          "command": "docker run -d --name isolate-demo alpine sleep 300",
+          "commandExplanation": "Starts an isolated container executing `sleep 300` in the background.",
+          "expectedOutput": "a91b483e5f7c823091...\n[Container running]",
+          "verification": "Run `docker top isolate-demo` to see PID inside container vs PID on host."
+        },
+        {
+          "stepNum": 4,
+          "title": "Compare Process Trees Inside and Outside Container",
+          "laymanExplanation": "Pehle container ke andar se process dekhenge, fir host machine ke angle se dekhenge.",
+          "consoleAction": "View container processes via CLI.",
+          "command": "docker exec isolate-demo ps aux",
+          "commandExplanation": "`docker exec` executes a process inside the running container. Inside, `sleep 300` has PID 1!",
+          "expectedOutput": "PID   USER     TIME  COMMAND\n  1   root     0:00  sleep 300",
+          "verification": "Confirm that inside the container, PID is 1 (completely isolated namespace)."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker Lab 2 Sandbox: OS Virtualization & Namespaces",
+        "commands": {
+          "docker search --filter is-official=true alpine": "NAME      DESCRIPTION                                     STARS     OFFICIAL\nalpine    A minimal Docker image based on Alpine Linux…   10340     [OK]",
+          "docker pull alpine && docker pull ubuntu:22.04 && docker images": "Pulling alpine... Done (7.3MB)\nPulling ubuntu:22.04... Done (77.8MB)\nREPOSITORY   TAG       IMAGE ID       SIZE\nubuntu       22.04     5a81c4b612d3   77.8MB\nalpine       latest    7e01a0d0a1da   7.34MB",
+          "docker run -d --name isolate-demo alpine sleep 300": "a91b483e5f7c8230915fba40982312b1\n[OK] Background container 'isolate-demo' running sleep 300.",
+          "docker exec isolate-demo ps aux": "PID   USER     TIME  COMMAND\n  1   root     0:00  sleep 300\n 14   root     0:00  ps aux",
+          "docker rm -f isolate-demo": "isolate-demo\n[OK] Container forcibly removed."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Image pull rate limit exceeded on Docker Hub",
+          "cause": "Docker Hub enforces limits on unauthenticated anonymous pulls (100 pulls / 6 hours).",
+          "solution": "Run `docker login` with your free Docker Hub account to increase limits to 200 pulls."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f isolate-demo",
+        "docker rmi alpine ubuntu:22.04"
+      ]
+    }
   },
   {
     "id": 3,
@@ -239,26 +385,26 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 03 - Architecture)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:04:52",
-      "summary": "Is lecture me Bhupinder Rajput ji ne digital board par 3-tier Docker architecture (Client, Host/Daemon, Registry) ka flowchart draw karke explain kiya ki 'docker run' execute karne par internally kya steps trigger hote hain.",
+      "summary": "इस लेक्चर में भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर 3-टियर डॉकर आर्किटेक्चर (Client, Host/Daemon, Registry) का विस्तृत फ्लोचार्ट बनाया और समझाया कि जब आप 'docker run' लिखते हैं तो पर्दे के पीछे क्या होता है।",
       "sections": [
         {
           "heading": "1. Docker 3-Tier Architecture Flowchart",
-          "hindiNote": "Board par 3 core building blocks draw karke explain kiya gaya:",
+          "hindiNote": "बोर्ड पर तीन बड़े बॉक्स बनाकर समझाया गया:",
           "points": [
-            "Box 1: Docker Client (CLI) - Jaha engineer commands execute karta hai ('docker build', 'docker pull', 'docker run').",
-            "Box 2: Docker Host (Daemon) - Engine process (dockerd) jo background me run karta hai aur images, containers, networks manage karta hai.",
-            "Box 3: Registry (Docker Hub / ECR) - Cloud library jaha base images aur customized application images store/download hoti hain."
+            "Box 1: Docker Client (CLI) - जहाँ आप 'docker build', 'docker pull', 'docker run' लिखते हैं।",
+            "Box 2: Docker Host (Daemon) - असली इंजन (dockerd) जो बैकग्राउंड में चलता है, इमेजेस और कंटेनर्स बनाता है।",
+            "Box 3: Registry (Docker Hub) - इंटरनेट पर मौजूद लाइब्रेरी जहाँ से इमेजेस डाउनलोड होती हैं।"
           ],
           "diagram": "+-------------------+       REST API       +-------------------------------------+\n|   DOCKER CLIENT   |  =================>  |             DOCKER HOST             |\n| (docker CLI tool) |  /var/run/docker.sock| +---------------------------------+ |\n|                   |                      | | Docker Daemon (dockerd)         | |\n| - docker build    |                      | |  |-> Images (Nginx, Ubuntu, App)| |\n| - docker pull     |                      | |  |-> Containers (Running Proc)  | |\n| - docker run      |                      | |  |-> Networks & Volumes         | |\n+-------------------+                      | +---------------------------------+ |\n                                           +-------------------------------------+\n                                                              ^ \n                                                              | Pull / Push\n                                                              v\n                                                   +----------------------+\n                                                   |   DOCKER REGISTRY    |\n                                                   |   (hub.docker.com)   |\n                                                   +----------------------+"
         },
         {
           "heading": "2. What happens during 'docker run -d nginx'?",
-          "hindiNote": "Board par step-by-step internal packet/execution flow:",
+          "hindiNote": "बोर्ड पर स्टेप-बाय-स्टेप फ्लो बताया गया:",
           "points": [
-            "Step 1: Docker Client ne dockerd daemon ko REST API request bheji - 'Check karo kya local image cache me requested image maujood hai?'",
-            "Step 2: Agar local storage me nahi hai, toh Daemon Docker Hub registry par jakar automatic 'docker pull' trigger karta hai.",
-            "Step 3: Image layers pull hone ke baad, Daemon read-only layers ke upar ek Thin Read-Write Container Layer mount karta hai.",
-            "Step 4: Linux Namespaces (PID, NET, MNT) aur Cgroups boundaries allocate karke container execution start kar deta hai!"
+            "Step 1: Docker Client ने Daemon से पूछा - 'क्या तुम्हारे लोकल कैशे में nginx इमेज है?'",
+            "Step 2: अगर लोकल में नहीं है, तो Daemon Docker Hub पर जाता है और 'docker pull' करता है।",
+            "Step 3: इमेज की लेयर्स डाउनलोड होने के बाद, Daemon उस इमेज के ऊपर एक Thin Read-Write Layer चढ़ाता है।",
+            "Step 4: Linux Namespaces (PID, NET) और Cgroups एक्टिवेट करता है और कंटेनर स्टार्ट कर देता है!"
           ],
           "diagram": "[ docker run -d nginx ]\n       |\n       +--> Local Cache Check? \n                 |-- Found? ===> Create Container Immediately\n                 +-- Not Found? ===> Connect to Docker Hub\n                                           |--> Download Layers\n                                           |--> Save to Local Images\n                                           |--> Launch Container"
         }
@@ -270,7 +416,80 @@ window.DOCKER_LECTURES = [
       "systemctl status docker (Check whether dockerd daemon service is running)"
     ],
     "examTips": "Crucial Exam Tip: The Docker Daemon listens on Unix socket unix:///var/run/docker.sock by default. Root privileges or membership in the 'docker' user group is required to talk to this socket.",
-    "interviewQuestions": "Q: What is the relationship between Docker Image and Docker Container?\nA: A Docker Image is a read-only, immutable template built from layered filesystems. A Container is a stateful, runtime instance of an image with an added top writable layer."
+    "interviewQuestions": "Q: What is the relationship between Docker Image and Docker Container?\nA: A Docker Image is a read-only, immutable template built from layered filesystems. A Container is a stateful, runtime instance of an image with an added top writable layer.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Installing & Hardening Docker Engine on AWS EC2 (Amazon Linux 2023 / Ubuntu)",
+      "scenario": "Aapne AWS par ek naya blank server (EC2) hire kiya hai. Jaise ek naye computer me sabse pehle OS ke baad software install karte hain, waise hi hum EC2 instance par Docker Engine install karenge, non-root user permissions configure karenge taaki bina `sudo` ke docker chal sake, aur service ko boot-persistent banayenge.",
+      "objective": "Install Docker Engine from official repositories on an AWS EC2 instance, manage the systemd daemon service, configure Linux user group permissions for ec2-user/ubuntu, and verify automated restart on reboot.",
+      "duration": "15 Mins",
+      "cost": "100% Free Tier (t2.micro / t3.micro)",
+      "difficulty": "Beginner to Intermediate",
+      "diagram": "+--------------------------------------------------------------+\n| AWS EC2 Instance (Amazon Linux 2023 / Ubuntu 22.04)          |\n|                                                              |\n|  [ User: ec2-user / ubuntu ]                                 |\n|         |                                                    |\n|         +---> Added to 'docker' Linux Group                  |\n|         |                                                    |\n|         v                                                    |\n|  [ /var/run/docker.sock (UNIX Socket - rw-rw----) ]          |\n|         |                                                    |\n|         v                                                    |\n|  [ systemd: docker.service (ENABLED at boot) ]               |\n|         |                                                    |\n|         v                                                    |\n|  [ dockerd Daemon Engine ]                                   |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Update Package Index and Install Docker Package",
+          "laymanExplanation": "Server ki purani package list refresh karna aur official repository se Docker ke latest stable binaries download karna.",
+          "consoleAction": "Connect to your EC2 instance using EC2 Instance Connect or SSH (`ssh -i key.pem ec2-user@<public-ip>`).",
+          "command": "sudo yum update -y && sudo yum install -y docker",
+          "commandExplanation": "On Amazon Linux 2/2023, `yum install docker` installs the tested and optimized AWS Docker package with all dependencies.",
+          "expectedOutput": "Installed:\n  containerd.x86_64\n  docker.x86_64\nComplete!",
+          "verification": "Run `docker --version` to verify binary is in $PATH."
+        },
+        {
+          "stepNum": 2,
+          "title": "Start Docker Daemon & Enable Boot Persistence",
+          "laymanExplanation": "Docker service ko start karna aur aisi setting karna ki agar EC2 restart bhi ho jaye, toh Docker apne aap auto-start ho jaye.",
+          "consoleAction": "Run systemctl commands in terminal.",
+          "command": "sudo systemctl start docker && sudo systemctl enable docker",
+          "commandExplanation": "`start` initializes dockerd immediately. `enable` creates symlinks so systemd boots Docker upon server reboot.",
+          "expectedOutput": "Created symlink /etc/systemd/system/multi-user.target.wants/docker.service -> /usr/lib/systemd/system/docker.service.",
+          "verification": "Run `sudo systemctl status docker` and verify status says 'active (running)'."
+        },
+        {
+          "stepNum": 3,
+          "title": "Grant Non-Root Execution Permissions (Security Best Practice)",
+          "laymanExplanation": "Baar-baar `sudo` type karna boring aur unsafe hota hai. Hum apne standard user (`ec2-user`) ko `docker` group me add karenge.",
+          "consoleAction": "Terminal command execution.",
+          "command": "sudo usermod -aG docker $USER && newgrp docker",
+          "commandExplanation": "`usermod -aG docker $USER` appends current user to the docker group. `newgrp docker` activates the group membership in current session without logout.",
+          "expectedOutput": "[User added to docker group without errors]",
+          "verification": "Run `docker ps` WITHOUT sudo. If no permission denied error appears, permissions are configured correctly!"
+        },
+        {
+          "stepNum": 4,
+          "title": "Inspect Docker System Configuration & Storage Driver",
+          "laymanExplanation": "Check karna ki Docker ka storage driver (Overlay2) aur cgroup driver theek se configure huye hain.",
+          "consoleAction": "Terminal inspection.",
+          "command": "docker info",
+          "commandExplanation": "Outputs comprehensive diagnostic metrics: Storage Driver (overlay2), Logging Driver (json-file), Cgroup Version, and Total Memory.",
+          "expectedOutput": "Server Version: 24.0.7\n Storage Driver: overlay2\n Cgroup Driver: systemd\n Plugins:\n  Volume: local\n  Network: bridge host ipvlan macvlan null overlay",
+          "verification": "Confirm Storage Driver is 'overlay2' and Cgroup is active."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker EC2 Installation Sandbox Terminal",
+        "commands": {
+          "sudo yum install -y docker": "Resolving Dependencies...\nPackage docker-24.0.7-1.amzn2023.x86_64 installed.\nComplete!",
+          "sudo systemctl start docker && sudo systemctl enable docker": "Created symlink /etc/systemd/system/multi-user.target.wants/docker.service.\n[OK] docker.service active (running).",
+          "sudo usermod -aG docker $USER && newgrp docker": "[OK] User added to docker group. Sudo-less docker commands enabled!",
+          "docker info": "Server Version: 24.0.7\nStorage Driver: overlay2\nLogging Driver: json-file\nCgroup Driver: systemd\nDocker Root Dir: /var/lib/docker",
+          "docker ps": "CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES\n(0 running containers)"
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Got permission denied while trying to connect to the Docker daemon socket",
+          "cause": "Your current shell session has not loaded the updated supplementary group permissions.",
+          "solution": "Run `newgrp docker` or log out from SSH and reconnect (`exit` and re-ssh)."
+        }
+      ],
+      "cleanup": [
+        "sudo systemctl stop docker",
+        "sudo yum remove -y docker (If terminating or cleaning up EC2)"
+      ]
+    }
   },
   {
     "id": 4,
@@ -300,30 +519,30 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 04 - Hands-On Commands)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "52:14",
-      "summary": "Board par essential Linux aur Docker commands ka lifecycle flowchart draw karke samjhaya gaya, jo har DevOps aur Cloud engineer ko verbally clear hona chahiye.",
+      "summary": "बोर्ड पर सभी ज़रूरी लिनक्स और डॉकर कमांड्स का स्टेप-बाय-स्टेप फ्लोचार्ट बनाकर समझाया गया, जो हर क्लाउड और डेवॉप्स इंजीनियर को जुबानी याद होना चाहिए।",
       "sections": [
         {
           "heading": "1. Installation Steps on AWS EC2 (Amazon Linux 2)",
-          "hindiNote": "AWS EC2 par Docker setup karne ke 4 golden steps:",
+          "hindiNote": "AWS EC2 पर डॉकर सेटअप करने के 4 सुनहरे नियम:",
           "points": [
-            "Step 1: sudo yum update -y (System packages refresh aur update karein)",
-            "Step 2: sudo yum install docker -y (Docker engine package install karein)",
-            "Step 3: sudo systemctl start docker && sudo systemctl enable docker (Daemon service start karein aur boot persistence enable karein)",
-            "Step 4: sudo usermod -aG docker ec2-user (ec2-user ko bina sudo privilege ke Docker commands run karne ki permission dein)"
+            "Step 1: sudo yum update -y (सिस्टम पैकेज अपडेट करें)",
+            "Step 2: sudo yum install docker -y (डॉकर पैकेज इंस्टॉल करें)",
+            "Step 3: sudo systemctl start docker && sudo systemctl enable docker (सर्विस शुरू और ऑटो-स्टार्ट करें)",
+            "Step 4: sudo usermod -aG docker ec2-user (ec2-user को बिना sudo के डॉकर चलाने की अनुमति दें)"
           ],
           "diagram": "[ AWS EC2 Instance ]\n       |\n       +--> sudo yum install docker -y\n       +--> sudo systemctl start docker\n       +--> sudo usermod -aG docker ec2-user\n       +--> exit & reconnect SSH ===> Docker Ready without sudo!"
         },
         {
           "heading": "2. Essential Container Management Commands Flow",
-          "hindiNote": "Container lifecycle - creation se lekar deletion tak ka complete sequence:",
+          "hindiNote": "कंटेनर को रन करने से लेकर डिलीट करने तक का पूरा चक्र:",
           "points": [
-            "docker images : Local host storage me available images inspect karein.",
-            "docker run -it --name my_ubuntu ubuntu /bin/bash : Interactive terminal mode me naya container launch karein.",
-            "docker ps : Currently active running containers display karein.",
-            "docker ps -a : Sabhi (Running + Stopped/Exited) containers inspect karein.",
-            "docker stop <id> : Container ko graceful shutdown signal (SIGTERM) bhejne ke liye.",
-            "docker rm <id> : Stopped container ko disk se permanently remove karne ke liye.",
-            "docker rm -f <id> : Active running container ko forceful SIGKILL dekar remove karne ke liye."
+            "docker images : लोकल में कौन-कौन सी इमेजेस मौजूद हैं।",
+            "docker run -it --name my_ubuntu ubuntu /bin/bash : इंटरैक्टिव मोड में नया कंटेनर खोलें।",
+            "docker ps : केवल चल रहे (Running) कंटेनर्स देखने के लिए।",
+            "docker ps -a : सभी (Running + Stopped) कंटेनर्स देखने के लिए।",
+            "docker stop <id> : कंटेनर को सुरक्षित बंद करने के लिए (SIGTERM).",
+            "docker rm <id> : बंद कंटेनर को मिटाने के लिए।",
+            "docker rm -f <id> : चल रहे कंटेनर को जबरन बंद करके मिटाने के लिए (SIGKILL)."
           ],
           "diagram": "+-------------------------------------------------------------+\n|                  CONTAINER LIFECYCLE FLOW                   |\n+-------------------------------------------------------------+\n| [ Image ] ----> (docker run -it) ----> [ Running Container ]|\n|                                              |              |\n|                                         (docker stop)       |\n|                                              v              |\n|                                        [ Stopped Container ]|\n|                                              |              |\n|                                         (docker rm)         |\n|                                              v              |\n|                                          [ DELETED ]        |\n+-------------------------------------------------------------+"
         }
@@ -339,7 +558,90 @@ window.DOCKER_LECTURES = [
       "docker stop test-os && docker rm test-os"
     ],
     "examTips": "Exam Trap: If you run 'docker run ubuntu' without '-it' or a long-running process, the container will instantly exit with status code 0 because PID 1 finishes immediately.",
-    "interviewQuestions": "Q: How do you exit an interactive Docker container without stopping it?\nA: Press the key sequence 'Ctrl + P' followed immediately by 'Ctrl + Q'. This detaches the TTY session while allowing the container to continue executing in the background."
+    "interviewQuestions": "Q: How do you exit an interactive Docker container without stopping it?\nA: Press the key sequence 'Ctrl + P' followed immediately by 'Ctrl + Q'. This detaches the TTY session while allowing the container to continue executing in the background.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Container Lifecycle Mastery (Run, Stop, Restart, Exec, Remove)",
+      "scenario": "Ek hotel room me jab guest aata hai, room book hota hai (Create/Run). Jab guest ghumne jata hai, room lock hota hai (Stop). Jab wapas aata hai, unlock hota hai (Start). Aur jab checkout hota hai, room clean karke naye guest ke liye ready kiya jata hai (Remove). Container ka lifecycle bhi theek aisa hi hota hai!",
+      "objective": "Master complete container state transitions: Created -> Running -> Paused -> Stopped -> Deleted. Run a persistent Nginx web server, forward host port 8080 to container port 80, view logs, and cleanly tear down.",
+      "duration": "20 Mins",
+      "cost": "100% Free",
+      "difficulty": "Complete Beginner",
+      "diagram": "+--------------------------------------------------------------+\n| Container Lifecycle State Machine                            |\n|                                                              |\n|        [ docker create ] --------+                           |\n|                 |                |                           |\n|                 v                v                           |\n|       +------------------------------------+                 |\n|       |        RUNNING (Status: Up)        |                 |\n|       +------------------------------------+                 |\n|            |                          ^                      |\n|       docker pause                docker unpause             |\n|            v                          |                      |\n|       [ PAUSED ] ---------------------+                      |\n|            |                                                 |\n|       docker stop (SIGTERM -> SIGKILL)                       |\n|            v                                                 |\n|       [ STOPPED (Exited) ]                                   |\n|            |                                                 |\n|       docker rm                                              |\n|            v                                                 |\n|       [ DESTROYED / REMOVED ]                                |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Launch a Detached Nginx Web Server with Port Forwarding",
+          "laymanExplanation": "Nginx web server ko background me start karna aur bahar se aane wale traffic ko port 8080 se container ke port 80 par redirect karna.",
+          "consoleAction": "Docker Desktop -> Images -> Search 'nginx' -> Run -> Host Port: 8080, Container Port: 80.",
+          "command": "docker run -d --name web-server -p 8080:80 nginx:alpine",
+          "commandExplanation": "-d: Detached mode (runs in background so you get your prompt back).\n--name web-server: Gives a human-friendly name.\n-p 8080:80: Maps host port 8080 to container internal port 80.\nnginx:alpine: Ultra-lightweight 23MB web server.",
+          "expectedOutput": "7489a234b67e890...\n[Container ID returned]",
+          "verification": "Run `docker ps` and check STATUS column says 'Up X seconds' and PORTS shows '0.0.0.0:8080->80/tcp'."
+        },
+        {
+          "stepNum": 2,
+          "title": "Test Web Access in Browser or Terminal",
+          "laymanExplanation": "Test karna ki container sach me live web traffic handle kar raha hai ya nahi.",
+          "consoleAction": "Open web browser and navigate to `http://localhost:8080` (or `http://<ec2-public-ip>:8080`).",
+          "command": "curl http://localhost:8080",
+          "commandExplanation": "`curl` sends an HTTP GET request to port 8080. Docker forwards the packet to container port 80 where Nginx returns the default HTML page.",
+          "expectedOutput": "<!DOCTYPE html>\n<html>\n<head>\n<title>Welcome to nginx!</title>\n</head>\n<body>\n<h1>Welcome to nginx!</h1>\n</body>\n</html>",
+          "verification": "See the 'Welcome to nginx!' HTML response."
+        },
+        {
+          "stepNum": 3,
+          "title": "Stream Real-Time Container Access Logs",
+          "laymanExplanation": "Jaise security guard diary me aane jaane walo ki entry likhta hai, waise hi Nginx ke access logs live terminal par stream karna.",
+          "consoleAction": "In Docker Desktop -> Click container 'web-server' -> 'Logs' tab.",
+          "command": "docker logs -f web-server",
+          "commandExplanation": "`docker logs` prints container STDOUT/STDERR. Adding `-f` (follow) streams logs in real-time as requests hit the server.",
+          "expectedOutput": "172.17.0.1 - - [25/Sep/2026:12:00:01 +0000] \"GET / HTTP/1.1\" 200 615 \"-\" \"curl/7.88.1\"",
+          "verification": "Press Ctrl+C to exit log streaming."
+        },
+        {
+          "stepNum": 4,
+          "title": "Pause, Unpause, and Stop Container",
+          "laymanExplanation": "Container ko temporarily freeze (pause) karna bina use band kiye, fir unfreeze karna aur aakhir me gracefully stop karna.",
+          "consoleAction": "Docker Desktop UI action buttons (Pause / Stop).",
+          "command": "docker pause web-server && docker ps && docker unpause web-server && docker stop web-server",
+          "commandExplanation": "`pause` uses Linux cgroups freezer to freeze all processes. `stop` sends SIGTERM (10s graceful shutdown) followed by SIGKILL.",
+          "expectedOutput": "web-server\n[Status: Up (Paused)]\nweb-server\n[Status: Up]\nweb-server\n[Status: Exited (0)]",
+          "verification": "Run `docker ps` (it won't show up). Run `docker ps -a` (shows status 'Exited (0)')."
+        },
+        {
+          "stepNum": 5,
+          "title": "Clean Up Container Completely",
+          "laymanExplanation": "Stopped container ko disk se permanently delete karna taaki storage clean rahe.",
+          "consoleAction": "Docker Desktop -> Containers -> Click trash can icon.",
+          "command": "docker rm web-server",
+          "commandExplanation": "`docker rm` permanently removes the container metadata and read-write layer from disk.",
+          "expectedOutput": "web-server",
+          "verification": "Run `docker ps -a`. The container 'web-server' is completely gone."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker Container Lifecycle Sandbox",
+        "commands": {
+          "docker run -d --name web-server -p 8080:80 nginx:alpine": "7489a234b67e890123456789abcdef0123456789abcdef0123456789abcdef\n[OK] Started 'web-server' on port 8080.",
+          "docker ps": "CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                  NAMES\n7489a234b67e   nginx:alpine   \"/docker-entrypoint.…\"   10 seconds ago  Up 9 seconds   0.0.0.0:8080->80/tcp   web-server",
+          "curl http://localhost:8080": "<!DOCTYPE html>\n<html><head><title>Welcome to nginx!</title></head>\n<body><h1>Welcome to nginx!</h1><p>Running inside Docker container!</p></body></html>",
+          "docker stop web-server": "web-server\n[OK] Gracefully stopped web-server (SIGTERM).",
+          "docker rm web-server": "web-server\n[OK] Container web-server removed."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Error response from daemon: Conflict. The container name \"/web-server\" is already in use",
+          "cause": "A container with the same name already exists (either running or stopped).",
+          "solution": "Either remove the existing container using `docker rm -f web-server` or pick a different name (e.g. `--name web-server-2`)."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f web-server",
+        "docker rmi nginx:alpine"
+      ]
+    }
   },
   {
     "id": 5,
@@ -370,27 +672,27 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 05 - Dockerfile & Layers)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:08:04",
-      "summary": "Board par real-world custom Dockerfile live code karke dikhayi gayi aur explain kiya gaya ki Docker kaise har instruction ko isolated cached layer me build karta hai.",
+      "summary": "बोर्ड पर एक वास्तविक Dockerfile लिखकर दिखाई गई और बताया गया कि डॉकर हर लाइन को कैसे एक लेयर (Layer) के रूप में कैश करता है।",
       "sections": [
         {
           "heading": "1. Anatomy of a Production Dockerfile on Board",
-          "hindiNote": "Board par draw ki gayi Nginx custom static website Dockerfile:",
+          "hindiNote": "बोर्ड पर लिखी गई Nginx कस्टम वेबसाइट Dockerfile:",
           "points": [
-            "FROM ubuntu:latest  ==> Base operating system image specify karein (always first mandatory instruction)",
-            "RUN apt-get update && apt-get install -y nginx  ==> Image build time par commands execute karke packages install karein",
-            "COPY index.html /var/www/html/  ==> Host system se application code container filesystem me transfer karein",
-            "EXPOSE 80  ==> Target container port document karein",
-            "CMD [\"nginx\", \"-g\", \"daemon off;\"]  ==> Jab container start ho tab ye default process run kare"
+            "FROM ubuntu:latest  ==> बेस ऑपरेटिंग सिस्टम चुने (हमेशा पहली लाइन होती है)",
+            "RUN apt-get update && apt-get install -y nginx  ==> इमेज बिल्ड के दौरान कमांड चलाएं",
+            "COPY index.html /var/www/html/  ==> होस्ट से कोड कंटेनर में डालें",
+            "EXPOSE 80  ==> पोर्ट 80 डॉक्यूमेंट करें",
+            "CMD [\"nginx\", \"-g\", \"daemon off;\"]  ==> जब कंटेनर स्टार्ट हो तब यह प्रोसेस चले"
           ],
           "diagram": "+-------------------------------------------------------------+\n| DOCKERFILE CODE (Layer Cake Concept)                        |\n+-------------------------------------------------------------+\n| Layer 4: CMD [\"nginx\", \"-g\", \"daemon off;\"] (Run at start)  |\n| Layer 3: COPY index.html /var/www/html/     (Code Layer)    |\n| Layer 2: RUN apt-get install -y nginx       (Package Layer) |\n| Layer 1: FROM ubuntu:latest                 (Base OS Layer) |\n+-------------------------------------------------------------+\n       | \n     docker build -t my_web_app:v1 .\n       v\n[ Final Custom Docker Image ]"
         },
         {
           "heading": "2. Docker Diff (A, C, D Flags) on Board",
-          "hindiNote": "docker diff inspection chart - container running state me kya modifications huye:",
+          "hindiNote": "कंटेनर के अंदर क्या बदलाव हुआ, यह देखने का बोर्ड चार्ट:",
           "points": [
-            "A (Added): Jab container ke andar nayi file ya directory create hoti hai.",
-            "C (Changed): Jab existing file ya system config (/etc/nginx/nginx.conf) modify hoti hai.",
-            "D (Deleted): Jab koi file ya folder delete ho jaata hai."
+            "A (Added): अगर कंटेनर के अंदर कोई नई फाइल या फोल्डर बनाया गया।",
+            "C (Changed): अगर किसी पहले से मौजूद सिस्टम फाइल (जैसे /etc/hosts) में बदलाव हुआ।",
+            "D (Deleted): अगर कोई फाइल मिटा दी गई।"
           ],
           "diagram": "Command: docker diff <container_id>\nOutput:\n  C /etc\n  C /etc/nginx\n  A /var/www/html/my_file.txt   <--- New file added\n  D /var/log/nginx/access.log   <--- File deleted"
         }
@@ -406,7 +708,90 @@ window.DOCKER_LECTURES = [
       "docker commit myapp custom-nginx:v2"
     ],
     "examTips": "DCA Best Practice: Minimize layers and image size by chaining multiple commands using '&&' into a single RUN instruction and cleaning up cache (e.g., 'apt-get clean && rm -rf /var/lib/apt/lists/*').",
-    "interviewQuestions": "Q: What is the difference between CMD and ENTRYPOINT in a Dockerfile?\nA: ENTRYPOINT specifies the fixed binary executable that will always run when the container starts. CMD specifies default arguments passed to that executable, which can be easily overridden from the command line."
+    "interviewQuestions": "Q: What is the difference between CMD and ENTRYPOINT in a Dockerfile?\nA: ENTRYPOINT specifies the fixed binary executable that will always run when the container starts. CMD specifies default arguments passed to that executable, which can be easily overridden from the command line.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Writing Production Dockerfiles, Layer Caching & Image Optimization",
+      "scenario": "Sochiye aap cake bana rahe hain. Pehle base sponge banta hai, fir cream layer, fir strawberry toppings. Agar aapko strawberry badal kar chocolate karni hai, toh aap pura cake dobara shuru se nahi banate, sirf topping badalte hain. Dockerfile me bhi layers hoti hain! Agar pehli layers me koi change nahi hua, toh Docker unhe cache se uthaata hai aur build 1 second me finish ho jata hai.",
+      "objective": "Build a custom production-ready Python web application container image using Dockerfile. Master FROM, WORKDIR, COPY, RUN, EXPOSE, and CMD instructions, verify layer caching, and optimize image size.",
+      "duration": "25 Mins",
+      "cost": "100% Free",
+      "difficulty": "Intermediate",
+      "diagram": "+--------------------------------------------------------------+\n| Dockerfile Layer Construction & Cache                        |\n|                                                              |\n|  [ Layer 1: FROM python:3.9-slim ]    ---> CACHED (Base OS)  |\n|  [ Layer 2: WORKDIR /app ]            ---> CACHED (Directory)|\n|  [ Layer 3: COPY requirements.txt . ]  ---> CACHED (Deps)     |\n|  [ Layer 4: RUN pip install -r req ]  ---> CACHED (Pip)      |\n|  [ Layer 5: COPY app.py . ]           ---> REBUILT (Code)    |\n|  [ Layer 6: EXPOSE 5000 ]             ---> Metadata          |\n|  [ Layer 7: CMD [\"python\",\"app.py\"] ] ---> Default Command   |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create Project Directory and Application Code",
+          "laymanExplanation": "Ek naya folder banana aur usme Python Flask ka ek simple web code likhna jo 'Hello from Dockerized App' return kare.",
+          "consoleAction": "Create a folder `my-python-app` on your computer or EC2 terminal.",
+          "command": "mkdir -p my-python-app && cd my-python-app\ncat << 'EOF' > app.py\nfrom flask import Flask\napp = Flask(__name__)\n\n@app.route('/')\ndef hello():\n    return '<h1>Welcome to Technical Guftgu Docker Masterclass!</h1><p>Custom Dockerfile App Running Successfully.</p>'\n\nif __name__ == '__main__':\n    app.run(host='0.0.0.0', port=5000)\nEOF",
+          "commandExplanation": "Creates a minimal Flask micro-web application listening on all network interfaces (`0.0.0.0`) on port 5000.",
+          "expectedOutput": "[app.py created successfully]",
+          "verification": "Run `cat app.py` to verify contents."
+        },
+        {
+          "stepNum": 2,
+          "title": "Create Requirements File for Dependencies",
+          "laymanExplanation": "Python libraries ki list banana taaki container ko pata ho kaunsa package install karna hai.",
+          "consoleAction": "Create requirements.txt file.",
+          "command": "echo 'flask==2.3.3' > requirements.txt",
+          "commandExplanation": "Pins Flask framework version 2.3.3 to avoid unexpected breaking changes in production builds.",
+          "expectedOutput": "[requirements.txt created]",
+          "verification": "Run `cat requirements.txt`."
+        },
+        {
+          "stepNum": 3,
+          "title": "Write the Production Dockerfile",
+          "laymanExplanation": "Docker ke liye recipe likhna: Kaunsa base OS chahiye, code kahan copy karna hai, dependency kaise install karni hai aur app ko start kaise karna hai.",
+          "consoleAction": "Create Dockerfile inside `my-python-app`.",
+          "command": "cat << 'EOF' > Dockerfile\nFROM python:3.9-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY app.py .\nEXPOSE 5000\nCMD [\"python\", \"app.py\"]\nEOF",
+          "commandExplanation": "FROM: Slim Linux base with Python runtime.\nWORKDIR: Sets working directory to /app.\nCOPY requirements first: Maximizes layer cache reuse when code changes.\nRUN: Installs pip dependencies.\nCMD: Executed at container startup.",
+          "expectedOutput": "[Dockerfile created]",
+          "verification": "Check `cat Dockerfile`."
+        },
+        {
+          "stepNum": 4,
+          "title": "Build the Custom Image with Tag",
+          "laymanExplanation": "Dockerfile ko compile karke ek ready-to-run container image banana jiska naam `my-flask-app:v1` hoga.",
+          "consoleAction": "Terminal command inside project directory.",
+          "command": "docker build -t my-flask-app:v1 .",
+          "commandExplanation": "`docker build` executes Dockerfile instructions step-by-step. `-t my-flask-app:v1` tags the image with name and version. `.` specifies current directory as build context.",
+          "expectedOutput": "[+] Building 4.2s (10/10) FINISHED\n => [internal] load build definition from Dockerfile\n => [1/5] FROM docker.io/library/python:3.9-slim\n => [2/5] WORKDIR /app\n => [3/5] COPY requirements.txt .\n => [4/5] RUN pip install -r requirements.txt\n => [5/5] COPY app.py .\n => exporting to image\n => naming to docker.io/library/my-flask-app:v1",
+          "verification": "Run `docker images my-flask-app:v1` to verify image exists."
+        },
+        {
+          "stepNum": 5,
+          "title": "Run Container from Custom Image and Test in Browser",
+          "laymanExplanation": "Apni banayi hui brand new image se container start karke browser me test karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run -d --name flask-container -p 5000:5000 my-flask-app:v1 && curl http://localhost:5000",
+          "commandExplanation": "Runs the container in background, maps port 5000, and verifies HTTP response with curl.",
+          "expectedOutput": "<h1>Welcome to Technical Guftgu Docker Masterclass!</h1><p>Custom Dockerfile App Running Successfully.</p>",
+          "verification": "Confirm custom HTML response returns on port 5000."
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Dockerfile Custom Image Build Sandbox",
+        "commands": {
+          "docker build -t my-flask-app:v1 .": "[+] Building 3.8s (10/10) FINISHED\n => [1/5] FROM python:3.9-slim (Pull complete)\n => [2/5] WORKDIR /app\n => [3/5] COPY requirements.txt .\n => [4/5] RUN pip install -r requirements.txt (Successfully installed Flask)\n => [5/5] COPY app.py .\n => naming to my-flask-app:v1\n[OK] Built image my-flask-app:v1",
+          "docker run -d --name flask-container -p 5000:5000 my-flask-app:v1": "e49f82a1b2c3d4e5f6...\n[OK] Container 'flask-container' running on port 5000.",
+          "curl http://localhost:5000": "<h1>Welcome to Technical Guftgu Docker Masterclass!</h1><p>Custom Dockerfile App Running Successfully.</p>",
+          "docker rm -f flask-container": "flask-container\n[OK] Cleaned up flask-container."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Step 4/5 fails with 'ModuleNotFoundError: No module named flask'",
+          "cause": "Flask was not installed into the container image before `CMD` was triggered, or requirements.txt had a typo.",
+          "solution": "Ensure `RUN pip install -r requirements.txt` comes before `COPY app.py .` in Dockerfile."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f flask-container",
+        "docker rmi my-flask-app:v1",
+        "cd .. && rm -rf my-python-app"
+      ]
+    }
   },
   {
     "id": 6,
@@ -436,37 +821,37 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 06 - Docker Volumes)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:03:28",
-      "summary": "Bhupinder Rajput ji ne digital board par samjhaya ki container ke andar database data persist karna kyu dangerous hai, aur kaise Pen Drive analogy ki tarah Docker Volumes attach karke data ko permanently secure rakha jaata hai.",
+      "summary": "भूपिंदर राजपूत जी ने डिजिटल बोर्ड पर समझाया कि कंटेनर के अंदर डेटा रखना सबसे बड़ी गलती क्यों है, और कैसे पेन ड्राइव (Pen Drive) की तरह डॉकर वॉल्यूम को कंटेनर में लगाकर डेटा को हमेशा सुरक्षित रखा जाता है।",
       "sections": [
         {
-          "heading": "1. Why Containers are Stateless / Ephemeral (Why Data Is Wiped on Container Delete)",
-          "hindiNote": "Board par Internet Cyber Cafe ki real-world analogy explain ki gayi:",
+          "heading": "1. Why Containers are Stateless / Ephemeral (डेटा डिलीट क्यों होता है?)",
+          "hindiNote": "बोर्ड पर इंटरनेट कैफे का शानदार उदाहरण समझाया गया:",
           "points": [
-            "Cyber Cafe PC: Aap cafe gaye, temporary desktop par file save ki. System restart hote hi DeepFreeze ya reboot se sab kuch wipe/deleted!",
-            "Docker container bhi Cyber Cafe PC jaisa ephemeral hai: Isme execution process run hoti hai. Agar container terminate/delete hua toh internal data destroyed!",
-            "Pen Drive Solution (Docker Volumes): Aap external USB Drive attach karte hain aur data waha store karte hain. System crash ho jaye tab bhi Pen Drive (Volume) me aapka production database 100% safe rehta hai!"
+            "इंटरनेट कैफे कंप्यूटर: आप कैफे गए, डेस्कटॉप पर अपनी जरूरी फाइलें सेव कीं। कंप्यूटर बंद होते ही सब कुछ रीसेट/डिलीट हो गया!",
+            "डॉकर कंटेनर भी कैफे कंप्यूटर जैसा है: कंटेनर में केवल कोड और प्रोसेस चलती है। अगर कंटेनर क्रैश हुआ तो डेटा खत्म।",
+            "पेन ड्राइव (Pen Drive) का समाधान: आप अपनी पेन ड्राइव (Docker Volume) लगाते हैं, उसमें डेटा सेव करते हैं। कंप्यूटर भले टूट जाए, पेन ड्राइव में आपका डेटा सुरक्षित है!"
           ],
           "diagram": "WITHOUT VOLUME (DANGEROUS!):\n[ Container Created ] ---> [ Writes Data in Writable Layer ] ---> [ docker rm ] ===> DATA LOST FOREVER!\n\nWITH DOCKER VOLUME (SAFE & PERSISTENT):\n[ Container ] === Mount Point (/var/lib/mysql) ===> [ DOCKER VOLUME on Host Disk ]\n      |                                                        |\n [ docker rm ] (Container Dies)                                v\n                                                   DATA REMAINS 100% SAFE!"
         },
         {
           "heading": "2. 3 Types of Docker Storage on Board",
-          "hindiNote": "Board par 3 core storage driver patterns compare kiye gaye:",
+          "hindiNote": "बोर्ड पर तीनों स्टोरेज मॉडल्स की तुलना की गई:",
           "points": [
-            "1. Docker Managed Volumes (Best Practice): Docker daemon manage karta hai (/var/lib/docker/volumes/). Production databases ke liye industry standard recommendation.",
-            "2. Bind Mounts: Host machine ka exact file path link hota hai (e.g. /home/ec2-user/code). Local development me live code reloading ke liye best.",
-            "3. tmpfs Mounts: Host RAM memory me ephemeral store hota hai, disk par zero footprint. Sensitive secrets aur temporary tokens ke liye best."
+            "1. Docker Volumes (सबसे अच्छा): डॉकर खुद मैनेज करता है (/var/lib/docker/volumes/). प्रोडक्शन डेटाबेस के लिए यही रिकमेंड है।",
+            "2. Bind Mounts: होस्ट मशीन का कोई भी मनचाहा फोल्डर (जैसे /home/ec2-user/code). डेवलपमेंट के समय लाइव कोडिंग के लिए बेस्ट।",
+            "3. tmpfs Mounts: रैम (RAM) में स्टोर होता है, हार्ड डिस्क पर कभी नहीं लिखा जाता। पासवर्ड और कीज के लिए बेस्ट।"
           ],
           "diagram": "+-------------------------------------------------------------------------+\n| HOST SYSTEM STORAGE HIERARCHY                                           |\n+-------------------------------------------------------------------------+\n| [ Docker Volumes ] ===> /var/lib/docker/volumes/my_data/_data (Managed) |\n| [ Bind Mounts ]    ===> /home/user/app (Direct Host Folder)             |\n| [ tmpfs Mounts ]   ===> System Memory (RAM) (Non-Persistent)            |\n+-------------------------------------------------------------------------+"
         },
         {
           "heading": "3. Volume Persistence Proof & Sharing (--volumes-from)",
-          "hindiNote": "Board par practical persistence validation flow:",
+          "hindiNote": "बोर्ड पर प्रैक्टिकल टेस्ट का फ्लो:",
           "points": [
-            "Step 1: Volume create karein: docker volume create my_data",
-            "Step 2: Container A me volume mount karein aur file1.txt write karein.",
-            "Step 3: Container A ko permanently terminate (docker rm -f) kar dein.",
-            "Step 4: Naya container B launch karein aur wahi volume attach karein: file1.txt intact aur 100% safe milegi!",
-            "Step 5: Multiple active containers same volume ko concurrency ke sath share kar sakte hain."
+            "Step 1: वॉल्यूम बनाएं: docker volume create my_data",
+            "Step 2: कंटेनर A में वॉल्यूम लगाएं और उसमें file1.txt लिखें।",
+            "Step 3: कंटेनर A को हमेशा के लिए डिलीट (docker rm -f) कर दें।",
+            "Step 4: नया कंटेनर B बनाएं और वही वॉल्यूम अटैच करें: file1.txt बिल्कुल सही सलामत मिलेगी!",
+            "Step 5: दो कंटेनर्स एक ही वॉल्यूम को आपस में शेयर कर सकते हैं।"
           ],
           "diagram": "[ Container A (Writes File) ] --+ \n                                +---> [ VOLUME: my_data ] <=== [ Container B (Reads File) ]\n[ Container A Deleted! ] -------+               | \n                                                +===> Data Still Intact!"
         }
@@ -483,7 +868,80 @@ window.DOCKER_LECTURES = [
       "docker volume prune -f"
     ],
     "examTips": "DCA / CKA Exam Tip: Docker will NEVER delete a Volume automatically when removing an attached container using 'docker rm <container>'. To explicitly delete associated anonymous volumes, you must pass the '-v' flag: 'docker rm -v <container>'.",
-    "interviewQuestions": "Q: How do you persist database data in a MySQL or Postgres container across container restarts or upgrades?\nA: Create a named Docker Volume (e.g. 'docker volume create mysql_data') and mount it to the container's data directory (e.g. 'docker run -d -v mysql_data:/var/lib/mysql mysql:latest'). Even if the container is upgraded, re-created, or destroyed, the MySQL database files stay intact inside the volume."
+    "interviewQuestions": "Q: How do you persist database data in a MySQL or Postgres container across container restarts or upgrades?\nA: Create a named Docker Volume (e.g. 'docker volume create mysql_data') and mount it to the container's data directory (e.g. 'docker run -d -v mysql_data:/var/lib/mysql mysql:latest'). Even if the container is upgraded, re-created, or destroyed, the MySQL database files stay intact inside the volume.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Docker Storage, Named Volumes & Data Persistence",
+      "scenario": "Maan lijiye aap ek hotel me stay kar rahe hain. Hotel ke drawer me rakha hua saaman checkout ke waqt room cleaning me fek diya jata hai (Ephemeral container layer). Lekin agar aap apna saaman hotel ke safe locker me rakhte hain (Docker Volume), toh chahe aap checkout karke dusre room me shift ho jayein, safe locker ka saaman hamesha safe aur intact rehta hai!",
+      "objective": "Demonstrate that Docker container storage is ephemeral (lost on deletion) versus Docker Named Volumes that persist data permanently across container deletion and recreation.",
+      "duration": "20 Mins",
+      "cost": "100% Free",
+      "difficulty": "Intermediate",
+      "diagram": "+--------------------------------------------------------------+\n| Host Filesystem: /var/lib/docker/volumes/my-db-data/_data    |\n|                                                              |\n|                     [ PERSISTENT VOLUME ]                    |\n|                        (my-db-data)                          |\n|                             |                                |\n|         +-------------------+-------------------+            |\n|         |                                       |            |\n|         v                                       v            |\n|  [ Container 1 (MySQL) ]                 [ Container 2 (MySQL) ]\n|  Mount: /var/lib/mysql                   Mount: /var/lib/mysql\n|  Action: Creates User Table              Action: Reads Table!\n|  Status: DELETED & DESTROYED!            Status: DATA PRESERVED!\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create an Independent Docker Named Volume",
+          "laymanExplanation": "Host machine par ek dedicated safe locker (Volume) banana jise container ke delete hone par bhi koi chhu nahi sakta.",
+          "consoleAction": "In Docker Desktop -> 'Volumes' tab -> Click 'Create'.",
+          "command": "docker volume create my-db-data && docker volume ls",
+          "commandExplanation": "`docker volume create` allocates a managed directory under `/var/lib/docker/volumes/` that bypasses the container storage driver.",
+          "expectedOutput": "my-db-data\nDRIVER    VOLUME NAME\nlocal     my-db-data",
+          "verification": "Inspect volume metadata using `docker volume inspect my-db-data`."
+        },
+        {
+          "stepNum": 2,
+          "title": "Launch Container 1 and Write Persistent Data",
+          "laymanExplanation": "Pehle container ko volume ke sath jodkar uske andar ek file create karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run -d --name writer-app -v my-db-data:/data alpine sh -c \"echo 'Production Database Record ID: 994821 - Created by Container 1' > /data/db.txt && sleep 3600\"",
+          "commandExplanation": "-v my-db-data:/data: Mounts the volume `my-db-data` to `/data` path inside the container.\nsh -c: Writes sample database text to `/data/db.txt`.",
+          "expectedOutput": "3b8a1c9e...\n[Container 1 running with volume mounted]",
+          "verification": "Read data inside container 1: `docker exec writer-app cat /data/db.txt`."
+        },
+        {
+          "stepNum": 3,
+          "title": "Delete Container 1 Completely (Simulating Disaster/Crash)",
+          "laymanExplanation": "Container 1 ko forcefully kill aur delete kar dena taaki test ho sake ki data bacha ya chala gaya.",
+          "consoleAction": "In Docker Desktop -> Delete container 'writer-app'.",
+          "command": "docker rm -f writer-app",
+          "commandExplanation": "Forcibly stops and deletes container 1 and its read-write layer.",
+          "expectedOutput": "writer-app\n[Container completely destroyed]",
+          "verification": "Run `docker ps -a`. Container 1 is dead, but run `docker volume ls` - `my-db-data` is still intact!"
+        },
+        {
+          "stepNum": 4,
+          "title": "Launch a Brand New Container 2 and Verify Data Persistence",
+          "laymanExplanation": "Ek naya naya container launch karke wahi volume mount karna aur check karna ki purani file waisi ki waisi milti hai ya nahi.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run --rm -v my-db-data:/data alpine cat /data/db.txt",
+          "commandExplanation": "Launches a brand new container, attaches the same volume `my-db-data`, reads `/data/db.txt`, and automatically removes itself (`--rm`).",
+          "expectedOutput": "Production Database Record ID: 994821 - Created by Container 1",
+          "verification": "The exact same data written by the destroyed Container 1 is read perfectly by Container 2! Data persistence proven!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker Persistent Storage & Volumes Sandbox",
+        "commands": {
+          "docker volume create my-db-data": "my-db-data\n[OK] Named volume 'my-db-data' created at /var/lib/docker/volumes/my-db-data/_data",
+          "docker run -d --name writer-app -v my-db-data:/data alpine sh -c \"echo 'Record ID: 994821' > /data/db.txt && sleep 3600\"": "3b8a1c9e78234...\n[OK] Started 'writer-app' and wrote data to /data/db.txt inside volume.",
+          "docker rm -f writer-app": "writer-app\n[OK] Container 1 forcibly deleted! Its ephemeral layer is gone.",
+          "docker run --rm -v my-db-data:/data alpine cat /data/db.txt": "Record ID: 994821\n[OK] Data successfully recovered by Container 2 from volume my-db-data!",
+          "docker volume rm my-db-data": "my-db-data\n[OK] Volume cleaned up."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Error response from daemon: remove my-db-data: volume is in use",
+          "cause": "A running or stopped container is still attached to the volume.",
+          "solution": "Remove the attached container first (`docker rm -f <container-name>`) before deleting the volume."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f writer-app",
+        "docker volume rm my-db-data"
+      ]
+    }
   },
   {
     "id": 7,
@@ -513,34 +971,34 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 07 - Port Mapping)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "1:00:19",
-      "summary": "Board par network packet routing explain ki gayi: Kaise internet se user request EC2 host port par aati hai aur Docker proxy internal container private port par forward karta hai.",
+      "summary": "बोर्ड पर समझाया गया कि इंटरनेट से आने वाले यूजर की रिक्वेस्ट आपके लैपटॉप/EC2 के पोर्ट 80 पर आती है, और डॉकर उसे कंटेनर के अंदर कैसे भेजता है।",
       "sections": [
         {
           "heading": "1. How Docker Port Forwarding (-p) Works on Board",
-          "hindiNote": "Board par packet traversal topology:",
+          "hindiNote": "बोर्ड पर पैकेट फ्लो का नक्शा:",
           "points": [
-            "User Client: Request bhejta hai http://<EC2-Public-IP>:8080.",
-            "Host Interface: Host kernel port 8080 par packet intercept karta hai.",
-            "Docker iptables NAT: Packet ko translate karke container ke internal private IP (172.17.0.2:80) par route karta hai.",
-            "Syntax formula to remember: -p <Outside/Host Port>:<Inside/Container Port> (-p HostPort:ContainerPort)"
+            "User Browser: http://<EC2-Public-IP>:8080 खोलता है।",
+            "Host Interface: EC2 सर्वर पोर्ट 8080 पर पैकेट रिसीव करता है।",
+            "iptables NAT: डॉकर इंजन पैकेट को ट्रांसलेट करके कंटेनर के प्राइवेट IP (172.17.0.2:80) पर फॉरवर्ड कर देता है।",
+            "सिंटेक्स याद रखने का तरीका: -p <बाहर का पोर्ट>:<अंदर का पोर्ट> (-p HostPort:ContainerPort)"
           ],
           "diagram": "[ Client Browser ] (HTTP Request to Public IP : 8080)\n        |\n        v\n[ AWS EC2 Host Interface : Port 8080 ]\n        |\n     (Docker iptables NAT Forwarding)\n        |\n        v\n[ Docker Container IP (172.17.0.2) : Port 80 ] ===> NGINX Web Server Responds!"
         },
         {
           "heading": "2. EXPOSE vs -p (The Classic Interview Question)",
-          "hindiNote": "Engineers ke beech common confusion clear kiya gaya:",
+          "hindiNote": "छात्रों को अक्सर इसमें भ्रम होता है, जिसे बोर्ड पर स्पष्ट किया गया:",
           "points": [
-            "EXPOSE 80: Ye sirf container metadata documentation hai. Isse external traffic open nahi hota!",
-            "-p 8080:80: Ye actual traffic forwarding switch hai. Ye host socket bind karta hai aur traffic forward karta hai."
+            "EXPOSE 80: यह सिर्फ एक लेबल या डॉक्यूमेंटेशन है। इसे लिखने से कोई पोर्ट बाहर नहीं खुलता!",
+            "-p 8080:80: यह असली स्विच है। यह होस्ट पर पोर्ट बाइंड करता है और इंटरनेट से आने वाला ट्रैफिक अंदर भेजता है।"
           ],
           "diagram": "Dockerfile: EXPOSE 80    ===> Just documentation ('This container expects port 80')\nCLI:        -p 8080:80   ===> ACTUAL PORT FORWARDING ACTIVATED!"
         },
         {
           "heading": "3. Docker Exec vs Docker Run on Board",
-          "hindiNote": "docker run vs docker exec distinction:",
+          "hindiNote": "दोनों में क्या अंतर है:",
           "points": [
-            "docker run: Creates and starts a completely new container instance.",
-            "docker exec: Existing active running container ke andar jakar commands/bash shell launch karta hai."
+            "docker run: एक नया कंटेनर जन्म देता है और चलाता है।",
+            "docker exec: पहले से चल रहे ज़िंदा कंटेनर के अंदर घुसकर नई कमांड या शेल चलाता है।"
           ],
           "diagram": "[ New Container Creation ] ===> docker run -it ubuntu /bin/bash\n[ Enter Already Running Container ] ===> docker exec -it <running_id> /bin/bash"
         }
@@ -556,7 +1014,80 @@ window.DOCKER_LECTURES = [
       "docker run -d --restart always nginx"
     ],
     "examTips": "DCA Tip: If you use uppercase '-P' (publish-all), Docker automatically maps all EXPOSE ports to random high-numbered ports (e.g. 32768+) on the host.",
-    "interviewQuestions": "Q: What is the difference between 'docker attach' and 'docker exec'?\nA: 'docker attach' binds your terminal directly to the container's primary process (PID 1). If you exit or send Ctrl+C, you terminate the container. 'docker exec' spawns a brand new independent process inside the container, allowing safe debugging without risking container termination."
+    "interviewQuestions": "Q: What is the difference between 'docker attach' and 'docker exec'?\nA: 'docker attach' binds your terminal directly to the container's primary process (PID 1). If you exit or send Ctrl+C, you terminate the container. 'docker exec' spawns a brand new independent process inside the container, allowing safe debugging without risking container termination.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Docker Networking, Custom Bridges & Inter-Container Communication",
+      "scenario": "Maan lijiye do log ek band kamre me baat kar rahe hain. Default bridge network me containers ek dusre ko sirf unke dynamic IP se bula sakte hain. Lekin custom bridge network me ek automated telephone directory (embedded DNS) hoti hai, jisse container ek dusre ko unke naam se (jaise `ping backend` ya `curl web`) direct call kar sakte hain!",
+      "objective": "Create an isolated user-defined Docker bridge network, attach multiple containers (frontend and backend), demonstrate automatic DNS service discovery between containers, and map public ports.",
+      "duration": "20 Mins",
+      "cost": "100% Free",
+      "difficulty": "Intermediate",
+      "diagram": "+--------------------------------------------------------------+\n| User-Defined Custom Bridge Network: 'my-custom-net'          |\n|  Subnet: 172.20.0.0/16 | Embedded DNS: 127.0.0.11            |\n|                                                              |\n|  [ Frontend Web Container ]           [ Backend API Container]\n|  IP: 172.20.0.2                      IP: 172.20.0.3          |\n|  Name: 'frontend-app'                 Name: 'backend-api'     |\n|         |                                    ^               |\n|         | curl http://backend-api:8080       |               |\n|         +------------------------------------+               |\n|                   (DNS Resolves by Name!)                    |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Create a User-Defined Custom Bridge Network",
+          "laymanExplanation": "Apne application ke liye ek isolated private WiFi network (virtual bridge switch) create karna.",
+          "consoleAction": "In Docker Desktop -> 'Networks' tab -> Click 'Create Network'.",
+          "command": "docker network create my-custom-net && docker network ls",
+          "commandExplanation": "`docker network create` provisions an isolated Linux software bridge with automatic DNS name resolution enabled.",
+          "expectedOutput": "38a19bc042...\nNETWORK ID     NAME            DRIVER    SCOPE\n38a19bc042     my-custom-net   bridge    local",
+          "verification": "Inspect subnet details with `docker network inspect my-custom-net`."
+        },
+        {
+          "stepNum": 2,
+          "title": "Launch Backend API Service Container on Custom Network",
+          "laymanExplanation": "Backend service ko is private network se jodkar launch karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run -d --name backend-api --network my-custom-net nginx:alpine",
+          "commandExplanation": "--network my-custom-net: Attaches the container interface directly to our custom bridge rather than default docker0 bridge.",
+          "expectedOutput": "5f1a2b3c4d...\n[Backend running on my-custom-net]",
+          "verification": "Check IP assigned in network: `docker inspect backend-api -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'`."
+        },
+        {
+          "stepNum": 3,
+          "title": "Launch Frontend Container and Test DNS Communication",
+          "laymanExplanation": "Frontend container se backend ko uske IP ke bajaye direct uske naam (`backend-api`) se call karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run --rm --network my-custom-net alpine ping -c 3 backend-api",
+          "commandExplanation": "Demonstrates Docker's embedded DNS server (127.0.0.11) automatically resolving the hostname 'backend-api' to its container IP.",
+          "expectedOutput": "PING backend-api (172.20.0.2): 56 data bytes\n64 bytes from 172.20.0.2: seq=0 ttl=64 time=0.082 ms\n64 bytes from 172.20.0.2: seq=1 ttl=64 time=0.075 ms\n--- backend-api ping statistics ---\n2 packets transmitted, 2 packets received, 0% packet loss",
+          "verification": "Observe 0% packet loss when pinging the container by name."
+        },
+        {
+          "stepNum": 4,
+          "title": "Verify HTTP Request Routing by Container Name",
+          "laymanExplanation": "Name-based HTTP communication verify karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run --rm --network my-custom-net alpine wget -qO- http://backend-api",
+          "commandExplanation": "Sends an HTTP GET request to backend-api over port 80 and prints the HTML response.",
+          "expectedOutput": "<!DOCTYPE html>\n<html><head><title>Welcome to nginx!</title></head><body><h1>Welcome to nginx!</h1></body></html>",
+          "verification": "Confirmed: Full inter-container communication functioning seamlessly via container names!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker Networking Sandbox Terminal",
+        "commands": {
+          "docker network create my-custom-net": "38a19bc042456e7f8\n[OK] User-defined bridge network 'my-custom-net' created.",
+          "docker run -d --name backend-api --network my-custom-net nginx:alpine": "5f1a2b3c4d5e...\n[OK] Started 'backend-api' attached to 'my-custom-net'.",
+          "docker run --rm --network my-custom-net alpine ping -c 2 backend-api": "PING backend-api (172.20.0.2): 56 data bytes\n64 bytes from 172.20.0.2: seq=0 ttl=64 time=0.08 ms\n64 bytes from 172.20.0.2: seq=1 ttl=64 time=0.07 ms\n--- backend-api ping statistics --- 0% packet loss.",
+          "docker run --rm --network my-custom-net alpine wget -qO- http://backend-api": "<!DOCTYPE html><html><head><title>Welcome to nginx!</title></head></html>\n[OK] HTTP request received and handled by backend-api!",
+          "docker rm -f backend-api && docker network rm my-custom-net": "backend-api\nmy-custom-net\n[OK] Cleaned up container and custom network."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "ping: bad address 'backend-api' on default bridge",
+          "cause": "Default bridge (`docker0`) does NOT support automatic DNS name resolution; it only works on user-defined custom networks.",
+          "solution": "Create a custom network using `docker network create <name>` and attach containers with `--network <name>`."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f backend-api",
+        "docker network rm my-custom-net"
+      ]
+    }
   },
   {
     "id": 8,
@@ -584,13 +1115,13 @@ window.DOCKER_LECTURES = [
       "title": "Technical Guftgu Classroom Whiteboard Breakdown (Lec 08 - Resume)",
       "instructor": "Bhupinder Rajput",
       "videoDuration": "3:27",
-      "summary": "DevOps resume me Docker containerization expertise ko impact-driven bullet points me showcase karne ki strategy.",
+      "summary": "रेज़्यूमे में डॉकर और डेवॉप्स स्किल्स को प्रभावशाली तरीके से लिखने की रणनीतियाँ।",
       "sections": [
         {
           "heading": "1. What NOT to write vs What to write",
-          "hindiNote": "Weak framing vs High-impact framing:",
+          "hindiNote": "गलत तरीका बनाम सही तरीका:",
           "points": [
-            "Don't write: 'Knowledge of Docker and Linux commands.' (Sounds generic and non-impactful)",
+            "Don't write: 'Knowledge of Docker and Linux commands.' (यह बहुत बेसिक लगता है)",
             "Do write: 'Built multi-stage Docker images reducing production container size from 800MB to 45MB using Alpine Linux.'",
             "Do write: 'Implemented persistent Docker Volumes for MySQL database ensuring zero data loss across container lifecycle.'"
           ],
@@ -604,7 +1135,89 @@ window.DOCKER_LECTURES = [
       "Write concise bullet points emphasizing business impact and performance gains"
     ],
     "examTips": "Interview Tip: Be prepared to draw Docker architecture (Client, Daemon, Registry) and explain Docker Volumes on the whiteboard in interview rounds.",
-    "interviewQuestions": "Q: Can you describe a Docker project you implemented?\nA: Highlight containerizing a multi-tier web application, separating frontend and backend into isolated containers, mapping ports for external access, and utilizing Docker Named Volumes for persistent database storage."
+    "interviewQuestions": "Q: Can you describe a Docker project you implemented?\nA: Highlight containerizing a multi-tier web application, separating frontend and backend into isolated containers, mapping ports for external access, and utilizing Docker Named Volumes for persistent database storage.",
+    "hasLiveLab": true,
+    "liveLab": {
+      "title": "Hands-On Lab: Production Container Debugging (Exec, Inspect, Stats & Restart Policies)",
+      "scenario": "Jab koi airplane hawa me ud raha hota hai, engineers use zameen par utare bina real-time sensors (telemetry) se check karte hain ki engine ka temperature aur fuel consumption kaisa hai. Is lab me hum ek live chalte hue container ke andar bina use roke ghusenge (Exec), uske resource metrics monitor karenge (Stats), aur auto-recovery (Restart Policy) test karenge.",
+      "objective": "Perform enterprise container operations: Open an interactive bash shell in a running container via `docker exec`, extract deep JSON metadata via `docker inspect --format`, monitor live CPU/Memory utilization with `docker stats`, and verify self-healing restart policies.",
+      "duration": "20 Mins",
+      "cost": "100% Free",
+      "difficulty": "Intermediate to Advanced",
+      "diagram": "+--------------------------------------------------------------+\n| Host Engine                                                  |\n|                                                              |\n|  [ User Terminal ]                                           |\n|         |                                                    |\n|         +---> docker exec -it prod-web sh                    |\n|         |     (Spawns new child process inside container)    |\n|         |                                                    |\n|         v                                                    |\n|  [ Running Container: prod-web ]                             |\n|  Policy: --restart unless-stopped                            |\n|         |                                                    |\n|         +---> If process crashes (kill -9 1)                 |\n|         |                                                    |\n|         v                                                    |\n|  [ Docker Daemon Auto-Restarts Container Immediately! ]      |\n+--------------------------------------------------------------+",
+      "steps": [
+        {
+          "stepNum": 1,
+          "title": "Launch a Container with Production Auto-Restart Policy",
+          "laymanExplanation": "Container ko aisi setting ke sath start karna ki agar wo crash ho jaye ya server restart ho, toh Docker use turant khud-b-khud dobara start kar de.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker run -d --name prod-web --restart unless-stopped -p 8080:80 nginx:alpine",
+          "commandExplanation": "--restart unless-stopped: Automatically restarts container if it crashes or if Docker daemon reboots, unless manually stopped by admin.",
+          "expectedOutput": "9a8b7c6d5e...\n[Container running with restart policy]",
+          "verification": "Inspect restart policy: `docker inspect prod-web --format '{{.HostConfig.RestartPolicy.Name}}'` returns 'unless-stopped'."
+        },
+        {
+          "stepNum": 2,
+          "title": "Spawn an Interactive Troubleshooting Shell with Exec",
+          "laymanExplanation": "Chalti hui gadi me andar jakar live settings check karna bina gadi ko roke.",
+          "consoleAction": "Terminal execution.",
+          "command": "docker exec -it prod-web sh",
+          "commandExplanation": "`docker exec` forks a new process inside existing namespaces. `-it` connects terminal stdin/stdout.",
+          "expectedOutput": "/ # ls -la /usr/share/nginx/html\n-rw-r--r-- 1 root root 615 index.html\n/ # exit",
+          "verification": "Type `exit` to leave the container shell without stopping Nginx."
+        },
+        {
+          "stepNum": 3,
+          "title": "Query Precise Container Metadata Using Go Templates",
+          "laymanExplanation": "Container ki 200 lines ki JSON file me se sirf kaam ki cheez (jaise container ka IP address ya start time) extract karna.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker inspect prod-web --format 'IP: {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} | Status: {{.State.Status}} | StartedAt: {{.State.StartedAt}}'",
+          "commandExplanation": "`docker inspect` dumps all low-level configuration. `--format` uses Go templates to extract only desired fields.",
+          "expectedOutput": "IP: 172.17.0.2 | Status: running | StartedAt: 2026-09-25T12:00:00Z",
+          "verification": "Observe clean single-line output."
+        },
+        {
+          "stepNum": 4,
+          "title": "Monitor Live CPU, Memory & Network I/O Streams",
+          "laymanExplanation": "Live dashboard dekhna ki container kitni RAM aur CPU use kar raha hai.",
+          "consoleAction": "Terminal command.",
+          "command": "docker stats --no-stream prod-web",
+          "commandExplanation": "`docker stats` displays real-time resource utilization. Adding `--no-stream` prints a single snapshot and exits.",
+          "expectedOutput": "CONTAINER ID   NAME       CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O\n9a8b7c6d5e1f   prod-web   0.00%     4.12MiB / 7.647GiB    0.05%     1.2kB / 600B     0B / 0B",
+          "verification": "Notice Nginx uses only ~4MB of RAM! In a VM this would take 1GB+."
+        },
+        {
+          "stepNum": 5,
+          "title": "Simulate a Crash and Witness Automated Self-Healing",
+          "laymanExplanation": "Container ke andar Nginx process ko forcibly kill karke dekhna ki Docker restart policy use 1 second me wapas zinda karti hai ya nahi.",
+          "consoleAction": "Terminal command execution.",
+          "command": "docker kill -s 9 prod-web && sleep 2 && docker ps",
+          "commandExplanation": "`docker kill -s 9` abruptly kills the container process. The daemon detects unexpected exit and immediately restarts it due to `--restart unless-stopped`.",
+          "expectedOutput": "prod-web\n[2 seconds delay...]\nCONTAINER ID   IMAGE          STATUS                     NAMES\n9a8b7c6d5e1f   nginx:alpine   Up Less than a second     prod-web",
+          "verification": "Notice STATUS shows 'Up Less than a second' - Docker automatically recovered the crashed service!"
+        }
+      ],
+      "simulator": {
+        "welcomeMessage": "Docker Operations & Debugging Sandbox",
+        "commands": {
+          "docker run -d --name prod-web --restart unless-stopped -p 8080:80 nginx:alpine": "9a8b7c6d5e1f...\n[OK] Started 'prod-web' with policy 'unless-stopped'.",
+          "docker exec -it prod-web sh": "Connected to prod-web shell: / # nginx -v\nnginx version: nginx/1.25.3\n/ # [Exited cleanly]",
+          "docker stats --no-stream prod-web": "CONTAINER ID   NAME       CPU %   MEM USAGE / LIMIT    MEM %   NET I/O\n9a8b7c6d5e1f   prod-web   0.01%   4.12MiB / 7.64GiB    0.05%   1.2kB / 600B",
+          "docker kill -s 9 prod-web": "prod-web\n[CRASH DETECTED] Daemon auto-restarting container according to policy...\n[OK] Container auto-recovered! Status: Up 1 second.",
+          "docker rm -f prod-web": "prod-web\n[OK] Cleaned up prod-web."
+        }
+      },
+      "troubleshooting": [
+        {
+          "issue": "Container keeps restarting continuously (Restart loop)",
+          "cause": "The primary process (PID 1) crashes immediately upon launch due to a bad config or missing file.",
+          "solution": "Inspect failure logs using `docker logs prod-web` to identify the stack trace."
+        }
+      ],
+      "cleanup": [
+        "docker rm -f prod-web"
+      ]
+    }
   }
 ];
 
